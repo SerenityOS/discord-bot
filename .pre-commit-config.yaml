@@ -1,0 +1,7 @@
+repos:
+  - repo: local
+    hooks:
+      - id: lin
+        name: Running yarn lint to ensure changes will pass linting on CI
+        entry:  yarn lint
+        language: system
