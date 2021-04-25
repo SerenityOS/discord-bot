@@ -9,6 +9,6 @@ export class FaqCommand implements Command {
     }
 
     async run(message: Message): Promise<void> {
-        await message.reply("FAQ: http://serenityos.org/faq/");
+        await message.channel.send("FAQ: http://serenityos.org/faq/");
     }
 }
