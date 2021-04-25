@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { BuildCommand, FaqCommand } from "./commands";
+import { QuickLinksCommand } from "./commands";
 import Command from "./commands/commandInterface";
 import { CommandParser } from "./models/commandParser";
 
@@ -11,7 +11,7 @@ export default class CommandHandler {
     private readonly production: boolean;
 
     constructor(prefix: string, production: boolean) {
-        const commandClasses = [BuildCommand, FaqCommand];
+        const commandClasses = [QuickLinksCommand];
 
         this.commands = commandClasses.map(commandClass => new commandClass());
         this.prefix = prefix;
@@ -40,13 +40,13 @@ export default class CommandHandler {
         }
 
         const matchedCommand = this.commands.find(command =>
-            command.commandNames.includes(commandParser.parsedCommandName)
+            command.matchesName(commandParser.parsedCommandName)
         );
 
         if (!matchedCommand) {
             await message.reply(`I don't recognize that command. Try !help.`);
         } else {
-            await matchedCommand.run(message).catch(error => {
+            await matchedCommand.run(commandParser).catch(error => {
                 message.reply(`'${this.echoMessage(message)}' failed because of ${error}`);
             });
         }

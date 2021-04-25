@@ -11,5 +11,4 @@
  * DO NOT export command classes using default
  */
 
-export * from "./buildCommand";
-export * from "./faqCommand";
+export * from "./quickLinksCommand";
