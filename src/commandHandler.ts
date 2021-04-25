@@ -32,6 +32,13 @@ export default class CommandHandler {
 
         const commandParser = new CommandParser(message, this.prefix);
 
+        if (commandParser.parsedCommandName == "help") {
+            await message.reply(
+                "Available commands:\n" + this.commands.map(cmd => cmd.help(this.prefix)).join("\n")
+            );
+            return;
+        }
+
         const matchedCommand = this.commands.find(command =>
             command.commandNames.includes(commandParser.parsedCommandName)
         );
