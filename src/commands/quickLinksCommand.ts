@@ -37,5 +37,10 @@ export class QuickLinksCommand implements Command {
         const link = this.links.find(link => link.name === parsedUserCommand.parsedCommandName);
         assert(link);
         await parsedUserCommand.send(link.response);
+        try {
+            await parsedUserCommand.originalMessage.delete();
+        } catch (e) {
+            // noop catch to ignore permission errors when deleting messages of higher rank users
+        }
     }
 }
