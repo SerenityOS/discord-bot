@@ -32,6 +32,10 @@ class GithubAPI {
                 repo: "serenity",
                 issue_number,
             });
+            if (results.data.pull_request) {
+                // This is a PR
+                return undefined;
+            }
             return results.data;
         } catch {
             return undefined;
