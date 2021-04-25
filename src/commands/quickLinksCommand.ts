@@ -3,7 +3,7 @@ import { CommandParser } from "../models/commandParser";
 import assert from "assert";
 
 export class QuickLinksCommand implements Command {
-    readonly links = [
+    readonly links: { help: string; response: string; name: string }[] = [
         {
             name: "faq",
             response: "FAQ: http://serenityos.org/faq/",
