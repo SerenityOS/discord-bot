@@ -1,15 +1,12 @@
-import { Message } from "discord.js";
+import { CommandParser } from "../models/commandParser";
 
 export default interface Command {
-    /**
-     * List of aliases for the command.
-     * The first name in the list is the primary command name.
-     */
-    readonly commandNames: string[];
+    /** Checks if the given command name matches this command **/
+    matchesName(commandName: string): boolean;
 
     /** Usage documentation. */
     help(commandPrefix: string): string;
 
     /** Execute the command. */
-    run(parsedUserCommand: Message): Promise<void>;
+    run(parsedUserCommand: CommandParser): Promise<void>;
 }
