@@ -3,7 +3,8 @@
   "parser": "@typescript-eslint/parser",
   "plugins": [
     "@typescript-eslint",
-    "prettier"
+    "prettier",
+    "unused-imports"
   ],
   "extends": [
     "eslint:recommended",
