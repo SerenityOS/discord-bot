@@ -14,9 +14,9 @@ export class IssueCommand implements Command {
     async run(parsedUserCommand: CommandParser): Promise<void> {
         const result = await githubAPI.search_issues(parsedUserCommand.args.join("+"));
         if (result) {
-            await parsedUserCommand.originalMessage.channel.send(`${result.html_url}`);
+            await parsedUserCommand.send(`${result.html_url}`);
         } else {
-            await parsedUserCommand.originalMessage.channel.send(`No matching issues found :^(`);
+            await parsedUserCommand.send(`No matching issues found :^(`);
         }
     }
 }
