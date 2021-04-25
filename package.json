@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "SerenityOS Discord Bot",
   "main": "index.js",
+  "license": "BSD-2-Clause",
   "scripts": {
     "lint": "eslint . --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix",
