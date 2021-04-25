@@ -6,3 +6,6 @@ node_modules
 
 # Ignore built ts files
 build/**/*
+
+# Ignore webstorm configuration
+.idea/
