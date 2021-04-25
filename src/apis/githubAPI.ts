@@ -16,6 +16,8 @@ class GithubAPI {
         const results = await this.octokit.search.issuesAndPullRequests({
             q: qualifiers.join("+"),
             per_page: 1,
+            sort: "updated",
+            order: "desc",
         });
         const {
             data: { items: issues },
@@ -28,6 +30,8 @@ class GithubAPI {
         const results = await this.octokit.search.issuesAndPullRequests({
             q: qualifiers.join("+"),
             per_page: 1,
+            sort: "updated",
+            order: "desc",
         });
         const {
             data: { items: pullRequests },
