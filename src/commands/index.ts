@@ -12,3 +12,4 @@
  */
 
 export * from "./buildCommand";
+export * from "./faqCommand";

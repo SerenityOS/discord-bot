@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import { BuildCommand } from "./commands";
+import { BuildCommand, FaqCommand } from "./commands";
 import Command from "./commands/commandInterface";
 import { CommandParser } from "./models/commandParser";
 
@@ -13,6 +13,7 @@ export default class CommandHandler {
 
     const commandClasses = [
       BuildCommand,
+      FaqCommand,
     ];
 
     this.commands = commandClasses.map(commandClass => new commandClass());
