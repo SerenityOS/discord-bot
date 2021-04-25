@@ -25,6 +25,19 @@ class GithubAPI {
         return issues[0];
     }
 
+    async search_issue(issue_number: number) {
+        try {
+            const results = await this.octokit.issues.get({
+                owner: "SerenityOS",
+                repo: "serenity",
+                issue_number,
+            });
+            return results.data;
+        } catch {
+            return undefined;
+        }
+    }
+
     async search_pull_requests(search_terms: string) {
         const qualifiers = [search_terms, "is:pull-request", "repo:SerenityOS/serenity"];
         const results = await this.octokit.search.issuesAndPullRequests({
