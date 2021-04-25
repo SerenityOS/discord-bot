@@ -36,6 +36,6 @@ export class QuickLinksCommand implements Command {
     async run(parsedUserCommand: CommandParser): Promise<void> {
         const link = this.links.find(link => link.name === parsedUserCommand.parsedCommandName);
         assert(link);
-        await parsedUserCommand.originalMessage.channel.send(link.response);
+        await parsedUserCommand.send(link.response);
     }
 }
