@@ -9,6 +9,6 @@ export class BuildCommand implements Command {
   }
 
   async run(message: Message): Promise<void> {
-    await message.reply("Howto Build: https://github.com/SerenityOS/serenity/blob/master/Documentation/BuildInstructions.md");
+    await message.reply("How To Build: https://github.com/SerenityOS/serenity/blob/master/Documentation/BuildInstructions.md");
   }
 }
