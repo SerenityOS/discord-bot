@@ -9,7 +9,9 @@ export default class CommandHandler {
 
   private readonly prefix: string;
 
-  constructor(prefix: string) {
+  private readonly production: boolean;
+
+  constructor(prefix: string, production: boolean) {
 
     const commandClasses = [
       BuildCommand,
@@ -18,6 +20,7 @@ export default class CommandHandler {
 
     this.commands = commandClasses.map(commandClass => new commandClass());
     this.prefix = prefix;
+    this.production = production;
   }
 
   /** Executes user commands contained in a message if appropriate. */
@@ -26,7 +29,9 @@ export default class CommandHandler {
       return;
     }
 
-    message.reply(`Buggie bot recieved '${this.echoMessage(message)}' from ${message.author.tag}`);
+    if (!this.production) {
+        message.reply(`Buggie bot recieved '${this.echoMessage(message)}' from ${message.author.tag}`);
+    }
 
     const commandParser = new CommandParser(message, this.prefix);
 

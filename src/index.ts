@@ -5,7 +5,7 @@ import config from './config/botConfig';
 
 const client = new Discord.Client();
 
-const commandHandler = new CommandHandler(config.prefix);
+const commandHandler = new CommandHandler(config.prefix, config.production);
 
 client.on("ready", () => { console.log("Buggie bot has started"); });
 client.on("message", (message: Message) => { commandHandler.handleMessage(message); });
