@@ -11,4 +11,6 @@
  * DO NOT export command classes using default
  */
 
+export * from "./issueCommand";
+export * from "./prCommand";
 export * from "./quickLinksCommand";
