@@ -1,4 +1,10 @@
-import { APIMessageContentResolvable, Message, MessageAdditions, MessageOptions } from "discord.js";
+import {
+    APIMessageContentResolvable,
+    Message,
+    MessageAdditions,
+    MessageOptions,
+    MessageEmbed,
+} from "discord.js";
 
 /** A user-given command extracted from a message. */
 export class CommandParser {
@@ -18,6 +24,12 @@ export class CommandParser {
         this.parsedCommandName = commandName.toLowerCase();
         this.args = splitMessage;
         this.originalMessage = message;
+    }
+
+    embed(): MessageEmbed {
+        return new MessageEmbed()
+            .setTimestamp()
+            .setFooter(`Query by ${this.originalMessage.author.username}`);
     }
 
     send(
