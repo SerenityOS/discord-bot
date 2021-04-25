@@ -21,7 +21,7 @@ export class PRCommand implements Command {
         if (result) {
             await parsedUserCommand.send(`${result.html_url}`);
         } else {
-            await parsedUserCommand.send(`No matching pull requests found :^(`);
+            await parsedUserCommand.send(`No matching pull requests found :sadcaret:`);
         }
     }
 }
