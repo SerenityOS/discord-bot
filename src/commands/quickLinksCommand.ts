@@ -15,6 +15,12 @@ export class QuickLinksCommand implements Command {
                 "How To Build: https://github.com/SerenityOS/serenity/blob/master/Documentation/BuildInstructions.md",
             help: "get a link to the build docs",
         },
+        {
+            name: "wsl",
+            response:
+                "WSL Specific Notes: https://github.com/SerenityOS/serenity/blob/master/Documentation/NotesOnWSL.md",
+            help: "get a link to the wsl specific notes",
+        },
     ];
 
     matchesName(commandName: string): boolean {
