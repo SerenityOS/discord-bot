@@ -1,4 +1,5 @@
 import { MessageEmbed } from "discord.js";
+import { RestEndpointMethodTypes } from "@octokit/rest";
 import Command from "./commandInterface";
 import { CommandParser } from "../models/commandParser";
 import githubAPI from "../apis/githubAPI";
@@ -22,21 +23,7 @@ export class IssueCommand implements Command {
                 let embed: MessageEmbed | string;
 
                 if (result) {
-                    let description = result.body || "";
-                    if (description.length > 500) {
-                        description = description.slice(0, 500) + "...";
-                    }
-
-                    embed = parsedUserCommand
-                        .embed()
-                        .setAuthor(`Issue ${number}`)
-                        .setTitle(result.title)
-                        .setURL(result.html_url)
-                        .setDescription(description);
-
-                    if (result.user) {
-                        embed.setThumbnail(result.user.avatar_url);
-                    }
+                    embed = this.embedFromIssue(parsedUserCommand, result);
                 } else {
                     embed = "No matching issues found :^(";
                 }
@@ -49,9 +36,37 @@ export class IssueCommand implements Command {
 
         const result = await githubAPI.search_issues(args.join("+"));
         if (result) {
-            await parsedUserCommand.send(`${result.html_url}`);
+            const embed = this.embedFromIssue(parsedUserCommand, result);
+            await parsedUserCommand.send(embed);
         } else {
             await parsedUserCommand.send(`No matching issues found :^(`);
         }
+    }
+
+    private embedFromIssue(
+        parsedUserCommand: CommandParser,
+        issue: RestEndpointMethodTypes["issues"]["get"]["response"]["data"]
+    ) {
+        let description = issue.body || "";
+        if (description.length > 300) {
+            description = description.slice(0, 300) + "...";
+        }
+
+        const color = issue.state === "open" ? "#57ab5a" : "#e5534b";
+
+        const embed = parsedUserCommand
+            .embed()
+            .setColor(color)
+            .setTitle(issue.title)
+            .setURL(issue.html_url)
+            .setDescription(description)
+            .addField("Created", new Date(issue.created_at).toDateString(), true)
+            .addField("Comments", issue.comments, true);
+
+        if (issue.user) {
+            embed.setThumbnail(issue.user.avatar_url).setAuthor(issue.user.login);
+        }
+
+        return embed;
     }
 }
