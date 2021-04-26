@@ -21,6 +21,12 @@ export class QuickLinksCommand implements Command {
                 "WSL Specific Notes: https://github.com/SerenityOS/serenity/blob/master/Documentation/NotesOnWSL.md",
             help: "get a link to the wsl specific notes",
         },
+        {
+            name: "bot-src",
+            response:
+                "Bot Source: https://github.com/SerenityOS/discord-bot/tree/master/src/commands",
+            help: "get a link to the source code for bot commands",
+        },
     ];
 
     matchesName(commandName: string): boolean {
