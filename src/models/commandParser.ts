@@ -4,6 +4,7 @@ import {
     MessageAdditions,
     MessageOptions,
     MessageEmbed,
+    MessageMentions,
 } from "discord.js";
 
 /** A user-given command extracted from a message. */
@@ -21,7 +22,7 @@ export class CommandParser {
         this.commandPrefix = prefix;
         const splitMessage = message.content
             .slice(prefix.length)
-            .replace(/<\S+>/g, "")
+            .replace(MessageMentions.USERS_PATTERN, "")
             .trim()
             .split(/ +/g);
         const commandName = splitMessage.shift() || "";
