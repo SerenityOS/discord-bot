@@ -1,11 +1,25 @@
 import { Message } from "discord.js";
 
+const cache: Map<string, Map<string, string>> = new Map();
+
 /** Gets a displayable emoji string from the message's guild */
 export function getEmoji(message: Message, name: string): string | null {
+    // guid == null in dms, where we don't have access to custom emojis
     if (!message.guild) return null;
-    const emoji = message.guild.emojis.cache.find(emoji => emoji.name === name);
+
+    // check the cache first O(1)
+    const cached = cache.get(message.guild.id)?.get(name);
+    if (cached) return cached;
+
+    // otherwise check discord's emoji list
+    const emoji = message.guild.emojis.cache.find(emoji => emoji.name === name)?.toString();
     if (!emoji) return null;
-    return emoji.toString();
+
+    // cache found emoji for faster lookup later
+    if (!cache.get(message.guild.id)) cache.set(message.guild.id, new Map());
+    cache.get(message.guild.id)?.set(name, emoji);
+
+    return emoji;
 }
 
 /** Alias function fot the :sadcaret: emoji */
