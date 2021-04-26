@@ -3,7 +3,7 @@ import { RestEndpointMethodTypes } from "@octokit/rest";
 import Command from "./commandInterface";
 import { CommandParser } from "../models/commandParser";
 import githubAPI from "../apis/githubAPI";
-import { getEmoji } from "../util/emoji";
+import { getSadCaret } from "../util/emoji";
 
 export class IssueCommand implements Command {
     matchesName(commandName: string): boolean {
@@ -26,7 +26,7 @@ export class IssueCommand implements Command {
                 if (result) {
                     embed = this.embedFromIssue(parsedUserCommand, result);
                 } else {
-                    const sadcaret = getEmoji(parsedUserCommand.originalMessage, "sadcaret");
+                    const sadcaret = getSadCaret(parsedUserCommand.originalMessage);
                     embed = `No matching issues found ${sadcaret}`;
                 }
 
@@ -41,7 +41,7 @@ export class IssueCommand implements Command {
             const embed = this.embedFromIssue(parsedUserCommand, result);
             await parsedUserCommand.send(embed);
         } else {
-            const sadcaret = getEmoji(parsedUserCommand.originalMessage, "sadcaret");
+            const sadcaret = getSadCaret(parsedUserCommand.originalMessage);
             await parsedUserCommand.send(`No matching issues found ${sadcaret}`);
         }
     }
