@@ -12,5 +12,6 @@
  */
 
 export * from "./issueCommand";
+export * from "./manCommand";
 export * from "./prCommand";
 export * from "./quickLinksCommand";
