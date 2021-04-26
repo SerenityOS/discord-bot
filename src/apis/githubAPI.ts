@@ -55,6 +55,19 @@ class GithubAPI {
         } = results;
         return pullRequests[0];
     }
+
+    async search_pull_request(pull_number: number) {
+        try {
+            const results = await this.octokit.pulls.get({
+                owner: "SerenityOS",
+                repo: "serenity",
+                pull_number,
+            });
+            return results.data;
+        } catch {
+            return undefined;
+        }
+    }
 }
 
 const api = new GithubAPI();
