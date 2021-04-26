@@ -3,6 +3,7 @@ import { RestEndpointMethodTypes } from "@octokit/rest";
 import Command from "./commandInterface";
 import { CommandParser } from "../models/commandParser";
 import githubAPI from "../apis/githubAPI";
+import { getEmoji } from "../util/emoji";
 
 export class PRCommand implements Command {
     matchesName(commandName: string): boolean {
@@ -30,7 +31,8 @@ export class PRCommand implements Command {
                 if (result) {
                     embed = this.embedFromPr(parsedUserCommand, result);
                 } else {
-                    embed = "No matching PRs found <:sadcaret:832714137166676018>";
+                    const sadcaret = getEmoji(parsedUserCommand.originalMessage, "sadcaret");
+                    embed = `No matching PRs found ${sadcaret}`;
                 }
 
                 await parsedUserCommand.send(embed);
@@ -48,9 +50,8 @@ export class PRCommand implements Command {
             }
         }
 
-        await parsedUserCommand.send(
-            `No matching pull requests found <:sadcaret:832714137166676018>`
-        );
+        const sadcaret = getEmoji(parsedUserCommand.originalMessage, "sadcaret");
+        await parsedUserCommand.send(`No matching pull requests found ${sadcaret}`);
     }
 
     private embedFromPr(
