@@ -25,7 +25,7 @@ export class IssueCommand implements Command {
                 if (result) {
                     embed = this.embedFromIssue(parsedUserCommand, result);
                 } else {
-                    embed = "No matching issues found :sadcaret:";
+                    embed = "No matching issues found <:sadcaret:832714137166676018>";
                 }
 
                 await parsedUserCommand.send(embed);
@@ -39,7 +39,7 @@ export class IssueCommand implements Command {
             const embed = this.embedFromIssue(parsedUserCommand, result);
             await parsedUserCommand.send(embed);
         } else {
-            await parsedUserCommand.send(`No matching issues found :sadcaret:`);
+            await parsedUserCommand.send(`No matching issues found <:sadcaret:832714137166676018>`);
         }
     }
 

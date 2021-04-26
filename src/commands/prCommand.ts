@@ -30,7 +30,7 @@ export class PRCommand implements Command {
                 if (result) {
                     embed = this.embedFromPr(parsedUserCommand, result);
                 } else {
-                    embed = "No matching PRs found :sadcaret:";
+                    embed = "No matching PRs found <:sadcaret:832714137166676018>";
                 }
 
                 await parsedUserCommand.send(embed);
@@ -48,7 +48,9 @@ export class PRCommand implements Command {
             }
         }
 
-        await parsedUserCommand.send(`No matching pull requests found :sadcaret:`);
+        await parsedUserCommand.send(
+            `No matching pull requests found <:sadcaret:832714137166676018>`
+        );
     }
 
     private embedFromPr(
