@@ -22,6 +22,12 @@ export class QuickLinksCommand implements Command {
             help: "get a link to the wsl specific notes",
         },
         {
+            name: "install",
+            response:
+                "Installing on real hardware: https://github.com/SerenityOS/serenity/blob/master/Documentation/INSTALL.md",
+            help: "get a link to the directions for installing SerenityOS on real hardware",
+        },
+        {
             name: "bot-src",
             response:
                 "Bot Source: https://github.com/SerenityOS/discord-bot/tree/master/src/commands",
