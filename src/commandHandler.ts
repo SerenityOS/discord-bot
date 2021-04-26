@@ -26,7 +26,7 @@ export default class CommandHandler {
 
         if (!this.production) {
             await message.reply(
-                `Buggie bot recieved '${this.echoMessage(message)}' from ${message.author.tag}`
+                `Buggie bot received '${this.echoMessage(message)}' from ${message.author.tag}`
             );
         }
 
