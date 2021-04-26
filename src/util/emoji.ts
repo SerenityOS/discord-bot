@@ -7,3 +7,8 @@ export function getEmoji(message: Message, name: string): string | null {
     if (!emoji) return null;
     return emoji.toString();
 }
+
+/** Alias function fot the :sadcaret: emoji */
+export function getSadCaret(message: Message): string | null {
+    return getEmoji(message, "sadcaret");
+}
