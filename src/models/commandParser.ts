@@ -19,7 +19,11 @@ export class CommandParser {
 
     constructor(message: Message, prefix: string) {
         this.commandPrefix = prefix;
-        const splitMessage = message.content.slice(prefix.length).trim().split(/ +/g);
+        const splitMessage = message.content
+            .slice(prefix.length)
+            .replace(/<\S+>/g, "")
+            .trim()
+            .split(/ +/g);
         const commandName = splitMessage.shift() || "";
         this.parsedCommandName = commandName.toLowerCase();
         this.args = splitMessage;
