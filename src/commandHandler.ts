@@ -44,7 +44,7 @@ export default class CommandHandler {
         );
 
         if (!matchedCommand) {
-            await message.reply(`I don't recognize that command. Try !help.`);
+            await message.reply(`I don't recognize that command. Try **!help**.`);
         } else {
             await matchedCommand.run(commandParser).catch(error => {
                 message.reply(`'${this.echoMessage(message)}' failed because of ${error}`);
