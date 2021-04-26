@@ -1,6 +1,7 @@
 import Command from "./commandInterface";
 import { CommandParser } from "../models/commandParser";
 import githubAPI from "../apis/githubAPI";
+import { getEmoji } from "../util/emoji";
 
 export class ManCommand implements Command {
     matchesName(commandName: string): boolean {
@@ -22,9 +23,8 @@ export class ManCommand implements Command {
             if (result) {
                 await parsedUserCommand.send(`${result}`);
             } else {
-                await parsedUserCommand.send(
-                    `No matching man page found <:sadcaret:832714137166676018>`
-                );
+                const sadcaret = getEmoji(parsedUserCommand.originalMessage, "sadcaret");
+                await parsedUserCommand.send(`No matching man page found ${sadcaret}`);
             }
         }
     }
