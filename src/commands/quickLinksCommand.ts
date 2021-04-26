@@ -35,7 +35,7 @@ export class QuickLinksCommand implements Command {
 
     help(commandPrefix: string): string {
         return this.links
-            .map(link => `Use ${commandPrefix}${link.name} to ${link.help}.`)
+            .map(link => `Use **${commandPrefix}${link.name}** to ${link.help}.`)
             .join("\n");
     }
 

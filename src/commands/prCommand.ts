@@ -15,7 +15,7 @@ export class PRCommand implements Command {
     }
 
     help(commandPrefix: string): string {
-        return `Use ${commandPrefix}pr <keywords> to search for SerenityOS pull requests`;
+        return `Use **${commandPrefix}pr [ <keywords> | <number> ]** to search for SerenityOS pull requests`;
     }
 
     async run(parsedUserCommand: CommandParser): Promise<void> {

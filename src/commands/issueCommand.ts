@@ -10,7 +10,7 @@ export class IssueCommand implements Command {
     }
 
     help(commandPrefix: string): string {
-        return `Use ${commandPrefix}issue <keywords> to search for SerenityOS issues`;
+        return `Use **${commandPrefix}issue [ <keywords> | <number> ]** to search for SerenityOS issues`;
     }
 
     async run(parsedUserCommand: CommandParser): Promise<void> {
