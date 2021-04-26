@@ -33,6 +33,13 @@ export class QuickLinksCommand implements Command {
                 "Bot Source: https://github.com/SerenityOS/discord-bot/tree/master/src/commands",
             help: "get a link to the source code for bot commands",
         },
+        {
+            name: "soytineres",
+            // The space at the end is needed.
+            response:
+                "https://cdn.discordapp.com/attachments/830522505605283866/834516065517568030/unknown.png ",
+            help: "!SOytinereS ot emocleW",
+        },
     ];
 
     matchesName(commandName: string): boolean {
