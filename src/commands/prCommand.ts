@@ -67,6 +67,8 @@ export class PRCommand implements Command {
 
         if (pr.draft) {
             color = "#768390";
+        } else if (pr.merged) {
+            color = "#6e40c9";
         } else {
             color = pr.state === "open" ? "#57ab5a" : "#e5534b";
         }
