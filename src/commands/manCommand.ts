@@ -35,10 +35,10 @@ export class ManCommand implements Command {
             const { markdown, url } = await githubAPI.fetch_serenity_manpage(section, page);
             if (markdown) {
                 const message: Message = await parsedUserCommand.send(
-                    ManCommand.embedForMan(markdown, url, page, true)
+                    ManCommand.embedForMan(markdown, url, section, page, true)
                 );
-                const maximizeEmote: string | null = getMaximize(message);
-                const minimizeEmote: string | null = getMinimize(message);
+                const maximizeEmote = getMaximize(message);
+                const minimizeEmote = getMinimize(message);
 
                 if (maximizeEmote) message.react(maximizeEmote);
                 if (minimizeEmote) message.react(minimizeEmote);
@@ -52,6 +52,7 @@ export class ManCommand implements Command {
     static embedForMan(
         markdown: string,
         url: string,
+        section: string,
         page: string,
         collapsed: boolean
     ): MessageEmbed {
@@ -88,7 +89,7 @@ export class ManCommand implements Command {
         }
 
         const embed = new MessageEmbed()
-            .setTitle(page)
+            .setTitle(`${page}(${section})`)
             .setDescription(name ?? "Name not found")
             .setURL(url)
             .setTimestamp();
@@ -100,7 +101,7 @@ export class ManCommand implements Command {
         if (truncated && !collapsed)
             embed.setFooter(
                 `The following paragraphs have been truncated: ${paragraphs
-                    .filter(paragraph => paragraph.title ?? paragraph.truncateFollowingLines)
+                    .filter(paragraph => paragraph.title && paragraph.truncateFollowingLines)
                     .map(paragraph => paragraph.title)
                     .join(", ")}`
             );
