@@ -25,9 +25,11 @@ export default class CommandHandler {
         }
 
         if (!this.production) {
-            await message.reply(
-                `Buggie bot received '${this.echoMessage(message)}' from ${message.author.tag}`
-            );
+            const msg = `Buggie bot received '${this.echoMessage(message)}' from ${
+                message.author.tag
+            }`;
+            await message.reply(msg);
+            await console.log(msg);
         }
 
         const commandParser = new CommandParser(message, this.prefix);
