@@ -78,17 +78,27 @@ class GithubAPI {
         }
     }
 
+    async fetch_serenity_manpage_by_url(url: string) {
+        const pattern = /https:\/\/github\.com\/([\w\/]*)\/blob\/master\/([\w\/]*)\/man(\d)\/([\w\/]*)\.md/;
+        const result = url.match(pattern);
+
+        if (result === null) return;
+
+        if (result[1] !== this.repository || result[2] !== this.man_path) return;
+
+        return this.fetch_serenity_manpage(result[3], result[4]);
+    }
+
     /* Attempts to fetch the content of a man page. */
-    async fetch_serenity_manpage(
-        section: string,
-        page: string
-    ): Promise<{ url: string; markdown: string }> {
+    async fetch_serenity_manpage(section: string, page: string) {
         const request_path = `GET /repos/${this.repository}/contents/${this.man_path}/man${section}/${page}.md`;
         const results = await this.octokit.request(request_path);
         const markdown = Buffer.from(results.data["content"], "base64").toString("binary");
 
         return {
             url: `https://github.com/${this.repository}/blob/master/${this.man_path}/man${section}/${page}.md`,
+            section,
+            page,
             markdown,
         };
     }
