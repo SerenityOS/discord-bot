@@ -32,3 +32,13 @@ export function getEmoji(message: Message, name: string): string | null {
 export function getSadCaret(message: Message): string | null {
     return getEmoji(message, "sadcaret");
 }
+
+/** Alias function for the :maximize: emoji */
+export function getMaximize(message: Message): string | null {
+    return getEmoji(message, "maximize");
+}
+
+/** Alias function for the :minimize: emoji */
+export function getMinimize(message: Message): string | null {
+    return getEmoji(message, "minimize");
+}

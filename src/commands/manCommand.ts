@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { MessageEmbed } from "discord.js";
+import { Message, MessageEmbed } from "discord.js";
 import githubAPI from "../apis/githubAPI";
 import { CommandParser } from "../models/commandParser";
-import { getSadCaret } from "../util/emoji";
+import { getMaximize, getMinimize, getSadCaret } from "../util/emoji";
 import Command from "./commandInterface";
 
 interface Paragraph {
@@ -34,9 +34,14 @@ export class ManCommand implements Command {
             const page = args[1];
             const { markdown, url } = await githubAPI.fetch_serenity_manpage(section, page);
             if (markdown) {
-                await parsedUserCommand.send(
-                    this.embedForMan(parsedUserCommand, markdown, url, page)
+                const message: Message = await parsedUserCommand.send(
+                    ManCommand.embedForMan(markdown, url, page, true)
                 );
+                const maximizeEmote: string | null = getMaximize(message);
+                const minimizeEmote: string | null = getMinimize(message);
+
+                if (maximizeEmote) message.react(maximizeEmote);
+                if (minimizeEmote) message.react(minimizeEmote);
             } else {
                 const sadcaret = getSadCaret(parsedUserCommand.originalMessage);
                 await parsedUserCommand.send(`No matching man page found ${sadcaret}`);
@@ -44,11 +49,11 @@ export class ManCommand implements Command {
         }
     }
 
-    embedForMan(
-        parsedUserCommand: CommandParser,
+    static embedForMan(
         markdown: string,
         url: string,
-        page: string
+        page: string,
+        collapsed: boolean
     ): MessageEmbed {
         const paragraphs: Array<Paragraph> = new Array<Paragraph>();
 
@@ -70,7 +75,7 @@ export class ManCommand implements Command {
 
                 currentParagraph.title = line.substring(3).trim();
             } else if (!currentParagraph.truncateFollowingLines) {
-                if (currentParagraph.content.length + line.length + 4 > 1024) {
+                if (currentParagraph.content.length + line.length + 4 > (collapsed ? 512 : 1024)) {
                     currentParagraph.content += "\n...";
                     currentParagraph.truncateFollowingLines = true;
                     truncated = true;
@@ -82,22 +87,25 @@ export class ManCommand implements Command {
             }
         }
 
-        const embed = parsedUserCommand
-            .embed()
+        const embed = new MessageEmbed()
             .setTitle(page)
             .setDescription(name ?? "Name not found")
-            .setURL(url);
+            .setURL(url)
+            .setTimestamp();
 
         for (const paragraph of paragraphs)
-            if (paragraph.title) embed.addField(paragraph.title, paragraph.content);
+            if ((!collapsed || paragraph.title === "Description") && paragraph.title)
+                embed.addField(paragraph.title, paragraph.content);
 
-        if (truncated)
+        if (truncated && !collapsed)
             embed.setFooter(
                 `The following paragraphs have been truncated: ${paragraphs
                     .filter(paragraph => paragraph.title ?? paragraph.truncateFollowingLines)
                     .map(paragraph => paragraph.title)
                     .join(", ")}`
             );
+
+        if (collapsed) embed.setFooter("React with maximize to expand sections");
 
         return embed;
     }
