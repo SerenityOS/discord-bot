@@ -56,9 +56,9 @@ client.on("messageReactionAdd", async (reaction: MessageReaction, user: User | P
 
         if (!result) return;
 
-        const { markdown, url, page } = result;
+        const { markdown, url, page, section } = result;
 
-        message.edit(ManCommand.embedForMan(markdown, url, page, collapsed));
+        message.edit(ManCommand.embedForMan(markdown, url, section, page, collapsed));
 
         reaction.users.remove(user.id);
     }
