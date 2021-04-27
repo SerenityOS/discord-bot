@@ -8,7 +8,16 @@ const client = new Discord.Client();
 const commandHandler = new CommandHandler(config.prefix, config.production);
 
 client.on("ready", () => {
-    console.log("Buggie bot has started");
+    if (client.user) {
+        console.log(`Logged in as ${client.user.tag}.`);
+        client.user.setPresence({
+            status: "online",
+            activity: {
+                type: "PLAYING",
+                name: "Type !help to list commands.",
+            },
+        });
+    }
 });
 client.on("message", (message: Message) => {
     commandHandler.handleMessage(message);
