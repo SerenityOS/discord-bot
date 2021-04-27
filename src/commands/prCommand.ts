@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021, the SerenityOS developers.
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 import { MessageEmbed } from "discord.js";
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import Command from "./commandInterface";

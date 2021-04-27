@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021, the SerenityOS developers.
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 import { Message } from "discord.js";
 import { IssueCommand, ManCommand, PRCommand, QuickLinksCommand } from "./commands";
 import Command from "./commands/commandInterface";

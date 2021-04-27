@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021, the SerenityOS developers.
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 import Discord, { Message } from "discord.js";
 import { DISCORD_TOKEN } from "./config/secrets";
 import CommandHandler from "./commandHandler";

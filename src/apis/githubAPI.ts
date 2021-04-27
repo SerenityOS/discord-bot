@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021, the SerenityOS developers.
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 import { Octokit } from "@octokit/rest";
 import { Util } from "discord.js";
 import { GITHUB_TOKEN } from "../config/secrets";

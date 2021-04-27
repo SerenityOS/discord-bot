@@ -1,4 +1,10 @@
-/** Intermediate module file for exporting all commands
+/*
+ * Copyright (c) 2021, the SerenityOS developers.
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ *
+ *
+ * Intermediate module file for exporting all commands
  * Makes importing several commands simpler
  *
  * before:

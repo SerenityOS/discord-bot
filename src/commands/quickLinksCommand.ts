@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021, the SerenityOS developers.
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 import Command from "./commandInterface";
 import { CommandParser } from "../models/commandParser";
 import assert from "assert";

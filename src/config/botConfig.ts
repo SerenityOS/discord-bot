@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021, the SerenityOS developers.
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 type BotConfig = {
     prefix: string /** Prefix used for bot commands. */;
     production: boolean;

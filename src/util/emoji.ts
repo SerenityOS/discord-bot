@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021, the SerenityOS developers.
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 import { Message } from "discord.js";
 
 const cache: Map<string, Map<string, string>> = new Map();
@@ -22,7 +28,7 @@ export function getEmoji(message: Message, name: string): string | null {
     return emoji;
 }
 
-/** Alias function fot the :sadcaret: emoji */
+/** Alias function for the :sadcaret: emoji */
 export function getSadCaret(message: Message): string | null {
     return getEmoji(message, "sadcaret");
 }
