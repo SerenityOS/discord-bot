@@ -5,7 +5,6 @@
  */
 
 import { Octokit } from "@octokit/rest";
-import { Util } from "discord.js";
 import { GITHUB_TOKEN } from "../config/secrets";
 
 class GithubAPI {
@@ -80,27 +79,18 @@ class GithubAPI {
     }
 
     /* Attempts to fetch the content of a man page. */
-    async fetch_serenity_manpage(section: string, page: string): Promise<string> {
+    async fetch_serenity_manpage(
+        section: string,
+        page: string
+    ): Promise<{ url: string; markdown: string }> {
         const request_path = `GET /repos/${this.repository}/contents/${this.man_path}/man${section}/${page}.md`;
         const results = await this.octokit.request(request_path);
         const markdown = Buffer.from(results.data["content"], "base64").toString("binary");
 
-        return this.envelope_in_markdown(markdown);
-    }
-
-    /* Utility to envelope content in markdown, including escaping code blocks. */
-    private async envelope_in_markdown(markdown: string): Promise<string> {
-        /* Escape code blocks so they don't break up the markdown message. */
-        markdown = Util.cleanCodeBlockContent(markdown);
-
-        /* Wrap the content in a markdown envelope. */
-        markdown = "```markdown\n" + markdown;
-
-        /* Discord only supports up to 2000 characters for messages. */
-        markdown = markdown.substr(0, Math.min(markdown.length, 2000 - 8));
-        markdown = markdown + "\n```";
-
-        return markdown;
+        return {
+            url: `https://github.com/${this.repository}/blob/master/${this.man_path}/man${section}/${page}.md`,
+            markdown,
+        };
     }
 }
 
