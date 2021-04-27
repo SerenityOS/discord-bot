@@ -83,6 +83,14 @@ export class PRCommand implements Command {
             .addField("Commits", `${pr.commits} (+${pr.additions} -${pr.deletions})`, true)
             .addField("Comments", pr.comments, true);
 
+        if (pr.merged && pr.merged_at && pr.merged_by) {
+            embed.addField(
+                "Merged",
+                `${new Date(pr.merged_at).toDateString()} by ${pr.merged_by.login}`,
+                true
+            );
+        }
+
         if (pr.user) {
             embed.setThumbnail(pr.user.avatar_url).setAuthor(pr.user.login);
         }
