@@ -7,6 +7,13 @@
 import { Octokit } from "@octokit/rest";
 import { GITHUB_TOKEN } from "../config/secrets";
 
+export interface ManPage {
+    url: string;
+    section: string;
+    page: string;
+    markdown: string;
+}
+
 class GithubAPI {
     private octokit: Octokit;
 
@@ -78,7 +85,7 @@ class GithubAPI {
         }
     }
 
-    async fetch_serenity_manpage_by_url(url: string) {
+    async fetch_serenity_manpage_by_url(url: string): Promise<ManPage | undefined> {
         const pattern = /https:\/\/github\.com\/([\w/]*)\/blob\/master\/([\w/]*)\/man(\d)\/([\w/]*)\.md/;
         const result = url.match(pattern);
 
@@ -90,17 +97,22 @@ class GithubAPI {
     }
 
     /* Attempts to fetch the content of a man page. */
-    async fetch_serenity_manpage(section: string, page: string) {
-        const request_path = `GET /repos/${this.repository}/contents/${this.man_path}/man${section}/${page}.md`;
-        const results = await this.octokit.request(request_path);
-        const markdown = Buffer.from(results.data["content"], "base64").toString("binary");
+    async fetch_serenity_manpage(section: string, page: string): Promise<ManPage | undefined> {
+        try {
+            const path = `${this.man_path}/man${section}/${page}.md`;
+            const request_path = `GET /repos/${this.repository}/contents/${path}`;
+            const results = await this.octokit.request(request_path);
+            const markdown = Buffer.from(results.data["content"], "base64").toString("binary");
 
-        return {
-            url: `https://github.com/${this.repository}/blob/master/${this.man_path}/man${section}/${page}.md`,
-            section,
-            page,
-            markdown,
-        };
+            return {
+                url: `https://github.com/${this.repository}/blob/master/${path}`,
+                section,
+                page,
+                markdown,
+            };
+        } catch {
+            return;
+        }
     }
 }
 
