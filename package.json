@@ -15,7 +15,9 @@
     "start": "node build/index.js"
   },
   "nodemonConfig": {
-    "watch": ["src"],
+    "watch": [
+      "src"
+    ],
     "ext": ".ts,.js",
     "ignore": [],
     "exec": "ts-node ./src/index.ts"
@@ -35,7 +37,7 @@
   },
   "homepage": "https://github.com/SerenityOS/discord-bot#readme",
   "devDependencies": {
-    "@octokit/types": "^6.13.2",
+    "@octokit/types": "^6.14.0",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.4.0",
@@ -48,7 +50,7 @@
   },
   "dependencies": {
     "@octokit/rest": "^18.5.3",
-    "@types/node": "^15.0.0",
+    "@types/node": "^15.0.1",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
     "rimraf": "^3.0.2",
