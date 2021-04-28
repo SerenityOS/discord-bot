@@ -37,7 +37,7 @@ export class PRCommand implements Command {
                 if (result) {
                     embed = this.embedFromPr(parsedUserCommand, result);
                 } else {
-                    const sadcaret = getSadCaret(parsedUserCommand.originalMessage);
+                    const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
                     embed = `No matching PRs found ${sadcaret}`;
                 }
 
@@ -56,7 +56,7 @@ export class PRCommand implements Command {
             }
         }
 
-        const sadcaret = getSadCaret(parsedUserCommand.originalMessage);
+        const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
         await parsedUserCommand.send(`No matching pull requests found ${sadcaret}`);
     }
 
