@@ -32,8 +32,10 @@ export class ManCommand implements Command {
         } else {
             const section = args[0];
             const page = args[1];
-            const { markdown, url } = await githubAPI.fetch_serenity_manpage(section, page);
-            if (markdown) {
+            const result = await githubAPI.fetch_serenity_manpage(section, page);
+
+            if (result) {
+                const { markdown, url } = result;
                 const message: Message = await parsedUserCommand.send(
                     ManCommand.embedForMan(markdown, url, section, page, true)
                 );
