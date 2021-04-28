@@ -10,6 +10,7 @@ import CommandHandler from "./commandHandler";
 import { ManCommand } from "./commands";
 import config from "./config/botConfig";
 import { DISCORD_TOKEN } from "./config/secrets";
+import { getMaximize, getMinimize } from "./util/emoji";
 
 const client = new Discord.Client({ partials: ["MESSAGE", "CHANNEL", "REACTION"] });
 
@@ -36,9 +37,9 @@ client.on("messageReactionAdd", async (reaction: MessageReaction, user: User | P
     if (reaction.partial) reaction = await reaction.fetch();
 
     const collapsed: boolean | undefined =
-        reaction.emoji.name === "minimize"
+        reaction.emoji === (await getMinimize(client))
             ? true
-            : reaction.emoji.name === "maximize"
+            : reaction.emoji === (await getMaximize(client))
             ? false
             : undefined;
 

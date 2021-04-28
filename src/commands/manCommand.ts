@@ -39,13 +39,13 @@ export class ManCommand implements Command {
                 const message: Message = await parsedUserCommand.send(
                     ManCommand.embedForMan(markdown, url, section, page, true)
                 );
-                const maximizeEmote = getMaximize(message);
-                const minimizeEmote = getMinimize(message);
+                const maximizeEmote = await getMaximize(message);
+                const minimizeEmote = await getMinimize(message);
 
-                if (maximizeEmote) message.react(maximizeEmote);
-                if (minimizeEmote) message.react(minimizeEmote);
+                if (maximizeEmote) message.react(maximizeEmote.identifier);
+                if (minimizeEmote) message.react(minimizeEmote.identifier);
             } else {
-                const sadcaret = getSadCaret(parsedUserCommand.originalMessage);
+                const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
                 await parsedUserCommand.send(`No matching man page found ${sadcaret}`);
             }
         }

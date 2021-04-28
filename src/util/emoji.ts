@@ -4,41 +4,50 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { Message } from "discord.js";
+import { Client, Emoji } from "discord.js";
+import { GUILD_ID } from "../config/secrets";
 
-const cache: Map<string, Map<string, string>> = new Map();
+type ClientOrParent = Client | { client: Client };
+
+const cache: Map<string, Emoji> = new Map();
 
 /** Gets a displayable emoji string from the message's guild */
-export function getEmoji(message: Message, name: string): string | null {
-    // guid == null in dms, where we don't have access to custom emojis
-    if (!message.guild) return null;
-
+export async function getEmoji(
+    clientOrParent: ClientOrParent,
+    emojiName: string
+): Promise<Emoji | null> {
     // check the cache first O(1)
-    const cached = cache.get(message.guild.id)?.get(name);
+    const cached = cache.get(emojiName);
     if (cached) return cached;
 
+    // check for guild in discord's cache or fetch using the api
+    if (!GUILD_ID) return null;
+
+    const client: Client =
+        clientOrParent instanceof Client ? clientOrParent : clientOrParent.client;
+    const guild = await client.guilds.fetch(GUILD_ID);
+
     // otherwise check discord's emoji list
-    const emoji = message.guild.emojis.cache.find(emoji => emoji.name === name)?.toString();
+    const emoji = guild.emojis.cache.find(emoji => emoji.name === emojiName);
     if (!emoji) return null;
 
     // cache found emoji for faster lookup later
-    if (!cache.get(message.guild.id)) cache.set(message.guild.id, new Map());
-    cache.get(message.guild.id)?.set(name, emoji);
+    cache.set(emojiName, emoji);
 
     return emoji;
 }
 
 /** Alias function for the :sadcaret: emoji */
-export function getSadCaret(message: Message): string | null {
-    return getEmoji(message, "sadcaret");
+export async function getSadCaret(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return getEmoji(clientOrParent, "sadcaret");
 }
 
 /** Alias function for the :maximize: emoji */
-export function getMaximize(message: Message): string | null {
-    return getEmoji(message, "maximize");
+export async function getMaximize(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return getEmoji(clientOrParent, "maximize");
 }
 
 /** Alias function for the :minimize: emoji */
-export function getMinimize(message: Message): string | null {
-    return getEmoji(message, "minimize");
+export async function getMinimize(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return getEmoji(clientOrParent, "minimize");
 }

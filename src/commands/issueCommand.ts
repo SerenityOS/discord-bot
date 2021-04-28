@@ -32,7 +32,7 @@ export class IssueCommand implements Command {
                 if (result) {
                     embed = this.embedFromIssue(parsedUserCommand, result);
                 } else {
-                    const sadcaret = getSadCaret(parsedUserCommand.originalMessage);
+                    const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
                     embed = `No matching issues found ${sadcaret}`;
                 }
 
@@ -47,7 +47,7 @@ export class IssueCommand implements Command {
             const embed = this.embedFromIssue(parsedUserCommand, result);
             await parsedUserCommand.send(embed);
         } else {
-            const sadcaret = getSadCaret(parsedUserCommand.originalMessage);
+            const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
             await parsedUserCommand.send(`No matching issues found ${sadcaret}`);
         }
     }
