@@ -53,7 +53,7 @@ client.on("messageReactionAdd", async (reaction: MessageReaction, user: User | P
 
         if (!embed.url) return;
 
-        const result = await githubAPI.fetch_serenity_manpage_by_url(embed.url);
+        const result = await githubAPI.fetchSerenityManpageByUrl(embed.url);
 
         if (!result) return;
 

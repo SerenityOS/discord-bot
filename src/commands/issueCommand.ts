@@ -26,7 +26,7 @@ export class IssueCommand implements Command {
         if (args.length == 1) {
             const number = Number(args[0]);
             if (!isNaN(number)) {
-                const result = await githubAPI.search_issue(number);
+                const result = await githubAPI.searchIssue(number);
                 let embed: MessageEmbed | string;
 
                 if (result) {
@@ -42,7 +42,7 @@ export class IssueCommand implements Command {
             }
         }
 
-        const result = await githubAPI.search_issues(args.join("+"));
+        const result = await githubAPI.searchIssues(args.join("+"));
         if (result) {
             const embed = this.embedFromIssue(parsedUserCommand, result);
             await parsedUserCommand.send(embed);

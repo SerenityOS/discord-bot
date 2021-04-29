@@ -32,7 +32,7 @@ export class ManCommand implements Command {
         } else {
             const section = args[0];
             const page = args[1];
-            const result = await githubAPI.fetch_serenity_manpage(section, page);
+            const result = await githubAPI.fetchSerenityManpage(section, page);
 
             if (result) {
                 const { markdown, url } = result;
