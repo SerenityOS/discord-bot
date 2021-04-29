@@ -31,7 +31,7 @@ export class PRCommand implements Command {
         if (args.length == 1) {
             const number = Number(args[0]);
             if (!isNaN(number)) {
-                const result = await githubAPI.search_pull_request(number);
+                const result = await githubAPI.searchPullRequest(number);
                 let embed: MessageEmbed | string;
 
                 if (result) {
@@ -47,9 +47,9 @@ export class PRCommand implements Command {
             }
         }
 
-        const result = await githubAPI.search_pull_requests(parsedUserCommand.args.join("+"));
+        const result = await githubAPI.searchPullRequests(parsedUserCommand.args.join("+"));
         if (result) {
-            const pr = await githubAPI.search_pull_request(result.number);
+            const pr = await githubAPI.searchPullRequest(result.number);
             if (pr) {
                 await parsedUserCommand.send(this.embedFromPr(parsedUserCommand, pr));
                 return;
