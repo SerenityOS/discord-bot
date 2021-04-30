@@ -10,7 +10,7 @@ import Command from "./commands/commandInterface";
 import { CommandParser } from "./models/commandParser";
 
 export default class CommandHandler {
-    private commands: Command[];
+    private readonly commands: Command[];
 
     private readonly prefix: string;
 

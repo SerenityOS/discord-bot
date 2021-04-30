@@ -16,7 +16,7 @@ export interface ManPage {
 }
 
 class GithubAPI {
-    private octokit: Octokit;
+    private readonly octokit: Octokit;
 
     private readonly repository: string = "SerenityOS/serenity";
     private readonly manPath: string = "Base/usr/share/man";
