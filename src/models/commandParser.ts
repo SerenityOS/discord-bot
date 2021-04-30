@@ -43,12 +43,12 @@ export class CommandParser {
             .setFooter(`Query by ${this.originalMessage.author.username}`);
     }
 
-    send(
+    async send(
         content:
             | APIMessageContentResolvable
             | (MessageOptions & { split?: false })
             | MessageAdditions
     ): Promise<Message> {
-        return this.originalMessage.channel.send(content);
+        return await this.originalMessage.channel.send(content);
     }
 }

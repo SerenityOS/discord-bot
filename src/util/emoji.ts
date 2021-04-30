@@ -39,15 +39,15 @@ export async function getEmoji(
 
 /** Alias function for the :sadcaret: emoji */
 export async function getSadCaret(clientOrParent: ClientOrParent): Promise<Emoji | null> {
-    return getEmoji(clientOrParent, "sadcaret");
+    return await getEmoji(clientOrParent, "sadcaret");
 }
 
 /** Alias function for the :maximize: emoji */
 export async function getMaximize(clientOrParent: ClientOrParent): Promise<Emoji | null> {
-    return getEmoji(clientOrParent, "maximize");
+    return await getEmoji(clientOrParent, "maximize");
 }
 
 /** Alias function for the :minimize: emoji */
 export async function getMinimize(clientOrParent: ClientOrParent): Promise<Emoji | null> {
-    return getEmoji(clientOrParent, "minimize");
+    return await getEmoji(clientOrParent, "minimize");
 }

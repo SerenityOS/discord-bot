@@ -94,7 +94,7 @@ class GithubAPI {
 
         if (result[1] !== this.repository || result[2] !== this.manPath) return;
 
-        return this.fetchSerenityManpage(result[3], result[4]);
+        return await this.fetchSerenityManpage(result[3], result[4]);
     }
 
     /* Attempts to fetch the content of a man page. */
