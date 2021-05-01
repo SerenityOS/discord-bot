@@ -51,7 +51,7 @@ export default class CommandHandler {
             command.matchesName(commandParser.parsedCommandName)
         );
 
-        if (!matchedCommand) {
+        if (matchedCommand == null) {
             await message.reply(`I don't recognize that command. Try **!help**.`);
         } else {
             await matchedCommand.run(commandParser).catch(error => {

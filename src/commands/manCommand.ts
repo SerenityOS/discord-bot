@@ -34,7 +34,7 @@ export class ManCommand implements Command {
             const page = args[1];
             const result = await githubAPI.fetchSerenityManpage(section, page);
 
-            if (result) {
+            if (result != null) {
                 const { markdown, url } = result;
                 const message: Message = await parsedUserCommand.send(
                     ManCommand.embedForMan(markdown, url, section, page, true)
@@ -42,8 +42,8 @@ export class ManCommand implements Command {
                 const maximizeEmote = await getMaximize(message);
                 const minimizeEmote = await getMinimize(message);
 
-                if (maximizeEmote) message.react(maximizeEmote.identifier);
-                if (minimizeEmote) message.react(minimizeEmote.identifier);
+                if (maximizeEmote != null) message.react(maximizeEmote.identifier);
+                if (minimizeEmote != null) message.react(minimizeEmote.identifier);
             } else {
                 const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
                 await parsedUserCommand.send(`No matching man page found ${sadcaret}`);

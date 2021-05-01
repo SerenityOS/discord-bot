@@ -29,7 +29,7 @@ export class IssueCommand implements Command {
                 const result = await githubAPI.searchIssue(number);
                 let embed: MessageEmbed | string;
 
-                if (result) {
+                if (result != null) {
                     embed = this.embedFromIssue(parsedUserCommand, result);
                 } else {
                     const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
@@ -72,7 +72,7 @@ export class IssueCommand implements Command {
             .addField("Created", new Date(issue.created_at).toDateString(), true)
             .addField("Comments", issue.comments, true);
 
-        if (issue.user) {
+        if (issue.user != null) {
             embed.setThumbnail(issue.user.avatar_url).setAuthor(issue.user.login);
         }
 

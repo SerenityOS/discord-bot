@@ -49,7 +49,7 @@ class GithubAPI {
                 repo: "serenity",
                 issue_number: issueNumber,
             });
-            if (results.data.pull_request) {
+            if (results.data.pull_request != null) {
                 // This is a PR
                 return undefined;
             }

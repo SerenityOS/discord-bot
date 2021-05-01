@@ -17,7 +17,7 @@ const client = new Discord.Client({ partials: ["MESSAGE", "CHANNEL", "REACTION"]
 const commandHandler = new CommandHandler(config.prefix, config.production);
 
 client.on("ready", () => {
-    if (client.user) {
+    if (client.user != null) {
         console.log(`Logged in as ${client.user.tag}.`);
         client.user.setPresence({
             status: "online",
@@ -55,7 +55,7 @@ client.on("messageReactionAdd", async (reaction: MessageReaction, user: User | P
 
         const result = await githubAPI.fetchSerenityManpageByUrl(embed.url);
 
-        if (!result) return;
+        if (result == null) return;
 
         const { markdown, url, page, section } = result;
 

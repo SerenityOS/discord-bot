@@ -34,7 +34,7 @@ export class PRCommand implements Command {
                 const result = await githubAPI.searchPullRequest(number);
                 let embed: MessageEmbed | string;
 
-                if (result) {
+                if (result != null) {
                     embed = this.embedFromPr(parsedUserCommand, result);
                 } else {
                     const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
@@ -50,7 +50,7 @@ export class PRCommand implements Command {
         const result = await githubAPI.searchPullRequests(parsedUserCommand.args.join("+"));
         if (result) {
             const pr = await githubAPI.searchPullRequest(result.number);
-            if (pr) {
+            if (pr != null) {
                 await parsedUserCommand.send(this.embedFromPr(parsedUserCommand, pr));
                 return;
             }
@@ -89,7 +89,7 @@ export class PRCommand implements Command {
             .addField("Commits", `${pr.commits} (+${pr.additions} -${pr.deletions})`, true)
             .addField("Comments", pr.comments, true);
 
-        if (pr.merged && pr.merged_at && pr.merged_by) {
+        if (pr.merged && pr.merged_at && pr.merged_by != null) {
             embed.addField(
                 "Merged",
                 `${new Date(pr.merged_at).toDateString()} by ${pr.merged_by.login}`,
@@ -97,7 +97,7 @@ export class PRCommand implements Command {
             );
         }
 
-        if (pr.user) {
+        if (pr.user != null) {
             embed.setThumbnail(pr.user.avatar_url).setAuthor(pr.user.login);
         }
 

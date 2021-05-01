@@ -18,7 +18,7 @@ export async function getEmoji(
 ): Promise<Emoji | null> {
     // check the cache first O(1)
     const cached = cache.get(emojiName);
-    if (cached) return cached;
+    if (cached != null) return cached;
 
     // check for guild in discord's cache or fetch using the api
     if (!GUILD_ID) return null;
@@ -29,7 +29,7 @@ export async function getEmoji(
 
     // otherwise check discord's emoji list
     const emoji = guild.emojis.cache.find(emoji => emoji.name === emojiName);
-    if (!emoji) return null;
+    if (emoji == null) return null;
 
     // cache found emoji for faster lookup later
     cache.set(emojiName, emoji);
