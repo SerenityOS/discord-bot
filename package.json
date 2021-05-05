@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@octokit/rest": "^18.5.3",
-    "@types/node": "^15.0.1",
+    "@types/node": "^15.0.2",
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
     "rimraf": "^3.0.2",
