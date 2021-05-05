@@ -12,7 +12,7 @@ export class QuickLinksCommand implements Command {
     readonly links: { help: string; response: string; name: string; deleteRequest: boolean }[] = [
         {
             name: "faq",
-            response: "FAQ: http://serenityos.org/faq/",
+            response: "FAQ: https://github.com/SerenityOS/serenity/blob/master/FAQ.md",
             help: "get a link to the SerenityOS FAQ",
             deleteRequest: true,
         },
