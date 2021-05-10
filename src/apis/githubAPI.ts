@@ -87,7 +87,8 @@ class GithubAPI {
     }
 
     async fetchSerenityManpageByUrl(url: string): Promise<ManPage | undefined> {
-        const pattern = /https:\/\/github\.com\/([\w/]*)\/blob\/master\/([\w/]*)\/man(\d)\/([\w/]*)\.md/;
+        const pattern =
+            /https:\/\/github\.com\/([\w/]*)\/blob\/master\/([\w/]*)\/man(\d)\/([\w/]*)\.md/;
         const result = url.match(pattern);
 
         if (result === null) return;
