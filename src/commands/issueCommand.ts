@@ -72,6 +72,14 @@ export class IssueCommand implements Command {
             .addField("Created", new Date(issue.created_at).toDateString(), true)
             .addField("Comments", issue.comments, true);
 
+        if (issue.closed_at && issue.closed_by != null) {
+            embed.addField(
+                "Closed",
+                `${new Date(issue.closed_at).toDateString()} by ${issue.closed_by.login}`,
+                true
+            );
+        }
+
         if (issue.user != null) {
             embed.setThumbnail(issue.user.avatar_url).setAuthor(issue.user.login);
         }
