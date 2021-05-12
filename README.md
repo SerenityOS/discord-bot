@@ -16,6 +16,10 @@ $ yarn build
 ### Configuration
 
 To configure the bot for local development you simply need to drop your discord bot token in an `.env` file at the root of this project.
+The contents should look something like:
+```ini
+discord_token=<your-token-goes-here>
+```
 See: https://www.writebots.com/discord-bot-token/
 
 Now you can run `yarn start:dev` and the bot will startup, and then restart as you save changes to the source files:
