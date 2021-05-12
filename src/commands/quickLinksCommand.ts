@@ -9,31 +9,31 @@ import { CommandParser } from "../models/commandParser";
 import assert from "assert";
 
 export class QuickLinksCommand implements Command {
+    private readonly documentation: string =
+        "https://github.com/SerenityOS/serenity/blob/master/Documentation";
+
     readonly links: { help: string; response: string; name: string; deleteRequest: boolean }[] = [
         {
             name: "faq",
-            response: "FAQ: https://github.com/SerenityOS/serenity/blob/master/FAQ.md",
+            response: `FAQ: ${this.documentation}/FAQ.md`,
             help: "get a link to the SerenityOS FAQ",
             deleteRequest: true,
         },
         {
             name: "build",
-            response:
-                "How To Build: https://github.com/SerenityOS/serenity/blob/master/Documentation/BuildInstructions.md",
+            response: `How To Build: ${this.documentation}/BuildInstructions.md`,
             help: "get a link to the build docs",
             deleteRequest: true,
         },
         {
             name: "wsl",
-            response:
-                "WSL Specific Notes: https://github.com/SerenityOS/serenity/blob/master/Documentation/NotesOnWSL.md",
+            response: `WSL Specific Notes: ${this.documentation}/NotesOnWSL.md`,
             help: "get a link to the wsl specific notes",
             deleteRequest: true,
         },
         {
             name: "install",
-            response:
-                "Installing on real hardware: https://github.com/SerenityOS/serenity/blob/master/Documentation/INSTALL.md",
+            response: `Installing on real hardware: ${this.documentation}/INSTALL.md`,
             help: "get a link to the directions for installing SerenityOS on real hardware",
             deleteRequest: true,
         },
