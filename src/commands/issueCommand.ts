@@ -72,6 +72,15 @@ export class IssueCommand implements Command {
             .addField("Created", new Date(issue.created_at).toDateString(), true)
             .addField("Comments", issue.comments, true);
 
+        const labels = issue.labels
+            .map(label => (typeof label === "string" ? label : label.name))
+            .filter(name => name !== undefined)
+            .join(", ");
+
+        if (labels.length !== 0) {
+            embed.addField("Labels", labels);
+        }
+
         if (issue.closed_at && issue.closed_by != null) {
             embed.addField(
                 "Closed",

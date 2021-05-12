@@ -89,6 +89,15 @@ export class PRCommand implements Command {
             .addField("Commits", `${pr.commits} (+${pr.additions} -${pr.deletions})`, true)
             .addField("Comments", pr.comments, true);
 
+        const labels = pr.labels
+            .map(label => label.name)
+            .filter(name => name !== undefined)
+            .join(", ");
+
+        if (pr.labels.length !== 0) {
+            embed.addField("Labels", labels);
+        }
+
         if (pr.merged && pr.merged_at && pr.merged_by != null) {
             embed.addField(
                 "Merged",
