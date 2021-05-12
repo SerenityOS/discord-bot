@@ -13,8 +13,6 @@ $ yarn install
 $ yarn build
 ```
 
-Eventually I'd like to create a crate.
-
 ### Configuration
 
 To configure the bot for local development you simply need to drop your discord bot token in an `.env` file at the root of this project.
