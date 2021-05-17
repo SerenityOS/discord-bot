@@ -48,7 +48,7 @@ export class QuickLinksCommand implements Command {
             name: "soytineres",
             // The space at the end is needed.
             response:
-                "https://cdn.discordapp.com/attachments/830522505605283866/834516065517568030/unknown.png ",
+                "https://cdn.discordapp.com/attachments/830525235803586570/843838343905411142/IMG_20210517_170429.png ",
             help: "!SOytinereS ot emocleW",
             deleteRequest: false,
         },
