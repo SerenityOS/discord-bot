@@ -20,8 +20,8 @@ export class PlanCommand implements Command {
     async run(parsedUserCommand: CommandParser): Promise<void> {
         let reply = this.baseReply;
         const args = parsedUserCommand.args;
-        if (args.length > 1) {
-            reply = reply.replace("`$THING`", args.slice(1).join(" "));
+        if (args.length > 0) {
+            reply = reply.replace("`$THING`", args.join(" "));
         }
 
         await parsedUserCommand.send(reply);
