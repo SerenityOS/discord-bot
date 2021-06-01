@@ -5,7 +5,7 @@
  */
 
 import { Message } from "discord.js";
-import { IssueCommand, ManCommand, PRCommand, QuickLinksCommand } from "./commands";
+import { IssueCommand, ManCommand, PlanCommand, PRCommand, QuickLinksCommand } from "./commands";
 import Command from "./commands/commandInterface";
 import { CommandParser } from "./models/commandParser";
 
@@ -17,7 +17,13 @@ export default class CommandHandler {
     private readonly production: boolean;
 
     constructor(prefix: string, production: boolean) {
-        const commandClasses = [IssueCommand, ManCommand, PRCommand, QuickLinksCommand];
+        const commandClasses = [
+            IssueCommand,
+            ManCommand,
+            PlanCommand,
+            PRCommand,
+            QuickLinksCommand,
+        ];
 
         this.commands = commandClasses.map(commandClass => new commandClass());
         this.prefix = prefix;
