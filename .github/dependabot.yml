@@ -5,9 +5,15 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "Dependencies:"
 
-  # Maintain dependencies for actions
+  # Maintain dependencies for our github actions dependencies.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
+    commit-message:
+      prefix: "Dependencies:"
+
+
