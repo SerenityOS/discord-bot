@@ -5,7 +5,14 @@
  */
 
 import { Message } from "discord.js";
-import { IssueCommand, ManCommand, PlanCommand, PRCommand, QuickLinksCommand } from "./commands";
+import {
+    IssueCommand,
+    ManCommand,
+    PlanCommand,
+    PRCommand,
+    QuickLinksCommand,
+    Test262Command,
+} from "./commands";
 import Command from "./commands/commandInterface";
 import { CommandParser } from "./models/commandParser";
 
@@ -23,6 +30,7 @@ export default class CommandHandler {
             PlanCommand,
             PRCommand,
             QuickLinksCommand,
+            Test262Command,
         ];
 
         this.commands = commandClasses.map(commandClass => new commandClass());
