@@ -86,6 +86,22 @@ class GithubAPI {
         }
     }
 
+    async searchCommit(commitHash: string) {
+        try {
+            const results = await this.octokit.request(
+                "GET /repos/{owner}/{repo}/git/commits/{commit_sha}",
+                {
+                    commit_sha: commitHash,
+                    owner: "SerenityOS",
+                    repo: "serenity",
+                }
+            );
+            return results.data;
+        } catch {
+            return undefined;
+        }
+    }
+
     async fetchSerenityManpageByUrl(url: string): Promise<ManPage | undefined> {
         const pattern =
             /https:\/\/github\.com\/([\w/]*)\/blob\/master\/([\w/]*)\/man(\d)\/([\w/]*)\.md/;
