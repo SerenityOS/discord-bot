@@ -51,3 +51,38 @@ export async function getMaximize(clientOrParent: ClientOrParent): Promise<Emoji
 export async function getMinimize(clientOrParent: ClientOrParent): Promise<Emoji | null> {
     return await getEmoji(clientOrParent, "minimize");
 }
+
+/** Alias function for the :poggie: emoji */
+export async function getPoggie(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "poggie");
+}
+
+/** Alias function for the :buggiemagnify: emoji */
+export async function getBuggiemagnify(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "buggiemagnify");
+}
+
+/** Alias function for the :buggus: emoji */
+export async function getBuggus(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "buggus");
+}
+
+/** Alias function for the :yakslice: emoji */
+export async function getYakslice(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "yakslice");
+}
+
+/** Alias function for the :skeleyak: emoji */
+export async function getSkeleyak(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "skeleyak");
+}
+
+/** Alias function for the :yaksplode: emoji */
+export async function getYaksplode(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "yaksplode");
+}
+
+/** Alias function for the :neoyak: emoji */
+export async function getNeoyak(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "neoyak");
+}
