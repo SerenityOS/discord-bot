@@ -4,10 +4,19 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { MessageEmbed } from "discord.js";
+import { Client, MessageEmbed } from "discord.js";
 import fetch from "node-fetch";
 import githubAPI from "../apis/githubAPI";
 import { CommandParser } from "../models/commandParser";
+import {
+    getBuggiemagnify,
+    getBuggus,
+    getNeoyak,
+    getPoggie,
+    getSkeleyak,
+    getYakslice,
+    getYaksplode,
+} from "../util/emoji";
 import Command from "./commandInterface";
 
 /* eslint-disable camelcase */
@@ -73,19 +82,25 @@ export class Test262Command implements Command {
             }
         }
 
-        await parsedUserCommand.send(await Test262Command.embedForResult(result, previousResult));
+        await parsedUserCommand.send(
+            await Test262Command.embedForResult(
+                parsedUserCommand.originalMessage.client,
+                result,
+                previousResult
+            )
+        );
     }
 
-    static statusIconByLabel = new Map<string, string>([
+    static statusIconByLabel = new Map<string, string | typeof getPoggie>([
         ["total", "🧪"],
-        ["passed", "✅"],
-        ["failed", "❌"],
-        ["skipped", "⚠️"],
-        ["metadata_error", "📄"],
-        ["harness_error", "⚙️"],
-        ["timeout_error", "💀"],
-        ["process_error", "💥️"],
-        ["runner_exception", "🐍"],
+        ["passed", getPoggie],
+        ["failed", "🦬"],
+        ["skipped", getBuggiemagnify],
+        ["metadata_error", getBuggus],
+        ["harness_error", getYakslice],
+        ["timeout_error", getSkeleyak],
+        ["process_error", getYaksplode],
+        ["runner_exception", getNeoyak],
     ]);
 
     static repositoryUrlByName = new Map<string, string>([
@@ -95,7 +110,11 @@ export class Test262Command implements Command {
         ["test262-parser-tests", "https://github.com/tc39/test262-parser-tests/"],
     ]);
 
-    static async embedForResult(result: Result, previousResult?: Result): Promise<MessageEmbed> {
+    static async embedForResult(
+        client: Client,
+        result: Result,
+        previousResult?: Result
+    ): Promise<MessageEmbed> {
         const commit = await githubAPI.searchCommit(result.versions.serenity);
 
         const embed = new MessageEmbed()
@@ -119,22 +138,28 @@ export class Test262Command implements Command {
         for (const [name, test] of Object.entries(result.tests)) {
             const percentage = test.results.passed / (test.results.total / 100);
 
+            const fields = new Array<string>();
+
+            for (const [label, value] of Object.entries(test.results)) {
+                const previous = previousResult?.tests[name]?.results[label];
+                let icon = Test262Command.statusIconByLabel.get(label) ?? label;
+
+                if (typeof icon === "function") icon = (await icon(client))?.toString() ?? label;
+
+                if (previous && previous - value !== 0) {
+                    const difference = value - previous;
+
+                    fields.push(`${icon} ${value} (${difference > 0 ? "+" : ""}${difference})`);
+
+                    continue;
+                }
+
+                fields.push(`${icon} ${value}`);
+            }
+
             embed.addField(
                 `${name} (${percentage.toFixed(2)}%, ${test.duration.toFixed(2)}s)`,
-                Object.entries(test.results)
-                    .map(([label, value]) => {
-                        const previous = previousResult?.tests[name]?.results[label];
-                        const icon = Test262Command.statusIconByLabel.get(label) ?? label;
-
-                        if (previous && previous - value !== 0) {
-                            const difference = value - previous;
-
-                            return `${icon} ${value} (${difference > 0 ? "+" : ""}${difference})`;
-                        }
-
-                        return `${icon} ${value}`;
-                    })
-                    .join(" | "),
+                fields.join(" | "),
                 false
             );
         }
