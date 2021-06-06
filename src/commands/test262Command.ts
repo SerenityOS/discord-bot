@@ -61,13 +61,20 @@ export class Test262Command implements Command {
 
         if (args.length === 1) {
             if (args[0] === "labels") {
-                await parsedUserCommand.send(
-                    new MessageEmbed().setDescription(
-                        Array.from(Test262Command.statusIconByLabel)
-                            .map(([key, icon]) => `${icon}: ${key}`)
-                            .join("\n")
-                    )
-                );
+                const lines = new Array<string>();
+
+                console.log(result);
+
+                for (const label in Object.values(result.tests)[0].results) {
+                    lines.push(
+                        `${await Test262Command.statusIconForLabel(
+                            parsedUserCommand.originalMessage.client,
+                            label
+                        )}: ${label}`
+                    );
+                }
+
+                await parsedUserCommand.send(new MessageEmbed().setDescription(lines.join("\n")));
 
                 return;
             }
@@ -91,24 +98,37 @@ export class Test262Command implements Command {
         );
     }
 
-    static statusIconByLabel = new Map<string, string | typeof getPoggie>([
-        ["total", "🧪"],
-        ["passed", getPoggie],
-        ["failed", "🦬"],
-        ["skipped", getBuggiemagnify],
-        ["metadata_error", getBuggus],
-        ["harness_error", getYakslice],
-        ["timeout_error", getSkeleyak],
-        ["process_error", getYaksplode],
-        ["runner_exception", getNeoyak],
-    ]);
-
     static repositoryUrlByName = new Map<string, string>([
         ["serenity", "https://github.com/SerenityOS/serenity/"],
         ["libjs-test262", "https://github.com/linusg/libjs-test262/"],
         ["test262", "https://github.com/tc39/test262/"],
         ["test262-parser-tests", "https://github.com/tc39/test262-parser-tests/"],
     ]);
+
+    static async statusIconForLabel(client: Client, label: string): Promise<string> {
+        switch (label) {
+            case "total":
+                return "🧪";
+            case "passed":
+                return (await getPoggie(client))?.toString() ?? label;
+            case "failed":
+                return "🦬";
+            case "skipped":
+                return (await getBuggiemagnify(client))?.toString() ?? label;
+            case "metadata_error":
+                return (await getBuggus(client))?.toString() ?? label;
+            case "harness_error":
+                return (await getYakslice(client))?.toString() ?? label;
+            case "timeout_error":
+                return (await getSkeleyak(client))?.toString() ?? label;
+            case "process_error":
+                return (await getYaksplode(client))?.toString() ?? label;
+            case "runner_exception":
+                return (await getNeoyak(client))?.toString() ?? label;
+            default:
+                return label;
+        }
+    }
 
     static async embedForResult(
         client: Client,
@@ -142,9 +162,7 @@ export class Test262Command implements Command {
 
             for (const [label, value] of Object.entries(test.results)) {
                 const previous = previousResult?.tests[name]?.results[label];
-                let icon = Test262Command.statusIconByLabel.get(label) ?? label;
-
-                if (typeof icon === "function") icon = (await icon(client))?.toString() ?? label;
+                const icon = await Test262Command.statusIconForLabel(client, label);
 
                 if (previous && previous - value !== 0) {
                     const difference = value - previous;
