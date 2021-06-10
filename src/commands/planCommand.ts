@@ -25,10 +25,5 @@ export class PlanCommand implements Command {
         }
 
         await parsedUserCommand.send(reply);
-        try {
-            await parsedUserCommand.originalMessage.delete();
-        } catch (e) {
-            // noop catch to ignore permission errors when deleting messages of higher rank users
-        }
     }
 }
