@@ -86,3 +86,8 @@ export async function getYaksplode(clientOrParent: ClientOrParent): Promise<Emoj
 export async function getNeoyak(clientOrParent: ClientOrParent): Promise<Emoji | null> {
     return await getEmoji(clientOrParent, "neoyak");
 }
+
+/** Alias function for the :libjs: emoji */
+export async function getLibjs(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "libjs");
+}
