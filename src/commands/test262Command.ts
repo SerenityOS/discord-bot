@@ -165,13 +165,13 @@ export class Test262Command implements Command {
             const previousPercentage = previousTest
                 ? previousTest?.results.passed / (previousTest?.results.total / 100)
                 : 0;
-            const percentageDifference = percentage - previousPercentage;
+            const percentageDifference = (percentage - previousPercentage).toFixed(2);
 
-            if (percentageDifference !== 0) {
+            if (percentageDifference !== "0.00" && percentageDifference !== "-0.00") {
                 fields.push(
                     `${(await getLibjs(client))?.toString()} ${percentage.toFixed(2)}% (${
-                        percentageDifference > 0 ? "+" : ""
-                    }${percentageDifference.toFixed(2)}) `
+                        percentageDifference.startsWith("-") ? "" : "+"
+                    }${percentageDifference}) `
                 );
             } else {
                 fields.push(`${(await getLibjs(client))?.toString()} ${percentage.toFixed(2)}%`);
