@@ -11,6 +11,7 @@ import { CommandParser } from "../models/commandParser";
 import {
     getBuggiemagnify,
     getBuggus,
+    getLibjs,
     getNeoyak,
     getPoggie,
     getSkeleyak,
@@ -156,16 +157,32 @@ export class Test262Command implements Command {
             .setFooter("Tests started");
 
         for (const [name, test] of Object.entries(result.tests)) {
-            const percentage = test.results.passed / (test.results.total / 100);
+            const previousTest = previousResult?.tests[name];
 
             const fields = new Array<string>();
 
+            const percentage = test.results.passed / (test.results.total / 100);
+            const previousPercentage = previousTest
+                ? previousTest?.results.passed / (previousTest?.results.total / 100)
+                : 0;
+            const percentageDifference = percentage - previousPercentage;
+
+            if (percentageDifference !== 0) {
+                fields.push(
+                    `${(await getLibjs(client))?.toString()} ${percentage.toFixed(2)}% (${
+                        percentageDifference > 0 ? "+" : ""
+                    }${percentageDifference.toFixed(2)}) `
+                );
+            } else {
+                fields.push(`${(await getLibjs(client))?.toString()} ${percentage.toFixed(2)}%`);
+            }
+
             for (const [label, value] of Object.entries(test.results)) {
-                const previous = previousResult?.tests[name]?.results[label];
+                const previousValue = previousTest?.results[label];
                 const icon = await Test262Command.statusIconForLabel(client, label);
 
-                if (previous && previous - value !== 0) {
-                    const difference = value - previous;
+                if (previousValue && previousValue - value !== 0) {
+                    const difference = value - previousValue;
 
                     fields.push(`${icon} ${value} (${difference > 0 ? "+" : ""}${difference})`);
 
@@ -175,11 +192,7 @@ export class Test262Command implements Command {
                 fields.push(`${icon} ${value}`);
             }
 
-            embed.addField(
-                `${name} (${percentage.toFixed(2)}%, ${test.duration.toFixed(2)}s)`,
-                fields.join(" | "),
-                false
-            );
+            embed.addField(`${name} (${test.duration.toFixed(2)}s)`, fields.join(" | "), false);
         }
 
         return embed;
