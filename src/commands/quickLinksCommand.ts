@@ -34,6 +34,11 @@ export class QuickLinksCommand implements Command {
             help: "get a link to the directions for installing SerenityOS on real hardware",
         },
         {
+            name: "iso",
+            response: `There are no ISO images. This project does not cater to non-technical users. See the FAQ: ${this.documentation}/FAQ.md`,
+            help: "Respond with the iso image policy + FAQ link",
+        },
+        {
             name: "bot-src",
             response:
                 "Bot Source: https://github.com/SerenityOS/discord-bot/tree/master/src/commands",
