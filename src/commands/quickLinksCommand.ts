@@ -44,7 +44,7 @@ export class QuickLinksCommand implements Command {
             suppressEmbeds: true,
         },
         {
-            name: "bot-src",
+            name: "botsrc",
             response:
                 "Bot Source: https://github.com/SerenityOS/discord-bot/tree/master/src/commands",
             help: "get a link to the source code for bot commands",
