@@ -8,7 +8,7 @@ import Command from "./commandInterface";
 import { CommandParser } from "../models/commandParser";
 
 export class PlanCommand implements Command {
-    private readonly baseReply: string = `> Will SerenityOS support \`$THING\`?\nMaybe. Maybe not. There is no plan.\n(source: <https://github.com/SerenityOS/serenity/blob/master/Documentation/FAQ.md>)`;
+    private readonly baseReply: string = `> Will SerenityOS support \`$THING\`?\nMaybe. Maybe not. There is no plan.\n\nSee: [FAQ](https://github.com/SerenityOS/serenity/blob/master/Documentation/FAQ.md)`;
     matchesName(commandName: string): boolean {
         return "plan" == commandName;
     }
@@ -24,6 +24,6 @@ export class PlanCommand implements Command {
             reply = reply.replace("`$THING`", args.join(" "));
         }
 
-        await parsedUserCommand.send(reply);
+        await parsedUserCommand.send(parsedUserCommand.embed().setDescription(reply));
     }
 }
