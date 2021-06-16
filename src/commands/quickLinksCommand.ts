@@ -39,7 +39,7 @@ export class QuickLinksCommand implements Command {
         },
         {
             name: "iso",
-            response: `There are no ISO images. This project does not cater to non-technical users. See the FAQ: ${this.documentation}/FAQ.md`,
+            response: `There are no ISO images. This project does not cater to non-technical users.\nSee the FAQ: ${this.documentation}/FAQ.md`,
             help: "Respond with the iso image policy + FAQ link",
             suppressEmbeds: true,
         },
