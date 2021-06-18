@@ -58,7 +58,7 @@
     "erlpack": "^0.1.3",
     "node-fetch": "^2.6.1",
     "rimraf": "^3.0.2",
-    "typescript": "^4.3.3",
+    "typescript": "^4.3.4",
     "utf-8-validate": "^5.0.5",
     "zlib-sync": "^0.1.7"
   }
