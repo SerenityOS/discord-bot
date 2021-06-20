@@ -12,6 +12,7 @@ import {
     PRCommand,
     QuickLinksCommand,
     Test262Command,
+    EmojiCommand,
 } from "./commands";
 import Command from "./commands/commandInterface";
 import { CommandParser } from "./models/commandParser";
@@ -31,6 +32,7 @@ export default class CommandHandler {
             PRCommand,
             QuickLinksCommand,
             Test262Command,
+            EmojiCommand,
         ];
 
         this.commands = commandClasses.map(commandClass => new commandClass());
