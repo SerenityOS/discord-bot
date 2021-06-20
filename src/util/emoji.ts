@@ -91,3 +91,8 @@ export async function getNeoyak(clientOrParent: ClientOrParent): Promise<Emoji |
 export async function getLibjs(clientOrParent: ClientOrParent): Promise<Emoji | null> {
     return await getEmoji(clientOrParent, "libjs");
 }
+
+/** Alias function for the :thonk: emoji */
+export async function getThonk(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "thonk");
+}
