@@ -7,6 +7,7 @@
 import Command from "./commandInterface";
 import { CommandParser } from "../models/commandParser";
 import { getEmoji, getThonk } from "../util/emoji";
+import { MessageEmbed } from "discord.js";
 
 export class EmojiCommand implements Command {
     matchesName(commandName: string): boolean {
@@ -27,8 +28,12 @@ export class EmojiCommand implements Command {
 
         const result = await getEmoji(parsedUserCommand.originalMessage, args[0]);
 
-        if (result) {
-            await parsedUserCommand.send(result.toString());
+        if (result?.url) {
+            await parsedUserCommand.send(
+                new MessageEmbed()
+                    .setThumbnail(result.url)
+                    .setFooter(parsedUserCommand.originalMessage.author.tag)
+            );
         } else {
             const thonk = await getThonk(parsedUserCommand.originalMessage);
             if (thonk?.id) await parsedUserCommand.originalMessage.react(thonk.id);
