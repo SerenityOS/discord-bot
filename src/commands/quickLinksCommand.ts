@@ -32,6 +32,12 @@ export class QuickLinksCommand implements Command {
             suppressEmbeds: true,
         },
         {
+            name: "hardware",
+            response: `Hardware Compatability: ${this.documentation}/HardwareCompatibility.md`,
+            help: "get a link to the hardware compatability list",
+            suppressEmbeds: true,
+        },
+        {
             name: "install",
             response: `Installing on real hardware: ${this.documentation}/INSTALL.md`,
             help: "get a link to the directions for installing SerenityOS on real hardware",
