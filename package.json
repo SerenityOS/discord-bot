@@ -44,7 +44,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-unused-imports": "^1.1.1",
-    "nodemon": "^2.0.8",
+    "nodemon": "^2.0.9",
     "prettier": "^2.3.2",
     "ts-node": "^10.0.0"
   },
