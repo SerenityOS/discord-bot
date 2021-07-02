@@ -14,6 +14,7 @@ import {
     getLibjs,
     getNeoyak,
     getPoggie,
+    getSadCaret,
     getSkeleyak,
     getYakslice,
     getYaksplode,
@@ -60,7 +61,7 @@ export class Test262Command implements Command {
         let result: Result = results[results.length - 1];
         let previousResult: Result = results[results.length - 2];
 
-        if (args.length === 1) {
+        if (args[0] !== undefined) {
             if (args[0] === "labels") {
                 const lines = new Array<string>();
 
@@ -80,13 +81,34 @@ export class Test262Command implements Command {
                 return;
             }
 
+            let foundCommit = false;
+
             for (let i = 0; i < results.length; i++) {
                 if (results[i].versions.serenity.startsWith(args[0])) {
                     result = results[i];
                     previousResult = results[i - 1];
 
+                    foundCommit = true;
+
                     break;
                 }
+            }
+
+            if (!foundCommit) {
+                const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
+
+                await parsedUserCommand.send(
+                    parsedUserCommand
+                        .embed()
+                        .setTitle("Not found")
+                        .setDescription(
+                            `Could not find a commit that ran test262 matching '${args[0]}' ${
+                                sadcaret ?? ":^("
+                            }`
+                        )
+                );
+
+                return;
             }
         }
 
