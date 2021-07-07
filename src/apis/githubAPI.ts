@@ -89,7 +89,7 @@ class GithubAPI {
     async searchCommit(commitHash: string) {
         try {
             const results = await this.octokit.request(
-                "GET /repos/{owner}/{repo}/git/commits/{commit_sha}",
+                "GET /repos/{owner}/{repo}/commits/{commit_sha}",
                 {
                     commit_sha: commitHash,
                     owner: "SerenityOS",
