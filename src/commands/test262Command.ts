@@ -160,21 +160,21 @@ export class Test262Command implements Command {
     ): Promise<MessageEmbed> {
         const commit = await githubAPI.searchCommit(result.versions.serenity);
 
+        const description = Object.entries(result.versions)
+            .map(([repository, commitHash]) => {
+                const treeUrl = Test262Command.repositoryUrlByName.get(repository);
+                const shortCommitHash = commitHash.substring(0, 7);
+
+                if (treeUrl)
+                    return `${repository}: [${shortCommitHash}](${treeUrl}tree/${commitHash})`;
+
+                return `${repository}: ${shortCommitHash}`;
+            })
+            .join("\n");
+
         const embed = new MessageEmbed()
             .setTitle(commit?.commit.message.split("\n")[0])
-            .setDescription(
-                Object.entries(result.versions)
-                    .map(([repository, commit]) => {
-                        const treeUrl = Test262Command.repositoryUrlByName.get(repository);
-                        const shortCommit = commit.substring(0, 7);
-
-                        if (treeUrl)
-                            return `${repository}: [${shortCommit}](${treeUrl}tree/${commit})`;
-
-                        return `${repository}: ${shortCommit}`;
-                    })
-                    .join("\n")
-            )
+            .setDescription(description)
             .setTimestamp(new Date(result.run_timestamp * 1000))
             .setFooter("Tests started");
 
