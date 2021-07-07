@@ -15,10 +15,11 @@ $ yarn build
 
 ### Configuration
 
-To configure the bot for local development you simply need to drop your discord bot token in an `.env` file at the root of this project.
+To configure the bot for local development you simply need to drop your discord bot token and guild ID in an `.env` file at the root of this project.
 The contents should look something like:
 ```ini
 discord_token=<your-token-goes-here>
+guild_id=<your-guild-id-goes-here>
 ```
 See: https://www.writebots.com/discord-bot-token/
 
