@@ -161,7 +161,7 @@ export class Test262Command implements Command {
         const commit = await githubAPI.searchCommit(result.versions.serenity);
 
         const embed = new MessageEmbed()
-            .setTitle(commit?.message.split("\n")[0])
+            .setTitle(commit?.commit.message.split("\n")[0])
             .setDescription(
                 Object.entries(result.versions)
                     .map(([repository, commit]) => {
