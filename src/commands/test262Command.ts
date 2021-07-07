@@ -160,6 +160,18 @@ export class Test262Command implements Command {
     ): Promise<MessageEmbed> {
         const commit = await githubAPI.searchCommit(result.versions.serenity);
 
+        if (commit == null) {
+            const sadcaret = await getSadCaret(client);
+
+            return new MessageEmbed()
+                .setTitle("Error")
+                .setDescription(
+                    `Could not fetch the matching commit ('${
+                        result.versions.serenity
+                    }') for the test262 run from github ${sadcaret ?? ":^("}`
+                );
+        }
+
         const description = Object.entries(result.versions)
             .map(([repository, commitHash]) => {
                 const treeUrl = Test262Command.repositoryUrlByName.get(repository);
@@ -173,12 +185,8 @@ export class Test262Command implements Command {
             .join("\n");
 
         const embed = new MessageEmbed()
-            .setAuthor(
-                `@${commit?.author.login}`,
-                commit?.author.avatar_url,
-                commit?.author.html_url
-            )
-            .setTitle(commit?.commit.message.split("\n")[0])
+            .setAuthor(`@${commit.author.login}`, commit.author.avatar_url, commit.author.html_url)
+            .setTitle(commit.commit.message.split("\n")[0])
             .setDescription(description)
             .setTimestamp(new Date(result.run_timestamp * 1000))
             .setFooter("Tests started");
