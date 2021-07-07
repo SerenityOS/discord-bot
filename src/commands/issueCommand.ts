@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { MessageEmbed } from "discord.js";
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import Command from "./commandInterface";
 import { CommandParser } from "../models/commandParser";
@@ -22,22 +21,13 @@ export class IssueCommand implements Command {
 
     async run(parsedUserCommand: CommandParser): Promise<void> {
         const args = parsedUserCommand.args;
+        const number = Number(args[0]);
 
-        if (args.length == 1) {
-            const number = Number(args[0]);
-            if (!isNaN(number)) {
-                const result = await githubAPI.searchIssue(number);
-                let embed: MessageEmbed | string;
+        if (!isNaN(number)) {
+            const result = await githubAPI.searchIssue(number);
 
-                if (result != null) {
-                    embed = this.embedFromIssue(parsedUserCommand, result);
-                } else {
-                    const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
-                    embed = `No matching issues found ${sadcaret}`;
-                }
-
-                await parsedUserCommand.send(embed);
-
+            if (result != null) {
+                await parsedUserCommand.send(this.embedFromIssue(parsedUserCommand, result));
                 return;
             }
         }
