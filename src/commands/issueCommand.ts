@@ -32,7 +32,7 @@ export class IssueCommand implements Command {
             }
         }
 
-        const result = await githubAPI.searchIssues(args.join("+"));
+        const result = await githubAPI.searchIssues(args.join("+").substring(0, 256));
         if (result) {
             const embed = this.embedFromIssue(parsedUserCommand, result);
             await parsedUserCommand.send(embed);

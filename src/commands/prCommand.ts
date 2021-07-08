@@ -37,7 +37,9 @@ export class PRCommand implements Command {
             }
         }
 
-        const result = await githubAPI.searchPullRequests(parsedUserCommand.args.join("+"));
+        const result = await githubAPI.searchPullRequests(
+            parsedUserCommand.args.join("+").substring(0, 256)
+        );
         if (result) {
             const pr = await githubAPI.searchPullRequest(result.number);
             if (pr != null) {
