@@ -57,6 +57,7 @@
     "dotenv": "^10.0.0",
     "erlpack": "^0.1.3",
     "node-fetch": "^2.6.1",
+    "octokit-plugin-create-pull-request": "^3.9.3",
     "rimraf": "^3.0.2",
     "typescript": "^4.3.5",
     "utf-8-validate": "^5.0.5",

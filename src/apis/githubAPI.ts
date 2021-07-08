@@ -5,8 +5,9 @@
  */
 
 /* eslint camelcase: [2, { "properties": "never" }] */
-import { Octokit } from "@octokit/rest";
 import { GITHUB_TOKEN } from "../config/secrets";
+import { Octokit } from "@octokit/rest";
+import { composeCreatePullRequest } from "octokit-plugin-create-pull-request";
 
 export interface ManPage {
     url: string;
@@ -15,11 +16,23 @@ export interface ManPage {
     markdown: string;
 }
 
+export interface Fortune {
+    quote: string;
+    author: string;
+    // eslint-disable-next-line camelcase
+    utc_time: number;
+    url: string;
+    context?: string;
+}
+
 class GithubAPI {
     private readonly octokit: Octokit;
 
-    private readonly repository: string = "SerenityOS/serenity";
+    private readonly repositoryOwner: string = "SerenityOS";
+    private readonly repositoryName: string = "serenity";
+    readonly repository: string = `${this.repositoryOwner}/${this.repositoryName}`;
     private readonly manPath: string = "Base/usr/share/man";
+    private readonly fortunesPath: string = "Base/res/fortunes.json";
 
     constructor() {
         this.octokit = new Octokit({
@@ -113,6 +126,37 @@ class GithubAPI {
         } catch {
             return;
         }
+    }
+
+    async fetchSerenityFortunes(): Promise<Fortune[]> {
+        const requestPath = `GET /repos/${this.repository}/contents/${this.fortunesPath}`;
+        const results = await this.octokit.request(requestPath);
+        const json = Buffer.from(results.data["content"], "base64").toString("binary");
+        return JSON.parse(json);
+    }
+
+    async openFortunesPullRequest(
+        fortunes: Fortune[],
+        triggeredBy: string
+    ): Promise<number | undefined> {
+        const json = JSON.stringify(fortunes, null, 2);
+        const result = await composeCreatePullRequest(this.octokit, {
+            owner: this.repositoryOwner,
+            repo: this.repositoryName,
+            title: "Base: Add a quote to the fortunes database",
+            body: `Triggered by @${triggeredBy} on Discord.`,
+            head: `add-quote-${Math.floor(Date.now() / 1000)}`,
+            changes: [
+                {
+                    files: {
+                        [this.fortunesPath]: json + "\n",
+                    },
+                    commit: "Base: Add a quote to the fortunes database\n\n[skip ci]",
+                },
+            ],
+        });
+        if (result == null) return;
+        return result.data.number;
     }
 }
 
