@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { Message } from "discord.js";
+import { Client, Message } from "discord.js";
 import {
     ManCommand,
     PlanCommand,
@@ -39,7 +39,7 @@ export default class CommandHandler {
     }
 
     /** Executes user commands contained in a message if appropriate. */
-    async handleMessage(message: Message): Promise<void> {
+    async handleMessage(client: Client, message: Message): Promise<void> {
         if (message.author.bot || !this.isCommand(message)) {
             return;
         }
@@ -52,7 +52,7 @@ export default class CommandHandler {
             await console.log(msg);
         }
 
-        const commandParser = new CommandParser(message, this.prefix);
+        const commandParser = new CommandParser(client, message, this.prefix);
 
         if (commandParser.parsedCommandName === "help") {
             await message.reply(
