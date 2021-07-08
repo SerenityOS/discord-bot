@@ -91,6 +91,7 @@ export class GithubCommand implements Command {
             .setTitle(issue.title)
             .setURL(issue.html_url)
             .setDescription(description)
+            .addField("Type", "Issue", true)
             .addField("Created", new Date(issue.created_at).toDateString(), true)
             .addField("Comments", issue.comments, true);
 
@@ -143,6 +144,7 @@ export class GithubCommand implements Command {
             .setTitle(pull.title)
             .setURL(pull.html_url)
             .setDescription(description)
+            .addField("Type", "Pull Request", true)
             .addField("Created", new Date(pull.created_at).toDateString(), true)
             .addField("Commits", `${pull.commits} (+${pull.additions} -${pull.deletions})`, true)
             .addField("Comments", pull.comments, true);
