@@ -23,3 +23,4 @@ export * from "./githubCommand";
 export * from "./quickLinksCommand";
 export * from "./test262Command";
 export * from "./emojiCommand";
+export * from "./quoteCommand";
