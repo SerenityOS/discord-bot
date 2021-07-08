@@ -6,10 +6,9 @@
 
 import { Message } from "discord.js";
 import {
-    IssueCommand,
     ManCommand,
     PlanCommand,
-    PRCommand,
+    GithubCommand,
     QuickLinksCommand,
     Test262Command,
     EmojiCommand,
@@ -26,10 +25,9 @@ export default class CommandHandler {
 
     constructor(prefix: string, production: boolean) {
         const commandClasses = [
-            IssueCommand,
             ManCommand,
             PlanCommand,
-            PRCommand,
+            GithubCommand,
             QuickLinksCommand,
             Test262Command,
             EmojiCommand,

@@ -28,8 +28,8 @@ class GithubAPI {
         });
     }
 
-    async searchIssues(searchTerms: string) {
-        const qualifiers = [searchTerms, "is:issue", `repo:${this.repository}`];
+    async searchIssuesOrPulls(query: string) {
+        const qualifiers = [query, `repo:${this.repository}`];
         const results = await this.octokit.search.issuesAndPullRequests({
             q: qualifiers.join("+"),
             per_page: 1,
@@ -37,48 +37,30 @@ class GithubAPI {
             order: "desc",
         });
         const {
-            data: { items: issues },
+            data: { items },
         } = results;
-        return issues[0];
+        return items[0];
     }
 
-    async searchIssue(issueNumber: number) {
+    async getIssueOrPull(number: number) {
         try {
             const results = await this.octokit.issues.get({
                 owner: "SerenityOS",
                 repo: "serenity",
-                issue_number: issueNumber,
+                issue_number: number,
             });
-            if (results.data.pull_request != null) {
-                // This is a PR
-                return undefined;
-            }
             return results.data;
         } catch {
             return undefined;
         }
     }
 
-    async searchPullRequests(searchTerms: string) {
-        const qualifiers = [searchTerms, "is:pull-request", `repo:${this.repository}`];
-        const results = await this.octokit.search.issuesAndPullRequests({
-            q: qualifiers.join("+"),
-            per_page: 1,
-            sort: "updated",
-            order: "desc",
-        });
-        const {
-            data: { items: pullRequests },
-        } = results;
-        return pullRequests[0];
-    }
-
-    async searchPullRequest(pullNumber: number) {
+    async getPull(number: number) {
         try {
             const results = await this.octokit.pulls.get({
                 owner: "SerenityOS",
                 repo: "serenity",
-                pull_number: pullNumber,
+                pull_number: number,
             });
             return results.data;
         } catch {
