@@ -17,10 +17,9 @@
  * DO NOT export command classes using default
  */
 
-export * from "./issueCommand";
 export * from "./manCommand";
 export * from "./planCommand";
-export * from "./prCommand";
+export * from "./githubCommand";
 export * from "./quickLinksCommand";
 export * from "./test262Command";
 export * from "./emojiCommand";
