@@ -29,7 +29,7 @@ client.on("ready", () => {
     }
 });
 client.on("message", (message: Message) => {
-    commandHandler.handleMessage(message);
+    return commandHandler.handleMessage(client, message);
 });
 client.on("messageReactionAdd", async (reaction: MessageReaction, user: User | PartialUser) => {
     const message: Message = await reaction.message.fetch();

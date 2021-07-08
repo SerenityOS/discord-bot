@@ -6,6 +6,7 @@
 
 import {
     APIMessageContentResolvable,
+    Client,
     Message,
     MessageAdditions,
     MessageOptions,
@@ -22,9 +23,12 @@ export class CommandParser {
     /** Original Message the command was extracted from. */
     readonly originalMessage: Message;
 
+    readonly client: Client;
+
     readonly commandPrefix: string;
 
-    constructor(message: Message, prefix: string) {
+    constructor(client: Client, message: Message, prefix: string) {
+        this.client = client;
         this.commandPrefix = prefix;
         const splitMessage = message.content
             .slice(prefix.length)
