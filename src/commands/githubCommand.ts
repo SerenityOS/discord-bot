@@ -112,7 +112,7 @@ export class GithubCommand implements Command {
         }
 
         if (issue.user != null) {
-            embed.setThumbnail(issue.user.avatar_url).setAuthor(issue.user.login);
+            embed.setAuthor(`@${issue.user.login}`, issue.user.avatar_url, issue.user.html_url);
         }
 
         return embed;
@@ -165,7 +165,7 @@ export class GithubCommand implements Command {
         }
 
         if (pull.user != null) {
-            embed.setThumbnail(pull.user.avatar_url).setAuthor(pull.user.login);
+            embed.setAuthor(`@${pull.user.login}`, pull.user.avatar_url, pull.user.html_url);
         }
 
         return embed;
