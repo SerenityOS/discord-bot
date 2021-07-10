@@ -27,7 +27,7 @@ export class QuickLinksCommand implements Command {
         },
         {
             name: "wsl",
-            response: `WSL Specific Notes: ${this.documentation}/NotesOnWSL.md`,
+            response: `WSL Specific Notes: ${this.documentation}/BuildInstructionsWindows.md`,
             help: "get a link to the wsl specific notes",
             suppressEmbeds: true,
         },
@@ -39,7 +39,7 @@ export class QuickLinksCommand implements Command {
         },
         {
             name: "install",
-            response: `Installing on real hardware: ${this.documentation}/INSTALL.md`,
+            response: `Installing on real hardware: ${this.documentation}/BareMetalInstallation.md`,
             help: "get a link to the directions for installing SerenityOS on real hardware",
             suppressEmbeds: true,
         },
