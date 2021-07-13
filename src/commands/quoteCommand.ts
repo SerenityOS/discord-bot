@@ -19,6 +19,7 @@ export class QuoteCommand implements Command {
         return "quote" == commandName;
     }
 
+    // eslint-disable-next-line
     help(_: string): string {
         return "";
     }
