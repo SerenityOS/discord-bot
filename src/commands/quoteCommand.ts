@@ -7,7 +7,7 @@
 import Command from "./commandInterface";
 import { CommandParser } from "../models/commandParser";
 import { QUOTE_ROLE_ID } from "../config/secrets";
-import { Client, Message, MessageReference } from "discord.js";
+import { Client, Guild, Message, MessageReference } from "discord.js";
 import githubAPI from "../apis/githubAPI";
 import { getSadCaret } from "../util/emoji";
 
@@ -32,27 +32,30 @@ export class QuoteCommand implements Command {
         const messageReference = await this.getMessageReference(parsedUserCommand);
         if (messageReference == undefined) return;
 
-        const message = await this.getMessageByReference(
-            parsedUserCommand.client,
-            messageReference
-        );
+        const client = parsedUserCommand.client;
+        const guild = await this.getGuild(client, messageReference.guildID);
+        if (guild == undefined) return;
+
+        const message = await this.getMessageByReference(guild, messageReference);
         if (message == undefined) return;
 
+        const nickname = await this.getAuthorNick(guild, message);
         const fortunes = await githubAPI.fetchSerenityFortunes();
         fortunes.push({
             quote: message.cleanContent,
-            author: message.author.username,
+            author: nickname,
             url: message.url,
             // eslint-disable-next-line camelcase
             utc_time: Math.floor(Date.now() / 1000),
         });
 
+        const commandIssuerNick = await this.getAuthorNick(guild, originalMessage);
         const pullRequestNumber = await githubAPI.openFortunesPullRequest(
             fortunes,
-            message.author.username
+            commandIssuerNick
         );
         if (pullRequestNumber == undefined) {
-            const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
+            const sadcaret = await getSadCaret(originalMessage);
             await originalMessage.reply(`Failed creating a pull request ${sadcaret}`);
             return;
         }
@@ -96,17 +99,29 @@ export class QuoteCommand implements Command {
     }
 
     private async getMessageByReference(
-        client: Client,
+        guild: Guild,
         messageReference: MessageReference
     ): Promise<Message | undefined> {
         if (messageReference.messageID == null) return;
         try {
-            const guild = await client.guilds.fetch(messageReference.guildID);
             const channel = guild.channels.resolve(messageReference.channelID);
             if (channel == null || !channel.isText()) return;
             return await channel.messages.fetch(messageReference.messageID);
         } catch (e) {
             return;
         }
+    }
+
+    private async getGuild(client: Client, guildID: string): Promise<Guild | undefined> {
+        try {
+            return await client.guilds.fetch(guildID);
+        } catch (e) {
+            return;
+        }
+    }
+
+    private async getAuthorNick(guild: Guild, message: Message): Promise<string> {
+        const member = await guild.member(message.author);
+        return member ? member.displayName : message.author.username;
     }
 }
