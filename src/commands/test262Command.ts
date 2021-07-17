@@ -213,10 +213,10 @@ export class Test262Command implements Command {
             }
 
             for (const [label, value] of Object.entries(test.results)) {
-                const previousValue = previousTest?.results[label];
+                const previousValue = previousTest?.results[label] ?? 0;
                 const icon = await Test262Command.statusIconForLabel(client, label);
 
-                if (previousValue && previousValue - value !== 0) {
+                if (previousValue - value !== 0) {
                     const difference = value - previousValue;
 
                     fields.push(`${icon} ${value} (${difference > 0 ? "+" : ""}${difference})`);
@@ -225,6 +225,16 @@ export class Test262Command implements Command {
                 }
 
                 fields.push(`${icon} ${value}`);
+            }
+
+            if (previousTest) {
+                for (const [label, value] of Object.entries(previousTest.results).filter(
+                    ([label]) => !(label in test.results)
+                )) {
+                    const icon = await Test262Command.statusIconForLabel(client, label);
+
+                    fields.push(`${icon} 0 (-${value})`);
+                }
             }
 
             embed.addField(`${name} (${test.duration.toFixed(2)}s)`, fields.join(" | "), false);
