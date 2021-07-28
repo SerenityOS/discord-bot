@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@octokit/rest": "^18.7.1",
-    "@types/node": "^16.4.3",
+    "@types/node": "^16.4.4",
     "@types/node-fetch": "^2.5.12",
     "bufferutil": "^4.0.3",
     "discord.js": "^12.5.3",
