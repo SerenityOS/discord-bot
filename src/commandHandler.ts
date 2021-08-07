@@ -4,27 +4,23 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { Client, Message } from "discord.js";
+import { Client, CommandInteraction } from "discord.js";
 import {
+    EmojiCommand,
+    GithubCommand,
     ManCommand,
     PlanCommand,
-    GithubCommand,
     QuickLinksCommand,
-    Test262Command,
-    EmojiCommand,
     QuoteCommand,
+    Test262Command,
 } from "./commands";
-import Command from "./commands/commandInterface";
-import { CommandParser } from "./models/commandParser";
+import Command from "./commands/command";
 
 export default class CommandHandler {
-    private readonly commands: Command[];
+    private readonly commands: Map<string[], Command>;
+    private readonly help: string;
 
-    private readonly prefix: string;
-
-    private readonly production: boolean;
-
-    constructor(prefix: string, production: boolean) {
+    constructor(private readonly production: boolean) {
         const commandClasses = [
             ManCommand,
             PlanCommand,
@@ -35,58 +31,77 @@ export default class CommandHandler {
             QuoteCommand,
         ];
 
-        this.commands = commandClasses.map(commandClass => new commandClass());
-        this.prefix = prefix;
-        this.production = production;
+        const availableCommands = new Array<string>();
+
+        this.commands = new Map(
+            commandClasses.map(commandClass => {
+                const command = new commandClass();
+                const data = command.data();
+
+                const dataArray = Array.isArray(data) ? data : [data];
+
+                for (const entry of dataArray)
+                    availableCommands.push(`**${entry.name}** - ${entry.description}`);
+
+                return [dataArray.map(entry => entry.name), command];
+            })
+        );
+
+        this.help = "Available commands:\n" + availableCommands.join("\n");
+    }
+
+    async registerInteractions(client: Client): Promise<void> {
+        if (!client.application) return;
+
+        await client.application.commands.set([
+            ...Array.from(this.commands.values())
+                .map(command => command.data())
+                .flat(),
+            {
+                name: "help",
+                description: "List all available commands",
+            },
+        ]);
     }
 
     /** Executes user commands contained in a message if appropriate. */
-    async handleMessage(client: Client, message: Message): Promise<void> {
-        if (message.author.bot || !this.isCommand(message)) {
-            return;
-        }
+    async handleInteraction(interaction: CommandInteraction): Promise<void> {
+        if (interaction.user.bot) return;
 
         if (!this.production) {
-            const msg = `Buggie bot received '${this.echoMessage(message)}' from ${
-                message.author.tag
+            const msg = `Buggie bot received '${JSON.stringify(interaction)}' from ${
+                interaction.user.tag
             }`;
-            await message.reply(msg);
+            await interaction.channel?.send(msg);
             await console.log(msg);
         }
 
-        const commandParser = new CommandParser(client, message, this.prefix);
-
-        if (commandParser.parsedCommandName === "help") {
-            await message.reply(
-                "Available commands:\n" +
-                    this.commands
-                        .map(cmd => cmd.help(this.prefix))
-                        .filter(help => help != "")
-                        .join("\n")
-            );
-            return;
-        }
-
-        const matchedCommand = this.commands.find(command =>
-            command.matchesName(commandParser.parsedCommandName)
-        );
-
-        if (matchedCommand == null) {
-            await message.reply(`I don't recognize that command. Try **!help**.`);
-        } else {
-            await matchedCommand.run(commandParser).catch(error => {
-                message.reply(`'${this.echoMessage(message)}' failed because of ${error}`);
+        if (interaction.commandName === "help") {
+            return await interaction.reply({
+                ephemeral: true,
+                content: this.help,
             });
         }
-    }
 
-    /** Sends back the message content after removing the prefix. */
-    echoMessage(message: Message): string {
-        return message.content.replace(this.prefix, "").trim();
-    }
+        let matchedCommand;
 
-    /** Determines whether or not a message is a user command. */
-    private isCommand(message: Message): boolean {
-        return message.content.startsWith(this.prefix);
+        for (const [names, command] of this.commands.entries()) {
+            for (const name of names) {
+                if (name.toLowerCase() === interaction.commandName) {
+                    matchedCommand = command;
+                    break;
+                }
+            }
+        }
+
+        if (!matchedCommand)
+            return await interaction.reply({
+                ephemeral: true,
+                content: "I don't recognize that command. Try **!help**.",
+            });
+
+        await matchedCommand.run(interaction).catch(error => {
+            interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
+        });
     }
 }

@@ -4,27 +4,35 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import Command from "./commandInterface";
-import { CommandParser } from "../models/commandParser";
+import Command from "./command";
+import { ApplicationCommandData, CommandInteraction } from "discord.js";
 
-export class PlanCommand implements Command {
-    private readonly baseReply: string = `> Will SerenityOS support \`$THING\`?\nMaybe. Maybe not. There is no plan.\n\nSee: [FAQ](https://github.com/SerenityOS/serenity/blob/master/Documentation/FAQ.md)`;
-    matchesName(commandName: string): boolean {
-        return "plan" == commandName || "wen" == commandName;
+export class PlanCommand extends Command {
+    private readonly baseReply: string = `> Will SerenityOS support \`$THING\`?\nMaybe. Maybe not. There is no plan.\n\nSee: [FAQ](<https://github.com/SerenityOS/serenity/blob/master/Documentation/FAQ.md>)`;
+
+    override data(): ApplicationCommandData | ApplicationCommandData[] {
+        return {
+            name: "plan",
+            description: "Check if a feature is part of the plan",
+            options: [
+                {
+                    name: "feature",
+                    description: "The feature to check",
+                    type: "STRING",
+                },
+            ],
+        };
     }
 
-    help(commandPrefix: string): string {
-        return `Use **${commandPrefix}plan [ <feature> ]** to check if a feature is part of the plan`;
-    }
+    override async run(interaction: CommandInteraction): Promise<void> {
+        let content = this.baseReply;
 
-    async run(parsedUserCommand: CommandParser): Promise<void> {
-        let reply = this.baseReply;
-        const args = parsedUserCommand.args;
-        if (args.length > 0) {
-            reply = reply.replace("`$THING`", args.join(" "));
-        }
+        const feature = interaction.options.getString("feature");
 
-        const embed = parsedUserCommand.embed().setDescription(reply);
-        await parsedUserCommand.send({ embeds: [embed] });
+        if (feature) content = content.replace("`$THING`", feature);
+
+        await interaction.reply({
+            content,
+        });
     }
 }

@@ -6,6 +6,7 @@
 
 import Discord, {
     Intents,
+    Interaction,
     Message,
     MessageEmbed,
     MessageReaction,
@@ -29,19 +30,28 @@ const client = new Discord.Client({
     partials: ["MESSAGE", "CHANNEL", "REACTION"],
 });
 
-const commandHandler = new CommandHandler(config.prefix, config.production);
+const commandHandler = new CommandHandler(config.production);
 
 client.on("ready", () => {
     if (client.user != null) {
         console.log(`Logged in as ${client.user.tag}.`);
         client.user.setPresence({
             status: "online",
-            activities: [{ type: "PLAYING", name: "Type !help to list commands." }],
+            activities: [
+                {
+                    type: "PLAYING",
+                    name: "Type /help to list commands.",
+                },
+            ],
         });
+
+        commandHandler.registerInteractions(client);
     }
 });
-client.on("message", (message: Message) => {
-    return commandHandler.handleMessage(client, message);
+client.on("interactionCreate", (interaction: Interaction) => {
+    if (!interaction.isCommand()) return;
+
+    commandHandler.handleInteraction(interaction);
 });
 client.on(
     "messageReactionAdd",
@@ -75,7 +85,7 @@ client.on(
             const manEmbed = ManCommand.embedForMan(markdown, url, section, page, collapsed);
             message.edit({ embeds: [manEmbed] });
 
-            reaction.users.remove(user.id);
+            if (message.channel.type !== "DM") reaction.users.remove(user.id);
         }
     }
 );
