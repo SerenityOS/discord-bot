@@ -4,7 +4,14 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { ApplicationCommandData, CommandInteraction, MessageEmbed } from "discord.js";
+import {
+    ApplicationCommandData,
+    CommandInteraction,
+    Interaction,
+    MessageActionRow,
+    MessageButton,
+    MessageEmbed,
+} from "discord.js";
 import githubAPI from "../apis/githubAPI";
 import { getMaximize, getMinimize, getSadCaret } from "../util/emoji";
 import Command from "./command";
@@ -46,20 +53,11 @@ export class ManCommand extends Command {
         if (result) {
             const { markdown, url } = result;
 
-            const partialMessage = await interaction.reply({
+            await interaction.reply({
                 fetchReply: true,
                 embeds: [ManCommand.embedForMan(markdown, url, section, page, true)],
+                components: [await ManCommand.buttons(interaction)],
             });
-
-            const message = await interaction.channel?.messages.fetch(partialMessage.id);
-
-            if (!message) return;
-
-            const maximizeEmote = await getMaximize(interaction);
-            const minimizeEmote = await getMinimize(interaction);
-
-            if (maximizeEmote) message.react(maximizeEmote.identifier);
-            if (minimizeEmote) message.react(minimizeEmote.identifier);
         } else {
             const sadcaret = await getSadCaret(interaction);
 
@@ -68,6 +66,26 @@ export class ManCommand extends Command {
                 content: `No matching man page found for ${page}(${section}) ${sadcaret ?? ":^("}`,
             });
         }
+    }
+
+    static async buttons(interaction: Interaction): Promise<MessageActionRow> {
+        const maximizeButton = new MessageButton()
+            .setCustomId("maximize")
+            .setLabel("Maximize")
+            .setStyle("PRIMARY");
+
+        const minimizeButton = new MessageButton()
+            .setCustomId("minimize")
+            .setLabel("Minimize")
+            .setStyle("PRIMARY");
+
+        const maximizeEmote = await getMaximize(interaction);
+        const minimizeEmote = await getMinimize(interaction);
+
+        if (maximizeEmote) maximizeButton.setEmoji(maximizeEmote.identifier);
+        if (minimizeEmote) minimizeButton.setEmoji(minimizeEmote.identifier);
+
+        return new MessageActionRow().addComponents(maximizeButton, minimizeButton);
     }
 
     static embedForMan(
