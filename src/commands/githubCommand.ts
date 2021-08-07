@@ -9,7 +9,7 @@ import Command from "./commandInterface";
 import { CommandParser } from "../models/commandParser";
 import githubAPI from "../apis/githubAPI";
 import { getSadCaret } from "../util/emoji";
-import { MessageEmbed } from "discord.js";
+import { HexColorString, MessageEmbed } from "discord.js";
 
 export class GithubCommand implements Command {
     matchesName(commandName: string): boolean {
@@ -40,7 +40,7 @@ export class GithubCommand implements Command {
             );
 
             if (result) {
-                await parsedUserCommand.send(result);
+                await parsedUserCommand.send({ embeds: [result] });
                 return;
             }
         }
@@ -51,7 +51,7 @@ export class GithubCommand implements Command {
         );
 
         if (result) {
-            await parsedUserCommand.send(result);
+            await parsedUserCommand.send({ embeds: [result] });
             return;
         }
 
@@ -93,7 +93,7 @@ export class GithubCommand implements Command {
             .setDescription(description)
             .addField("Type", "Issue", true)
             .addField("Created", new Date(issue.created_at).toDateString(), true)
-            .addField("Comments", issue.comments, true);
+            .addField("Comments", issue.comments.toString(), true);
 
         const labels = issue.labels
             .map(label => (typeof label === "string" ? label : label.name))
@@ -128,7 +128,7 @@ export class GithubCommand implements Command {
             description = description.slice(0, 300) + "...";
         }
 
-        let color: string;
+        let color: HexColorString;
 
         if (pull.draft) {
             color = "#768390";
@@ -147,7 +147,7 @@ export class GithubCommand implements Command {
             .addField("Type", "Pull Request", true)
             .addField("Created", new Date(pull.created_at).toDateString(), true)
             .addField("Commits", `${pull.commits} (+${pull.additions} -${pull.deletions})`, true)
-            .addField("Comments", pull.comments, true);
+            .addField("Comments", pull.comments.toString(), true);
 
         const labels = pull.labels
             .map(label => label.name)

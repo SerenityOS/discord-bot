@@ -29,11 +29,10 @@ export class EmojiCommand implements Command {
         const result = await getEmoji(parsedUserCommand.originalMessage, args[0]);
 
         if (result?.url) {
-            await parsedUserCommand.send(
-                new MessageEmbed()
-                    .setThumbnail(result.url)
-                    .setFooter(parsedUserCommand.originalMessage.author.tag)
-            );
+            const embed = new MessageEmbed()
+                .setThumbnail(result.url)
+                .setFooter(parsedUserCommand.originalMessage.author.tag);
+            await parsedUserCommand.send({ embeds: [embed] });
         } else {
             const thonk = await getThonk(parsedUserCommand.originalMessage);
             if (thonk?.id) await parsedUserCommand.originalMessage.react(thonk.id);

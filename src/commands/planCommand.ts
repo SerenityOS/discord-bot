@@ -24,6 +24,7 @@ export class PlanCommand implements Command {
             reply = reply.replace("`$THING`", args.join(" "));
         }
 
-        await parsedUserCommand.send(parsedUserCommand.embed().setDescription(reply));
+        const embed = parsedUserCommand.embed().setDescription(reply);
+        await parsedUserCommand.send({ embeds: [embed] });
     }
 }

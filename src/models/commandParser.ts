@@ -5,13 +5,12 @@
  */
 
 import {
-    APIMessageContentResolvable,
     Client,
     Message,
-    MessageAdditions,
-    MessageOptions,
     MessageEmbed,
     MessageMentions,
+    MessageOptions,
+    MessagePayload,
 } from "discord.js";
 
 /** A user-given command extracted from a message. */
@@ -47,12 +46,7 @@ export class CommandParser {
             .setFooter(`Query by ${this.originalMessage.author.username}`);
     }
 
-    async send(
-        content:
-            | APIMessageContentResolvable
-            | (MessageOptions & { split?: false })
-            | MessageAdditions
-    ): Promise<Message> {
+    async send(content: string | MessagePayload | MessageOptions): Promise<Message> {
         return await this.originalMessage.channel.send(content);
     }
 }

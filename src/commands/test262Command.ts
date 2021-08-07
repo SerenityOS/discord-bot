@@ -76,7 +76,8 @@ export class Test262Command implements Command {
                     );
                 }
 
-                await parsedUserCommand.send(new MessageEmbed().setDescription(lines.join("\n")));
+                const embed = new MessageEmbed().setDescription(lines.join("\n"));
+                await parsedUserCommand.send({ embeds: [embed] });
 
                 return;
             }
@@ -96,29 +97,26 @@ export class Test262Command implements Command {
 
             if (!foundCommit) {
                 const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
-
-                await parsedUserCommand.send(
-                    parsedUserCommand
-                        .embed()
-                        .setTitle("Not found")
-                        .setDescription(
-                            `Could not find a commit that ran test262 matching '${args[0]}' ${
-                                sadcaret ?? ":^("
-                            }`
-                        )
-                );
+                const embed = parsedUserCommand
+                    .embed()
+                    .setTitle("Not found")
+                    .setDescription(
+                        `Could not find a commit that ran test262 matching '${args[0]}' ${
+                            sadcaret ?? ":^("
+                        }`
+                    );
+                await parsedUserCommand.send({ embeds: [embed] });
 
                 return;
             }
         }
 
-        await parsedUserCommand.send(
-            await Test262Command.embedForResult(
-                parsedUserCommand.originalMessage.client,
-                result,
-                previousResult
-            )
+        const embed = await Test262Command.embedForResult(
+            parsedUserCommand.originalMessage.client,
+            result,
+            previousResult
         );
+        await parsedUserCommand.send({ embeds: [embed] });
     }
 
     static repositoryUrlByName = new Map<string, string>([
