@@ -4,22 +4,12 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import Discord, {
-    Intents,
-    Interaction,
-    Message,
-    MessageEmbed,
-    MessageReaction,
-    PartialMessageReaction,
-    PartialUser,
-    User,
-} from "discord.js";
+import Discord, { Intents, Interaction, Message, MessageEmbed } from "discord.js";
 import githubAPI from "./apis/githubAPI";
 import CommandHandler from "./commandHandler";
 import { ManCommand } from "./commands";
 import config from "./config/botConfig";
 import { DISCORD_TOKEN } from "./config/secrets";
-import { getMaximize, getMinimize } from "./util/emoji";
 
 const client = new Discord.Client({
     intents: [
@@ -48,29 +38,15 @@ client.on("ready", () => {
         commandHandler.registerInteractions(client);
     }
 });
-client.on("interactionCreate", (interaction: Interaction) => {
-    if (!interaction.isCommand()) return;
+client.on("interactionCreate", async (interaction: Interaction) => {
+    if (interaction.isButton()) {
+        if (!interaction.channel) return;
 
-    commandHandler.handleInteraction(interaction);
-});
-client.on(
-    "messageReactionAdd",
-    async (reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser) => {
-        const message: Message = await reaction.message.fetch();
+        const message: Message = await interaction.channel.messages.fetch(interaction.message.id);
 
-        if (reaction.partial) reaction = await reaction.fetch();
+        if (interaction.user.id !== message.interaction?.user.id) return;
 
-        const collapsed: boolean | undefined =
-            reaction.emoji === (await getMinimize(client))
-                ? true
-                : reaction.emoji === (await getMaximize(client))
-                ? false
-                : undefined;
-
-        if (collapsed === undefined) return;
-
-        if (user.id === client.user?.id) return;
-        if (message.author.id !== client.user?.id) return;
+        const collapsed: boolean = interaction.customId === "minimize";
 
         if (message.embeds.length === 1) {
             const embed: MessageEmbed = message.embeds[0];
@@ -82,13 +58,19 @@ client.on(
             if (result == null) return;
 
             const { markdown, url, page, section } = result;
-            const manEmbed = ManCommand.embedForMan(markdown, url, section, page, collapsed);
-            message.edit({ embeds: [manEmbed] });
 
-            if (message.channel.type !== "DM") reaction.users.remove(user.id);
+            interaction.update({
+                embeds: [ManCommand.embedForMan(markdown, url, section, page, collapsed)],
+            });
         }
+
+        return;
     }
-);
+
+    if (!interaction.isCommand()) return;
+
+    commandHandler.handleInteraction(interaction);
+});
 client.on("error", e => {
     console.error("Discord client error!", e);
 });
