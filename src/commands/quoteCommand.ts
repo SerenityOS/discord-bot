@@ -33,7 +33,7 @@ export class QuoteCommand implements Command {
         if (messageReference == undefined) return;
 
         const client = parsedUserCommand.client;
-        const guild = await this.getGuild(client, messageReference.guildID);
+        const guild = await this.getGuild(client, messageReference.guildId);
         if (guild == undefined) return;
 
         const message = await this.getMessageByReference(guild, messageReference);
@@ -78,9 +78,9 @@ export class QuoteCommand implements Command {
         const messageURLMatch = args[0].match(this.messageLinkRegex);
         if (messageURLMatch != null && messageURLMatch.groups != undefined) {
             return {
-                guildID: messageURLMatch.groups.guild,
-                channelID: messageURLMatch.groups.channel,
-                messageID: messageURLMatch.groups.message,
+                guildId: messageURLMatch.groups.guild,
+                channelId: messageURLMatch.groups.channel,
+                messageId: messageURLMatch.groups.message,
             };
         }
 
@@ -89,9 +89,9 @@ export class QuoteCommand implements Command {
             const message = await originalMessage.channel.messages.fetch(args[0]);
             if (message.guild == null) return;
             return {
-                guildID: message.guild.id,
-                channelID: message.channel.id,
-                messageID: message.id,
+                guildId: message.guild.id,
+                channelId: message.channel.id,
+                messageId: message.id,
             };
         } catch (e) {
             return;
@@ -102,26 +102,26 @@ export class QuoteCommand implements Command {
         guild: Guild,
         messageReference: MessageReference
     ): Promise<Message | undefined> {
-        if (messageReference.messageID == null) return;
+        if (messageReference.messageId == null) return;
         try {
-            const channel = guild.channels.resolve(messageReference.channelID);
+            const channel = guild.channels.resolve(messageReference.channelId);
             if (channel == null || !channel.isText()) return;
-            return await channel.messages.fetch(messageReference.messageID);
+            return await channel.messages.fetch(messageReference.messageId);
         } catch (e) {
             return;
         }
     }
 
-    private async getGuild(client: Client, guildID: string): Promise<Guild | undefined> {
+    private async getGuild(client: Client, guildId: string): Promise<Guild | undefined> {
         try {
-            return await client.guilds.fetch(guildID);
+            return await client.guilds.fetch(guildId);
         } catch (e) {
             return;
         }
     }
 
     private async getAuthorNick(guild: Guild, message: Message): Promise<string> {
-        const member = await guild.member(message.author);
+        const member = await guild.members.cache.get(message.author.id);
         return member ? member.displayName : message.author.username;
     }
 }

@@ -55,9 +55,10 @@ export class ManCommand implements Command {
 
         if (result) {
             const { markdown, url } = result;
-            const message: Message = await parsedUserCommand.send(
-                ManCommand.embedForMan(markdown, url, section, page, true)
-            );
+            const embed = ManCommand.embedForMan(markdown, url, section, page, true);
+            const message: Message = await parsedUserCommand.send({
+                embeds: [embed],
+            });
             const maximizeEmote = await getMaximize(message);
             const minimizeEmote = await getMinimize(message);
 
