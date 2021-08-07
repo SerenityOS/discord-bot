@@ -4,11 +4,10 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { Message, MessageEmbed } from "discord.js";
+import { ApplicationCommandData, CommandInteraction, MessageEmbed } from "discord.js";
 import githubAPI from "../apis/githubAPI";
-import { CommandParser } from "../models/commandParser";
 import { getMaximize, getMinimize, getSadCaret } from "../util/emoji";
-import Command from "./commandInterface";
+import Command from "./command";
 
 interface Paragraph {
     title?: string;
@@ -16,59 +15,58 @@ interface Paragraph {
     truncateFollowingLines?: boolean;
 }
 
-export class ManCommand implements Command {
-    private readonly pageRegex = /(.*)\((\d)\)/;
-
-    matchesName(commandName: string): boolean {
-        return "man" == commandName || "manpage" == commandName;
+export class ManCommand extends Command {
+    override data(): ApplicationCommandData | ApplicationCommandData[] {
+        return {
+            name: "man",
+            description: "Display a SerenityOS man page",
+            options: [
+                {
+                    name: "section",
+                    type: "INTEGER",
+                    description: "The section in which the page to display is",
+                    required: true,
+                },
+                {
+                    name: "page",
+                    type: "STRING",
+                    description: "The name of the page to display",
+                    required: true,
+                },
+            ],
+        };
     }
 
-    help(commandPrefix: string): string {
-        return `Use **${commandPrefix}man [ <section> <page> | page(section) ]** to display SerenityOS man pages`;
-    }
-
-    async run(parsedUserCommand: CommandParser): Promise<void> {
-        const args = parsedUserCommand.args;
-
-        let section: string;
-        let page: string;
-
-        if (args.length < 1) {
-            await parsedUserCommand.send("Error: At least one argument required");
-            return;
-        }
-
-        const pageRegexMatch = args[0].match(this.pageRegex);
-
-        if (pageRegexMatch) {
-            section = pageRegexMatch[2];
-            page = pageRegexMatch[1];
-        } else if (args.length < 2) {
-            await parsedUserCommand.send("Error: At least two arguments required");
-            return;
-        } else {
-            section = args[0];
-            page = args[1];
-        }
+    override async run(interaction: CommandInteraction): Promise<void> {
+        const section = interaction.options.getInteger("section", true).toString();
+        const page = interaction.options.getString("page", true);
 
         const result = await githubAPI.fetchSerenityManpage(section, page);
 
         if (result) {
             const { markdown, url } = result;
-            const embed = ManCommand.embedForMan(markdown, url, section, page, true);
-            const message: Message = await parsedUserCommand.send({
-                embeds: [embed],
-            });
-            const maximizeEmote = await getMaximize(message);
-            const minimizeEmote = await getMinimize(message);
 
-            if (maximizeEmote != null) message.react(maximizeEmote.identifier);
-            if (minimizeEmote != null) message.react(minimizeEmote.identifier);
+            const partialMessage = await interaction.reply({
+                fetchReply: true,
+                embeds: [ManCommand.embedForMan(markdown, url, section, page, true)],
+            });
+
+            const message = await interaction.channel?.messages.fetch(partialMessage.id);
+
+            if (!message) return;
+
+            const maximizeEmote = await getMaximize(interaction);
+            const minimizeEmote = await getMinimize(interaction);
+
+            if (maximizeEmote) message.react(maximizeEmote.identifier);
+            if (minimizeEmote) message.react(minimizeEmote.identifier);
         } else {
-            const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
-            await parsedUserCommand.send(
-                `No matching man page found for ${page}(${section}) ${sadcaret ?? ":^("}`
-            );
+            const sadcaret = await getSadCaret(interaction);
+
+            await interaction.reply({
+                ephemeral: true,
+                content: `No matching man page found for ${page}(${section}) ${sadcaret ?? ":^("}`,
+            });
         }
     }
 

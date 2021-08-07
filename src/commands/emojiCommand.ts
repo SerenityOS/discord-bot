@@ -4,38 +4,37 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import Command from "./commandInterface";
-import { CommandParser } from "../models/commandParser";
-import { getEmoji, getThonk } from "../util/emoji";
-import { MessageEmbed } from "discord.js";
+import { ApplicationCommandData, CommandInteraction, MessageEmbed } from "discord.js";
+import { getEmoji } from "../util/emoji";
+import Command from "./command";
 
-export class EmojiCommand implements Command {
-    matchesName(commandName: string): boolean {
-        return "emoji" === commandName;
+export class EmojiCommand extends Command {
+    override data(): ApplicationCommandData | ApplicationCommandData[] {
+        return {
+            name: "emoji",
+            description: "Make Buggie post an emoji",
+            options: [
+                {
+                    name: "emoji",
+                    description: "The emoji to post",
+                    type: "STRING",
+                    required: true,
+                },
+            ],
+        };
     }
 
-    help(commandPrefix: string): string {
-        return `Use **${commandPrefix}emoji <name>** to make Buggie post an emoji`;
-    }
-
-    async run(parsedUserCommand: CommandParser): Promise<void> {
-        const args = parsedUserCommand.args;
-
-        if (args.length !== 1) {
-            await parsedUserCommand.send("Error: One argument required");
-            return;
-        }
-
-        const result = await getEmoji(parsedUserCommand.originalMessage, args[0]);
+    override async run(interaction: CommandInteraction): Promise<void> {
+        const result = await getEmoji(interaction, interaction.options.getString("emoji", true));
 
         if (result?.url) {
-            const embed = new MessageEmbed()
-                .setThumbnail(result.url)
-                .setFooter(parsedUserCommand.originalMessage.author.tag);
-            await parsedUserCommand.send({ embeds: [embed] });
-        } else {
-            const thonk = await getThonk(parsedUserCommand.originalMessage);
-            if (thonk?.id) await parsedUserCommand.originalMessage.react(thonk.id);
+            return await interaction.reply({
+                embeds: [
+                    new MessageEmbed().setThumbnail(result.url).setFooter(interaction.user.tag),
+                ],
+            });
         }
+
+        await interaction.reply({ ephemeral: true, content: "Emoji not found" });
     }
 }

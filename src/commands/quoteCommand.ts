@@ -4,43 +4,63 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import Command from "./commandInterface";
-import { CommandParser } from "../models/commandParser";
-import { QUOTE_ROLE_ID } from "../config/secrets";
-import { Client, Guild, Message, MessageReference } from "discord.js";
+import {
+    ApplicationCommandData,
+    Client,
+    CommandInteraction,
+    Guild,
+    Message,
+    MessageReference,
+    User,
+} from "discord.js";
 import githubAPI from "../apis/githubAPI";
+import { QUOTE_ROLE_ID } from "../config/secrets";
 import { getSadCaret } from "../util/emoji";
+import Command from "./command";
 
-export class QuoteCommand implements Command {
+export class QuoteCommand extends Command {
     private readonly messageLinkRegex: RegExp =
         /https:\/\/(?:(?:ptb|canary)\.)?discord\.com\/channels\/(?<guild>[0-9]{17,18})\/(?<channel>[0-9]{17,18})\/(?<message>[0-9]{17,18})/;
 
-    matchesName(commandName: string): boolean {
-        return "quote" == commandName;
+    override data(): ApplicationCommandData | ApplicationCommandData[] {
+        return {
+            name: "quote",
+            description: "Quote a message",
+            options: [
+                {
+                    name: "message",
+                    description: "The id or url of the message to quote",
+                    type: "STRING",
+                },
+            ],
+        };
     }
 
-    // eslint-disable-next-line
-    help(_: string): string {
-        return "";
-    }
-
-    async run(parsedUserCommand: CommandParser): Promise<void> {
+    override async run(interaction: CommandInteraction): Promise<void> {
         if (!QUOTE_ROLE_ID) return;
-        const originalMessage = parsedUserCommand.originalMessage;
-        if (!originalMessage.member?.roles.cache.has(QUOTE_ROLE_ID)) return;
 
-        const messageReference = await this.getMessageReference(parsedUserCommand);
-        if (messageReference == undefined) return;
+        const commandIssuerMember = await interaction.guild?.members?.fetch(interaction.user);
+        if (!commandIssuerMember)
+            return interaction.reply({
+                ephemeral: true,
+                content: "Command only available on the SerenityOS Discord Server",
+            });
 
-        const client = parsedUserCommand.client;
-        const guild = await this.getGuild(client, messageReference.guildId);
-        if (guild == undefined) return;
+        if (commandIssuerMember.roles.cache.has(QUOTE_ROLE_ID))
+            return interaction.reply({ ephemeral: true, content: "Insufficient permission" });
+
+        const messageReference = await this.getMessageReference(interaction);
+        if (!messageReference) return;
+
+        const guild = await this.getGuild(interaction.client, messageReference.guildId);
+        if (!guild) return;
 
         const message = await this.getMessageByReference(guild, messageReference);
-        if (message == undefined) return;
+        if (!message) return;
 
-        const nickname = await this.getAuthorNick(guild, message);
+        const nickname = await this.getAuthorNick(guild, message.author);
         const fortunes = await githubAPI.fetchSerenityFortunes();
+
         fortunes.push({
             quote: message.cleanContent,
             author: nickname,
@@ -49,33 +69,42 @@ export class QuoteCommand implements Command {
             utc_time: Math.floor(Date.now() / 1000),
         });
 
-        const commandIssuerNick = await this.getAuthorNick(guild, originalMessage);
+        const commandIssuerNick = await this.getAuthorNick(guild, interaction.user);
         const pullRequestNumber = await githubAPI.openFortunesPullRequest(
             fortunes,
             commandIssuerNick
         );
+
         if (pullRequestNumber == undefined) {
-            const sadcaret = await getSadCaret(originalMessage);
-            await originalMessage.reply(`Failed creating a pull request ${sadcaret}`);
-            return;
+            const sadcaret = await getSadCaret(interaction);
+
+            return await interaction.reply({
+                content: `Failed creating a pull request ${sadcaret ?? ":^("}`,
+                ephemeral: true,
+            });
         }
-        await originalMessage.reply(
+
+        await interaction.reply(
             `Pull Request opened! https://github.com/${githubAPI.repository}/pull/${pullRequestNumber}`
         );
     }
 
     private async getMessageReference(
-        parsedUserCommand: CommandParser
+        interaction: CommandInteraction
     ): Promise<MessageReference | undefined> {
-        const originalMessage = parsedUserCommand.originalMessage;
+        const originalMessage = await interaction.channel?.messages.fetch(interaction.commandId);
+
+        if (!originalMessage) return;
+
         // Option 1: The quote was replied to
         if (originalMessage.reference != null) return originalMessage.reference;
 
-        const args = parsedUserCommand.args;
-        if (args.length != 1) return;
+        const argument = interaction.options.getString("messsage");
+
+        if (!argument) return;
 
         // Option 2: The quote was linked
-        const messageURLMatch = args[0].match(this.messageLinkRegex);
+        const messageURLMatch = argument.match(this.messageLinkRegex);
         if (messageURLMatch != null && messageURLMatch.groups != undefined) {
             return {
                 guildId: messageURLMatch.groups.guild,
@@ -86,7 +115,7 @@ export class QuoteCommand implements Command {
 
         // Option 3: The quote's message ID was given
         try {
-            const message = await originalMessage.channel.messages.fetch(args[0]);
+            const message = await originalMessage.channel.messages.fetch(argument);
             if (message.guild == null) return;
             return {
                 guildId: message.guild.id,
@@ -120,8 +149,8 @@ export class QuoteCommand implements Command {
         }
     }
 
-    private async getAuthorNick(guild: Guild, message: Message): Promise<string> {
-        const member = await guild.members.cache.get(message.author.id);
-        return member ? member.displayName : message.author.username;
+    private async getAuthorNick(guild: Guild, user: User): Promise<string> {
+        const member = await guild.members.fetch(user);
+        return member ? member.displayName : user.username;
     }
 }

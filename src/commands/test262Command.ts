@@ -4,10 +4,9 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { Client, MessageEmbed } from "discord.js";
+import { ApplicationCommandData, Client, CommandInteraction, MessageEmbed } from "discord.js";
 import fetch from "node-fetch";
 import githubAPI from "../apis/githubAPI";
-import { CommandParser } from "../models/commandParser";
 import {
     getBuggiemagnify,
     getBuggus,
@@ -19,7 +18,7 @@ import {
     getYakslice,
     getYaksplode,
 } from "../util/emoji";
-import Command from "./commandInterface";
+import Command from "./command";
 
 /* eslint-disable camelcase */
 interface Result {
@@ -42,50 +41,65 @@ interface Result {
 }
 /* eslint-enable camelcase */
 
-export class Test262Command implements Command {
-    matchesName(commandName: string): boolean {
-        return "test262" === commandName;
+export class Test262Command extends Command {
+    override data(): ApplicationCommandData | ApplicationCommandData[] {
+        return {
+            name: "test262",
+            description: "Display LibJS test262 results",
+            options: [
+                {
+                    name: "commit",
+                    description: "The commit to use the results from",
+                    type: "STRING",
+                },
+                {
+                    name: "labels",
+                    description: "Print the meaning of label emojis",
+                    type: "STRING",
+                    choices: [
+                        {
+                            name: "labels",
+                            value: "labels",
+                        },
+                    ],
+                },
+            ],
+        };
     }
 
-    help(commandPrefix: string): string {
-        return `Use **${commandPrefix}test262 [ commitHash | "labels" ]** to display libjs test262 results`;
-    }
-
-    async run(parsedUserCommand: CommandParser): Promise<void> {
+    override async run(interaction: CommandInteraction): Promise<void> {
         const results: Array<Result> = await (
             await fetch("https://libjs.dev/test262/data/results.json")
         ).json();
 
-        const args = parsedUserCommand.args;
-
         let result: Result = results[results.length - 1];
         let previousResult: Result = results[results.length - 2];
 
-        if (args[0] !== undefined) {
-            if (args[0] === "labels") {
-                const lines = new Array<string>();
+        if (interaction.options.getString("labels") === "labels") {
+            const lines = new Array<string>();
 
-                console.log(result);
-
-                for (const label in Object.values(result.tests)[0].results) {
-                    lines.push(
-                        `${await Test262Command.statusIconForLabel(
-                            parsedUserCommand.originalMessage.client,
-                            label
-                        )}: ${label}`
-                    );
-                }
-
-                const embed = new MessageEmbed().setDescription(lines.join("\n"));
-                await parsedUserCommand.send({ embeds: [embed] });
-
-                return;
+            for (const label in Object.values(result.tests)[0].results) {
+                lines.push(
+                    `${await Test262Command.statusIconForLabel(
+                        interaction.client,
+                        label
+                    )}: ${label}`
+                );
             }
 
+            return await interaction.reply({
+                ephemeral: true,
+                embeds: [new MessageEmbed().setDescription(lines.join("\n"))],
+            });
+        }
+
+        const commit = interaction.options.getString("commit");
+
+        if (commit) {
             let foundCommit = false;
 
             for (let i = 0; i < results.length; i++) {
-                if (results[i].versions.serenity.startsWith(args[0])) {
+                if (results[i].versions.serenity.startsWith(commit)) {
                     result = results[i];
                     previousResult = results[i - 1];
 
@@ -96,27 +110,28 @@ export class Test262Command implements Command {
             }
 
             if (!foundCommit) {
-                const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
-                const embed = parsedUserCommand
-                    .embed()
-                    .setTitle("Not found")
-                    .setDescription(
-                        `Could not find a commit that ran test262 matching '${args[0]}' ${
-                            sadcaret ?? ":^("
-                        }`
-                    );
-                await parsedUserCommand.send({ embeds: [embed] });
+                const sadcaret = await getSadCaret(interaction);
 
-                return;
+                return await interaction.reply({
+                    ephemeral: true,
+                    embeds: [
+                        new MessageEmbed()
+                            .setTitle("Not found")
+                            .setDescription(
+                                `Could not find a commit that ran test262 matching '${commit}' ${
+                                    sadcaret ?? ":^("
+                                }`
+                            ),
+                    ],
+                });
             }
         }
 
-        const embed = await Test262Command.embedForResult(
-            parsedUserCommand.originalMessage.client,
-            result,
-            previousResult
-        );
-        await parsedUserCommand.send({ embeds: [embed] });
+        await interaction.reply({
+            embeds: [
+                await Test262Command.embedForResult(interaction.client, result, previousResult),
+            ],
+        });
     }
 
     static repositoryUrlByName = new Map<string, string>([

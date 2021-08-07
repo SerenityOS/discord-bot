@@ -5,62 +5,80 @@
  */
 
 import { RestEndpointMethodTypes } from "@octokit/rest";
-import Command from "./commandInterface";
-import { CommandParser } from "../models/commandParser";
+import {
+    ApplicationCommandData,
+    ApplicationCommandOptionData,
+    ColorResolvable,
+    CommandInteraction,
+    MessageEmbed,
+} from "discord.js";
 import githubAPI from "../apis/githubAPI";
 import { getSadCaret } from "../util/emoji";
-import { HexColorString, MessageEmbed } from "discord.js";
+import Command from "./command";
 
-export class GithubCommand implements Command {
-    matchesName(commandName: string): boolean {
-        return (
-            "gh" === commandName ||
-            "github" === commandName ||
-            "issue" === commandName ||
-            "issues" === commandName ||
-            "pr" === commandName ||
-            "prs" === commandName ||
-            "pullrequest" === commandName ||
-            "pullrequests" === commandName
-        );
+export class GithubCommand extends Command {
+    override data(): ApplicationCommandData | ApplicationCommandData[] {
+        const options: Array<ApplicationCommandOptionData> = [
+            {
+                name: "number",
+                description: "The issue or pull request number",
+                type: "NUMBER",
+            },
+            {
+                name: "query",
+                description: "A string to query issues and pull requests with",
+                type: "STRING",
+            },
+        ];
+
+        const description = "Link an issue or pull request";
+
+        return [
+            {
+                name: "github",
+                description,
+                options,
+            },
+            {
+                name: "issue",
+                description,
+                options,
+            },
+            {
+                name: "pull",
+                description,
+                options,
+            },
+        ];
     }
 
-    help(commandPrefix: string): string {
-        return `Use **${commandPrefix}gh [ <number> | <keywords> ]** to search for issues or pull requests`;
-    }
+    override async run(interaction: CommandInteraction): Promise<void> {
+        const number = interaction.options.getNumber("number");
+        const query = interaction.options.getString("query");
 
-    async run(parsedUserCommand: CommandParser): Promise<void> {
-        const args = parsedUserCommand.args;
-        const number = Number(args[0]);
+        if (number !== null) {
+            const result = await this.embedFromIssueOrPull(await githubAPI.getIssueOrPull(number));
 
-        if (!isNaN(number)) {
+            if (result) return await interaction.reply({ embeds: [result] });
+        }
+
+        if (query) {
             const result = await this.embedFromIssueOrPull(
-                parsedUserCommand,
-                await githubAPI.getIssueOrPull(number)
+                await githubAPI.searchIssuesOrPulls(query)
             );
 
-            if (result) {
-                await parsedUserCommand.send({ embeds: [result] });
-                return;
-            }
+            if (result) return await interaction.reply({ embeds: [result] });
         }
 
-        const result = await this.embedFromIssueOrPull(
-            parsedUserCommand,
-            await githubAPI.searchIssuesOrPulls(parsedUserCommand.args.join("+").substring(0, 256))
-        );
+        const sadcaret = await getSadCaret(interaction);
 
-        if (result) {
-            await parsedUserCommand.send({ embeds: [result] });
-            return;
-        }
-
-        const sadcaret = await getSadCaret(parsedUserCommand.originalMessage);
-        await parsedUserCommand.send(`No matching issues or pull requests found ${sadcaret}`);
+        await interaction.reply({
+            content: `No matching issues or pull requests found ${sadcaret ?? ":^("}`,
+            ephemeral: true,
+        });
     }
 
     private async embedFromIssueOrPull(
-        parsedUserCommand: CommandParser,
         issueOrPull: RestEndpointMethodTypes["issues"]["get"]["response"]["data"] | undefined
     ): Promise<MessageEmbed | undefined> {
         if (!issueOrPull) return undefined;
@@ -68,14 +86,13 @@ export class GithubCommand implements Command {
         if (issueOrPull.pull_request) {
             const pull = await githubAPI.getPull(issueOrPull.number);
 
-            if (pull) return this.embedFromPull(parsedUserCommand, pull);
+            if (pull) return this.embedFromPull(pull);
         }
 
-        return this.embedFromIssue(parsedUserCommand, issueOrPull);
+        return this.embedFromIssue(issueOrPull);
     }
 
     private embedFromIssue(
-        parsedUserCommand: CommandParser,
         issue: RestEndpointMethodTypes["issues"]["get"]["response"]["data"]
     ): MessageEmbed {
         let description = issue.body || "";
@@ -85,8 +102,7 @@ export class GithubCommand implements Command {
 
         const color = issue.state === "open" ? "#57ab5a" : "#e5534b";
 
-        const embed = parsedUserCommand
-            .embed()
+        const embed = new MessageEmbed()
             .setColor(color)
             .setTitle(issue.title)
             .setURL(issue.html_url)
@@ -120,7 +136,6 @@ export class GithubCommand implements Command {
     }
 
     private embedFromPull(
-        parsedUserCommand: CommandParser,
         pull: RestEndpointMethodTypes["pulls"]["get"]["response"]["data"]
     ): MessageEmbed {
         let description = pull.body || "";
@@ -128,7 +143,7 @@ export class GithubCommand implements Command {
             description = description.slice(0, 300) + "...";
         }
 
-        let color: HexColorString;
+        let color: ColorResolvable;
 
         if (pull.draft) {
             color = "#768390";
@@ -138,8 +153,7 @@ export class GithubCommand implements Command {
             color = pull.state === "open" ? "#57ab5a" : "#e5534b";
         }
 
-        const embed = parsedUserCommand
-            .embed()
+        const embed = new MessageEmbed()
             .setColor(color)
             .setTitle(pull.title)
             .setURL(pull.html_url)
