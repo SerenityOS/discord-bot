@@ -44,7 +44,12 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 
         const message: Message = await interaction.channel.messages.fetch(interaction.message.id);
 
-        if (interaction.user.id !== message.interaction?.user.id) return;
+        if (interaction.user.id !== message.interaction?.user.id) {
+            return interaction.reply({
+                ephemeral: true,
+                content: `Only ${message.interaction?.user.tag} can update this embed`,
+            });
+        }
 
         const collapsed: boolean = interaction.customId === "minimize";
 
