@@ -66,6 +66,6 @@ export class QuickLinksCommand extends Command {
     override async run(interaction: CommandInteraction): Promise<void> {
         for (const link of this.links)
             if (link.name === interaction.commandName)
-                interaction.reply({ content: link.response });
+                return interaction.reply({ content: link.response });
     }
 }
