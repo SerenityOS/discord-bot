@@ -29,9 +29,7 @@ export class EmojiCommand extends Command {
 
         if (result?.url) {
             return await interaction.reply({
-                embeds: [
-                    new MessageEmbed().setThumbnail(result.url).setFooter(interaction.user.tag),
-                ],
+                embeds: [new MessageEmbed().setThumbnail(result.url)],
             });
         }
 
