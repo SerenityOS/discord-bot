@@ -5,23 +5,37 @@
  */
 
 import Command from "./command";
-import { ApplicationCommandData, CommandInteraction } from "discord.js";
+import {
+    ApplicationCommandData,
+    ApplicationCommandOptionData,
+    CommandInteraction,
+} from "discord.js";
 
 export class PlanCommand extends Command {
     private readonly baseReply: string = `> Will SerenityOS support \`$THING\`?\nMaybe. Maybe not. There is no plan.\n\nSee: [FAQ](<https://github.com/SerenityOS/serenity/blob/master/Documentation/FAQ.md>)`;
 
     override data(): ApplicationCommandData | ApplicationCommandData[] {
-        return {
-            name: "plan",
-            description: "Check if a feature is part of the plan",
-            options: [
-                {
-                    name: "feature",
-                    description: "The feature to check",
-                    type: "STRING",
-                },
-            ],
-        };
+        const description = "Check if a feature is part of the plan";
+        const options: ApplicationCommandOptionData[] = [
+            {
+                name: "feature",
+                description: "The feature to check",
+                type: "STRING",
+            },
+        ];
+
+        return [
+            {
+                name: "plan",
+                description,
+                options,
+            },
+            {
+                name: "wen",
+                description,
+                options,
+            },
+        ];
     }
 
     override async run(interaction: CommandInteraction): Promise<void> {
