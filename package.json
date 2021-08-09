@@ -49,7 +49,7 @@
     "eslint-plugin-unused-imports": "^1.1.2",
     "nodemon": "^2.0.12",
     "prettier": "^2.3.2",
-    "ts-node": "^10.1.0"
+    "ts-node": "^10.2.0"
   },
   "dependencies": {
     "@octokit/rest": "^18.9.0",
