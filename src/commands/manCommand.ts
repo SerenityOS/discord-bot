@@ -5,7 +5,7 @@
  */
 
 import {
-    ApplicationCommandData,
+    ChatInputApplicationCommandData,
     CommandInteraction,
     Interaction,
     MessageActionRow,
@@ -23,7 +23,7 @@ interface Paragraph {
 }
 
 export class ManCommand extends Command {
-    override data(): ApplicationCommandData | ApplicationCommandData[] {
+    override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
         return {
             name: "man",
             description: "Display a SerenityOS man page",

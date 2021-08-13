@@ -4,7 +4,12 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { ApplicationCommandData, Client, CommandInteraction, MessageEmbed } from "discord.js";
+import {
+    ChatInputApplicationCommandData,
+    Client,
+    CommandInteraction,
+    MessageEmbed,
+} from "discord.js";
 import fetch from "node-fetch";
 import githubAPI from "../apis/githubAPI";
 import {
@@ -42,7 +47,7 @@ interface Result {
 /* eslint-enable camelcase */
 
 export class Test262Command extends Command {
-    override data(): ApplicationCommandData | ApplicationCommandData[] {
+    override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
         return {
             name: "test262",
             description: "Display LibJS test262 results",

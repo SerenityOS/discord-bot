@@ -6,7 +6,7 @@
 
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import {
-    ApplicationCommandData,
+    ChatInputApplicationCommandData,
     ApplicationCommandOptionData,
     ColorResolvable,
     CommandInteraction,
@@ -17,7 +17,7 @@ import { getSadCaret } from "../util/emoji";
 import Command from "./command";
 
 export class GithubCommand extends Command {
-    override data(): ApplicationCommandData | ApplicationCommandData[] {
+    override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
         const options: Array<ApplicationCommandOptionData> = [
             {
                 name: "number",
