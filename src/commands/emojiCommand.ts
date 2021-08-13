@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { ApplicationCommandData, CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputApplicationCommandData, CommandInteraction, MessageEmbed } from "discord.js";
 import { getEmoji } from "../util/emoji";
 import Command from "./command";
 
 export class EmojiCommand extends Command {
-    override data(): ApplicationCommandData | ApplicationCommandData[] {
+    override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
         return {
             name: "emoji",
             description: "Make Buggie post an emoji",

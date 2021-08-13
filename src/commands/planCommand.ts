@@ -6,7 +6,7 @@
 
 import Command from "./command";
 import {
-    ApplicationCommandData,
+    ChatInputApplicationCommandData,
     ApplicationCommandOptionData,
     CommandInteraction,
 } from "discord.js";
@@ -14,7 +14,7 @@ import {
 export class PlanCommand extends Command {
     private readonly baseReply: string = `> Will SerenityOS support \`$THING\`?\nMaybe. Maybe not. There is no plan.\n\nSee: [FAQ](<https://github.com/SerenityOS/serenity/blob/master/Documentation/FAQ.md>)`;
 
-    override data(): ApplicationCommandData | ApplicationCommandData[] {
+    override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
         const description = "Check if a feature is part of the plan";
         const options: ApplicationCommandOptionData[] = [
             {
