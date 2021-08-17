@@ -98,10 +98,6 @@ export class QuoteCommand extends Command {
     private async getMessageReference(
         interaction: BaseCommandInteraction
     ): Promise<MessageReference | undefined> {
-        const originalMessage = await interaction.channel?.messages.fetch(interaction.commandId);
-
-        if (!originalMessage) return;
-
         if (!interaction.inGuild()) {
             interaction.reply({
                 ephemeral: true,
@@ -110,9 +106,6 @@ export class QuoteCommand extends Command {
 
             return;
         }
-
-        // Option 1: The quote was replied to
-        if (originalMessage.reference != null) return originalMessage.reference;
 
         // Option 2: A context menu was used on the quote
         if (interaction.isContextMenu() && interaction.targetType === "MESSAGE") {
@@ -127,7 +120,6 @@ export class QuoteCommand extends Command {
         if (!interaction.isCommand()) return;
 
         const argument = interaction.options.getString("messsage");
-
         if (!argument) return;
 
         // Option 3a: The quote was linked
@@ -140,7 +132,10 @@ export class QuoteCommand extends Command {
             };
         }
 
-        // Option 3: The quote's message ID was given
+        const originalMessage = await interaction.channel?.messages.fetch(interaction.commandId);
+        if (!originalMessage) return;
+
+        // Option 3b: The quote's message ID was given
         try {
             const message = await originalMessage.channel.messages.fetch(argument);
             if (message.guild == null) return;
