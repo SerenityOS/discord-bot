@@ -8,7 +8,7 @@ import Command from "./command";
 import {
     ChatInputApplicationCommandData,
     ApplicationCommandOptionData,
-    CommandInteraction,
+    BaseCommandInteraction,
 } from "discord.js";
 
 export class PlanCommand extends Command {
@@ -38,7 +38,9 @@ export class PlanCommand extends Command {
         ];
     }
 
-    override async run(interaction: CommandInteraction): Promise<void> {
+    override async run(interaction: BaseCommandInteraction): Promise<void> {
+        if (!interaction.isCommand()) return;
+
         let content = this.baseReply;
 
         const feature = interaction.options.getString("feature");

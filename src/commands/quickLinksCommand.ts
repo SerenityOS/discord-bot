@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { ChatInputApplicationCommandData, CommandInteraction } from "discord.js";
+import { BaseCommandInteraction, ChatInputApplicationCommandData } from "discord.js";
 import Command from "./command";
 
 export class QuickLinksCommand extends Command {
@@ -63,7 +63,7 @@ export class QuickLinksCommand extends Command {
         }));
     }
 
-    override async run(interaction: CommandInteraction): Promise<void> {
+    override async run(interaction: BaseCommandInteraction): Promise<void> {
         for (const link of this.links)
             if (link.name === interaction.commandName)
                 return interaction.reply({ content: link.response });

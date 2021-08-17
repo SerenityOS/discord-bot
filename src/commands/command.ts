@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { ChatInputApplicationCommandData, CommandInteraction } from "discord.js";
+import { ApplicationCommandData, BaseCommandInteraction } from "discord.js";
 
 export default abstract class Command {
     /** Execute the command. */
-    abstract run(interaction: CommandInteraction): Promise<void>;
+    abstract run(interaction: BaseCommandInteraction): Promise<void>;
 
-    abstract data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[];
+    abstract data(): ApplicationCommandData | ApplicationCommandData[];
 }

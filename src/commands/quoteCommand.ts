@@ -5,9 +5,9 @@
  */
 
 import {
-    ChatInputApplicationCommandData,
+    ApplicationCommandData,
+    BaseCommandInteraction,
     Client,
-    CommandInteraction,
     Guild,
     Message,
     MessageReference,
@@ -36,7 +36,7 @@ export class QuoteCommand extends Command {
         };
     }
 
-    override async run(interaction: CommandInteraction): Promise<void> {
+    override async run(interaction: BaseCommandInteraction): Promise<void> {
         if (!QUOTE_ROLE_ID) return;
 
         const commandIssuerMember = await interaction.guild?.members?.fetch(interaction.user);
