@@ -110,7 +110,7 @@ export class GithubCommand extends Command {
             .setURL(issue.html_url)
             .setDescription(description)
             .addField("Type", "Issue", true)
-            .addField("Created", new Date(issue.created_at).toDateString(), true)
+            .addField("Created", `<t:${new Date(issue.created_at).valueOf() / 1000}:R>`, true)
             .addField("Comments", issue.comments.toString(), true);
 
         const labels = issue.labels
@@ -125,7 +125,7 @@ export class GithubCommand extends Command {
         if (issue.closed_at && issue.closed_by != null) {
             embed.addField(
                 "Closed",
-                `${new Date(issue.closed_at).toDateString()} by ${issue.closed_by.login}`,
+                `<t:${new Date(issue.closed_at).valueOf() / 1000}:R> by ${issue.closed_by.login}`,
                 true
             );
         }
@@ -161,7 +161,7 @@ export class GithubCommand extends Command {
             .setURL(pull.html_url)
             .setDescription(description)
             .addField("Type", "Pull Request", true)
-            .addField("Created", new Date(pull.created_at).toDateString(), true)
+            .addField("Created", `<t:${new Date(pull.created_at).valueOf() / 1000}:R>`, true)
             .addField("Commits", `${pull.commits} (+${pull.additions} -${pull.deletions})`, true)
             .addField("Comments", pull.comments.toString(), true);
 
@@ -177,7 +177,7 @@ export class GithubCommand extends Command {
         if (pull.merged && pull.merged_at && pull.merged_by != null) {
             embed.addField(
                 "Merged",
-                `${new Date(pull.merged_at).toDateString()} by ${pull.merged_by.login}`,
+                `<t:${new Date(pull.merged_at).valueOf() / 1000}:R> by ${pull.merged_by.login}`,
                 true
             );
         }
