@@ -46,7 +46,7 @@ export class QuoteCommand extends Command {
                 content: "Command only available on the SerenityOS Discord Server",
             });
 
-        if (commandIssuerMember.roles.cache.has(QUOTE_ROLE_ID))
+        if (!commandIssuerMember.roles.cache.has(QUOTE_ROLE_ID))
             return interaction.reply({ ephemeral: true, content: "Insufficient permission" });
 
         const messageReference = await this.getMessageReference(interaction);
