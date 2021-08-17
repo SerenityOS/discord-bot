@@ -119,7 +119,7 @@ export class GithubCommand extends Command {
             .join(", ");
 
         if (labels.length !== 0) {
-            embed.addField("Labels", labels);
+            embed.addField("Labels", labels, true);
         }
 
         if (issue.closed_at && issue.closed_by != null) {
@@ -173,7 +173,7 @@ export class GithubCommand extends Command {
             .join(", ");
 
         if (pull.labels.length !== 0) {
-            embed.addField("Labels", labels);
+            embed.addField("Labels", labels, true);
         }
 
         if (pull.merged && pull.merged_at && pull.merged_by != null) {
