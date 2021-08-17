@@ -22,18 +22,24 @@ export class QuoteCommand extends Command {
     private readonly messageLinkRegex: RegExp =
         /https:\/\/(?:(?:ptb|canary)\.)?discord\.com\/channels\/(?<guild>[0-9]{17,18})\/(?<channel>[0-9]{17,18})\/(?<message>[0-9]{17,18})/;
 
-    override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
-        return {
-            name: "quote",
-            description: "Quote a message",
-            options: [
-                {
-                    name: "message",
-                    description: "The id or url of the message to quote",
-                    type: "STRING",
-                },
-            ],
-        };
+    override data(): ApplicationCommandData | ApplicationCommandData[] {
+        return [
+            {
+                name: "quote",
+                description: "Quote a message",
+                options: [
+                    {
+                        name: "message",
+                        description: "The id or url of the message to quote",
+                        type: "STRING",
+                    },
+                ],
+            },
+            {
+                name: "quote",
+                type: "MESSAGE",
+            },
+        ];
     }
 
     override async run(interaction: BaseCommandInteraction): Promise<void> {
@@ -90,20 +96,41 @@ export class QuoteCommand extends Command {
     }
 
     private async getMessageReference(
-        interaction: CommandInteraction
+        interaction: BaseCommandInteraction
     ): Promise<MessageReference | undefined> {
         const originalMessage = await interaction.channel?.messages.fetch(interaction.commandId);
 
         if (!originalMessage) return;
 
+        if (!interaction.inGuild()) {
+            interaction.reply({
+                ephemeral: true,
+                content: "Command only available on the SerenityOS Discord Server",
+            });
+
+            return;
+        }
+
         // Option 1: The quote was replied to
         if (originalMessage.reference != null) return originalMessage.reference;
+
+        // Option 2: A context menu was used on the quote
+        if (interaction.isContextMenu() && interaction.targetType === "MESSAGE") {
+            return {
+                guildId: interaction.guildId,
+                channelId: interaction.channelId,
+                messageId: interaction.targetId,
+            };
+        }
+
+        // Option 3: A command was used for quoting
+        if (!interaction.isCommand()) return;
 
         const argument = interaction.options.getString("messsage");
 
         if (!argument) return;
 
-        // Option 2: The quote was linked
+        // Option 3a: The quote was linked
         const messageURLMatch = argument.match(this.messageLinkRegex);
         if (messageURLMatch != null && messageURLMatch.groups != undefined) {
             return {
