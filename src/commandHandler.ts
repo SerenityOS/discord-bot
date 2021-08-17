@@ -15,6 +15,8 @@ import {
     Test262Command,
 } from "./commands";
 import Command from "./commands/command";
+import config from "./config/botConfig";
+import { GUILD_ID } from "./config/secrets";
 
 export default class CommandHandler {
     private readonly commands: Map<string[], Command>;
@@ -52,9 +54,7 @@ export default class CommandHandler {
     }
 
     async registerInteractions(client: Client): Promise<void> {
-        if (!client.application) return;
-
-        await client.application.commands.set([
+        const commands = [
             ...Array.from(this.commands.values())
                 .map(command => command.data())
                 .flat(),
@@ -62,7 +62,17 @@ export default class CommandHandler {
                 name: "help",
                 description: "List all available commands",
             },
-        ]);
+        ];
+
+        if (!config.production && GUILD_ID) {
+            const guild = await client.guilds.fetch(GUILD_ID);
+
+            guild.commands.set(commands);
+        }
+
+        if (!client.application) return;
+
+        await client.application.commands.set(commands);
     }
 
     /** Executes user commands contained in a message if appropriate. */
