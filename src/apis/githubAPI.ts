@@ -144,7 +144,7 @@ class GithubAPI {
             owner: this.repositoryOwner,
             repo: this.repositoryName,
             title: "Base: Add a quote to the fortunes database",
-            body: `Triggered by @${triggeredBy} on Discord.`,
+            body: `Triggered by ${triggeredBy} on Discord.`,
             head: `add-quote-${Math.floor(Date.now() / 1000)}`,
             changes: [
                 {
