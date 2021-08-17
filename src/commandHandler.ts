@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { Client, CommandInteraction } from "discord.js";
+import { BaseCommandInteraction, Client } from "discord.js";
 import {
     EmojiCommand,
     GithubCommand,
@@ -41,7 +41,8 @@ export default class CommandHandler {
                 const dataArray = Array.isArray(data) ? data : [data];
 
                 for (const entry of dataArray)
-                    availableCommands.push(`**${entry.name}** - ${entry.description}`);
+                    if (!entry.type || entry.type === "CHAT_INPUT")
+                        availableCommands.push(`**${entry.name}** - ${entry.description}`);
 
                 return [dataArray.map(entry => entry.name), command];
             })
@@ -65,7 +66,7 @@ export default class CommandHandler {
     }
 
     /** Executes user commands contained in a message if appropriate. */
-    async handleInteraction(interaction: CommandInteraction): Promise<void> {
+    async handleInteraction(interaction: BaseCommandInteraction): Promise<void> {
         if (interaction.user.bot) return;
 
         if (!this.production) {
