@@ -125,7 +125,9 @@ export class GithubCommand extends Command {
         if (issue.closed_at && issue.closed_by != null) {
             embed.addField(
                 "Closed",
-                `<t:${new Date(issue.closed_at).valueOf() / 1000}:R> by ${issue.closed_by.login}`,
+                `<t:${new Date(issue.closed_at).valueOf() / 1000}:R> by [${
+                    issue.closed_by.login
+                }](${issue.closed_by.url})`,
                 true
             );
         }
@@ -177,7 +179,9 @@ export class GithubCommand extends Command {
         if (pull.merged && pull.merged_at && pull.merged_by != null) {
             embed.addField(
                 "Merged",
-                `<t:${new Date(pull.merged_at).valueOf() / 1000}:R> by ${pull.merged_by.login}`,
+                `<t:${new Date(pull.merged_at).valueOf() / 1000}:R> by [${pull.merged_by.login}](${
+                    pull.merged_by.url
+                })`,
                 true
             );
         }
