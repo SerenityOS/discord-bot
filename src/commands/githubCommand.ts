@@ -127,7 +127,7 @@ export class GithubCommand extends Command {
                 "Closed",
                 `<t:${new Date(issue.closed_at).valueOf() / 1000}:R> by [${
                     issue.closed_by.login
-                }](${issue.closed_by.url})`,
+                }](${issue.closed_by.html_url})`,
                 true
             );
         }
@@ -180,7 +180,7 @@ export class GithubCommand extends Command {
             embed.addField(
                 "Merged",
                 `<t:${new Date(pull.merged_at).valueOf() / 1000}:R> by [${pull.merged_by.login}](${
-                    pull.merged_by.url
+                    pull.merged_by.html_url
                 })`,
                 true
             );
