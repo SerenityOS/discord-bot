@@ -30,7 +30,7 @@ export class QuickLinksCommand extends Command {
         {
             name: "hardware",
             response: `Hardware Compatability: <${this.documentation}/HardwareCompatibility.md>`,
-            help: "Get a link to the hardware compatability list",
+            help: "Get a link to the hardware compatibility list",
         },
         {
             name: "install",
