@@ -4,6 +4,11 @@ jobs:
   build:
     name: Lint and Build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-env: [ 'development', 'production' ]
+    env:
+        NODE_ENV: ${{ matrix.node-env }}
     steps:
       - name: Checkout 
         uses: actions/checkout@v2.3.4
@@ -14,5 +19,9 @@ jobs:
           node-version: '16.6'
 
       - run: yarn install
+
       - run: yarn build
+
       - run: yarn lint
+        if: ${{ matrix.node-env == 'development' }}
+
