@@ -40,7 +40,7 @@
   },
   "homepage": "https://github.com/SerenityOS/discord-bot#readme",
   "devDependencies": {
-    "@octokit/types": "^6.25.0",
+    "@octokit/types": "^6.26.0",
     "@typescript-eslint/eslint-plugin": "^4.30.0",
     "@typescript-eslint/parser": "^4.30.0",
     "eslint": "^7.32.0",
