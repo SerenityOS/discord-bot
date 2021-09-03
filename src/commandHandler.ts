@@ -112,6 +112,7 @@ export default class CommandHandler {
             });
 
         await matchedCommand.run(interaction).catch(error => {
+            console.trace("matchedCommand failed", error);
             interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
         });
     }

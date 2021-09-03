@@ -145,6 +145,7 @@ export class QuoteCommand extends Command {
                 messageId: message.id,
             };
         } catch (e) {
+            console.trace(e);
             return;
         }
     }
@@ -159,6 +160,7 @@ export class QuoteCommand extends Command {
             if (channel == null || !channel.isText()) return;
             return await channel.messages.fetch(messageReference.messageId);
         } catch (e) {
+            console.trace(e);
             return;
         }
     }
@@ -167,6 +169,7 @@ export class QuoteCommand extends Command {
         try {
             return await client.guilds.fetch(guildId);
         } catch (e) {
+            console.trace(e);
             return;
         }
     }

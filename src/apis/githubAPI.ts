@@ -63,7 +63,8 @@ class GithubAPI {
                 issue_number: number,
             });
             return results.data;
-        } catch {
+        } catch (e) {
+            console.trace(e);
             return undefined;
         }
     }
@@ -76,7 +77,8 @@ class GithubAPI {
                 pull_number: number,
             });
             return results.data;
-        } catch {
+        } catch (e) {
+            console.trace(e);
             return undefined;
         }
     }
@@ -92,7 +94,8 @@ class GithubAPI {
                 }
             );
             return results.data;
-        } catch {
+        } catch (e) {
+            console.trace(e);
             return undefined;
         }
     }
@@ -123,7 +126,8 @@ class GithubAPI {
                 page,
                 markdown,
             };
-        } catch {
+        } catch (e) {
+            console.trace(e);
             return;
         }
     }
@@ -158,7 +162,10 @@ class GithubAPI {
                 },
             ],
         });
-        if (result == null) return;
+        if (result == null) {
+            console.trace("Failed to create pull request");
+            return;
+        }
         return result.data.number;
     }
 }
