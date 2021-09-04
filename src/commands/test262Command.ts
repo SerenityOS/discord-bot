@@ -75,9 +75,9 @@ export class Test262Command extends Command {
     override async run(interaction: BaseCommandInteraction): Promise<void> {
         if (!interaction.isCommand()) return;
 
-        const results: Array<Result> = await (
+        const results = (await (
             await fetch("https://libjs.dev/test262/data/results.json")
-        ).json();
+        ).json()) as Result[];
 
         let result: Result = results[results.length - 1];
         let previousResult: Result = results[results.length - 2];
