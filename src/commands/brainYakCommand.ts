@@ -65,6 +65,7 @@ class BrainYakInterpreter {
     private tokenize(): string | null {
         while (this.text.length > 0) {
             for (let k in this.yak_map) {
+                this.validate_execution_time();
                 if (this.text.startsWith(k)) {
                     this.text = this.text.substring(k.length);
                     return this.yak_map[k];
@@ -76,6 +77,7 @@ class BrainYakInterpreter {
     }
 
     private parse_instruction(token: string | null): Instruction {
+        this.validate_execution_time();
         switch (token) {
         case "+":
             return { name: InstructionName.Increment };
@@ -120,14 +122,14 @@ class BrainYakInterpreter {
         return parsed;
     }
 
-    private validate_run_time() {
+    private validate_execution_time() {
         if (Date.now() - this.start_execution_time > 2000) {
             throw new BrainYakError("Execution stopped due to total time of execution exceeding 2 seconds");
         }
     }
 
     private interpret_instruction(instruction: Instruction) {
-        this.validate_run_time();
+        this.validate_execution_time();
 
         switch (instruction.name) {
         case InstructionName.Increment:
@@ -154,7 +156,7 @@ class BrainYakInterpreter {
                     this.interpret_instruction(loop_child_instruction);
                 }
 
-                this.validate_run_time();
+                this.validate_execution_time();
             }
             break;
         case InstructionName.Put:
