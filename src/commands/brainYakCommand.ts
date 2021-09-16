@@ -11,7 +11,12 @@ import {
     BaseCommandInteraction,
 } from "discord.js";
 
-class BrainYakError extends Error {}
+class BrainYakError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = "BrainYakError";
+    }
+}
 
 enum InstructionName {
     End,
@@ -116,8 +121,8 @@ class BrainYakInterpreter {
     }
 
     private validate_run_time() {
-        if (Date.now() - this.start_execution_time > 4000) {
-            throw new BrainYakError("Execution stopped due to length of execution exceeding 4 seconds");
+        if (Date.now() - this.start_execution_time > 2000) {
+            throw new BrainYakError("Execution stopped due to total time of execution exceeding 2 seconds");
         }
     }
 
@@ -132,7 +137,7 @@ class BrainYakInterpreter {
             this.tape[this.tape_idx]--;
             break;
         case InstructionName.Right:
-            if (this.tape_idx == 128 - 1) {
+            if (this.tape_idx == this.tape_size - 1) {
                 throw new BrainYakError("Can't go right on tape when on its rightmost cell");
             }
             ++this.tape_idx;
