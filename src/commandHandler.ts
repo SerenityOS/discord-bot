@@ -13,6 +13,7 @@ import {
     QuickLinksCommand,
     QuoteCommand,
     Test262Command,
+    BrainYakCommand,
 } from "./commands";
 import Command from "./commands/command";
 import config from "./config/botConfig";
@@ -31,6 +32,7 @@ export default class CommandHandler {
             Test262Command,
             EmojiCommand,
             QuoteCommand,
+            BrainYakCommand
         ];
 
         const availableCommands = new Array<string>();
