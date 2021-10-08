@@ -58,7 +58,17 @@ export class QuoteCommand extends Command {
         const messageReference = await this.getMessageReference(interaction);
         if (!messageReference) return;
 
-        const guild = await this.getGuild(interaction.client, messageReference.guildId);
+        if (messageReference.guildId == undefined) {
+            const sadcaret = await getSadCaret(interaction);
+
+            return await interaction.reply({
+                content: `Failed to obtain the guild ID ${sadcaret ?? ":^("}`,
+                ephemeral: true,
+            });
+        }
+
+        const guildId: string = messageReference.guildId;
+        const guild = await this.getGuild(interaction.client, guildId);
         if (!guild) return;
 
         const message = await this.getMessageByReference(guild, messageReference);
