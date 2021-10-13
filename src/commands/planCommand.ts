@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import Command from "./command";
 import {
-    ChatInputApplicationCommandData,
     ApplicationCommandOptionData,
-    BaseCommandInteraction,
+    ChatInputApplicationCommandData,
+    CommandInteraction,
 } from "discord.js";
+import Command from "./command";
 
 export class PlanCommand extends Command {
     private readonly baseReply: string = `> Will SerenityOS support \`$THING\`?\nMaybe. Maybe not. There is no plan.\n\nSee: [FAQ](<https://github.com/SerenityOS/serenity/blob/master/Documentation/FAQ.md>)`;
@@ -38,7 +38,7 @@ export class PlanCommand extends Command {
         ];
     }
 
-    override async run(interaction: BaseCommandInteraction): Promise<void> {
+    override async handleCommand(interaction: CommandInteraction): Promise<void> {
         if (!interaction.isCommand()) return;
 
         let content = this.baseReply;
