@@ -73,7 +73,7 @@ client.on("interactionCreate", async (interaction: Interaction) => {
     }
 
     if (interaction.isCommand() || interaction.isContextMenu())
-        commandHandler.handleInteraction(interaction);
+        commandHandler.handleBaseCommandInteraction(interaction);
 });
 client.on("error", e => {
     console.error("Discord client error!", e);

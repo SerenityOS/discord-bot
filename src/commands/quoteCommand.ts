@@ -8,6 +8,7 @@ import {
     ApplicationCommandData,
     BaseCommandInteraction,
     Client,
+    ContextMenuInteraction,
     Guild,
     Message,
     MessageReference,
@@ -42,7 +43,7 @@ export class QuoteCommand extends Command {
         ];
     }
 
-    override async run(interaction: BaseCommandInteraction): Promise<void> {
+    override async handleCommand(interaction: BaseCommandInteraction): Promise<void> {
         if (!QUOTE_ROLE_ID) return;
 
         const commandIssuerMember = await interaction.guild?.members?.fetch(interaction.user);
@@ -103,6 +104,10 @@ export class QuoteCommand extends Command {
         await interaction.reply(
             `Pull Request opened! https://github.com/${githubAPI.repository}/pull/${pullRequestNumber}`
         );
+    }
+
+    override async handleContextMenu(interaction: ContextMenuInteraction): Promise<void> {
+        return this.handleCommand(interaction);
     }
 
     private async getMessageReference(

@@ -6,11 +6,11 @@
 
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import {
-    ChatInputApplicationCommandData,
     ApplicationCommandOptionData,
+    ChatInputApplicationCommandData,
     ColorResolvable,
+    CommandInteraction,
     MessageEmbed,
-    BaseCommandInteraction,
 } from "discord.js";
 import githubAPI from "../apis/githubAPI";
 import { getSadCaret } from "../util/emoji";
@@ -52,9 +52,7 @@ export class GithubCommand extends Command {
         ];
     }
 
-    override async run(interaction: BaseCommandInteraction): Promise<void> {
-        if (!interaction.isCommand()) return;
-
+    override async handleCommand(interaction: CommandInteraction): Promise<void> {
         const number = interaction.options.getNumber("number");
         const query = interaction.options.getString("query");
 
