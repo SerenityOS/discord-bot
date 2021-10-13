@@ -5,9 +5,9 @@
  */
 
 import {
-    BaseCommandInteraction,
     ChatInputApplicationCommandData,
     Client,
+    CommandInteraction,
     MessageEmbed,
 } from "discord.js";
 import fetch from "node-fetch";
@@ -72,9 +72,7 @@ export class Test262Command extends Command {
         };
     }
 
-    override async run(interaction: BaseCommandInteraction): Promise<void> {
-        if (!interaction.isCommand()) return;
-
+    override async handleCommand(interaction: CommandInteraction): Promise<void> {
         const results: Array<Result> = await (
             await fetch("https://libjs.dev/test262/data/results.json")
         ).json();

@@ -5,8 +5,8 @@
  */
 
 import {
-    BaseCommandInteraction,
     ChatInputApplicationCommandData,
+    CommandInteraction,
     Interaction,
     MessageActionRow,
     MessageButton,
@@ -44,9 +44,7 @@ export class ManCommand extends Command {
         };
     }
 
-    override async run(interaction: BaseCommandInteraction): Promise<void> {
-        if (!interaction.isCommand()) return;
-
+    override async handleCommand(interaction: CommandInteraction): Promise<void> {
         const section = interaction.options.getInteger("section", true).toString();
         const page = interaction.options.getString("page", true);
 

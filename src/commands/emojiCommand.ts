@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { BaseCommandInteraction, ChatInputApplicationCommandData, MessageEmbed } from "discord.js";
+import { ChatInputApplicationCommandData, CommandInteraction, MessageEmbed } from "discord.js";
 import { getEmoji } from "../util/emoji";
 import Command from "./command";
 
@@ -24,9 +24,7 @@ export class EmojiCommand extends Command {
         };
     }
 
-    override async run(interaction: BaseCommandInteraction): Promise<void> {
-        if (!interaction.isCommand()) return;
-
+    override async handleCommand(interaction: CommandInteraction): Promise<void> {
         const result = await getEmoji(interaction, interaction.options.getString("emoji", true));
 
         if (result?.url) {
