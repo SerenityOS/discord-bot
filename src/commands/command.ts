@@ -4,7 +4,12 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { ApplicationCommandData, CommandInteraction, ContextMenuInteraction } from "discord.js";
+import {
+    ApplicationCommandData,
+    ButtonInteraction,
+    CommandInteraction,
+    ContextMenuInteraction,
+} from "discord.js";
 
 export default abstract class Command {
     /** Execute the command. */
@@ -12,5 +17,9 @@ export default abstract class Command {
 
     handleContextMenu?(interaction: ContextMenuInteraction): Promise<void>;
 
+    handleButton?(interaction: ButtonInteraction): Promise<void>;
+
     abstract data(): ApplicationCommandData | ApplicationCommandData[];
+
+    buttonData?(): Array<string>;
 }

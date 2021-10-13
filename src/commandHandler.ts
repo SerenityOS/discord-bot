@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { BaseCommandInteraction, Client } from "discord.js";
+import { BaseCommandInteraction, ButtonInteraction, Client } from "discord.js";
 import {
     EmojiCommand,
     GithubCommand,
@@ -77,8 +77,6 @@ export default class CommandHandler {
 
     /** Executes user commands contained in a message if appropriate. */
     async handleBaseCommandInteraction(interaction: BaseCommandInteraction): Promise<void> {
-        if (interaction.user.bot) return;
-
         if (!this.production) {
             const msg = `Buggie bot received '${JSON.stringify(interaction)}' from ${
                 interaction.user.tag
@@ -112,15 +110,45 @@ export default class CommandHandler {
             });
 
         if (interaction.isCommand())
-            await matchedCommand.handleCommand(interaction).catch(error => {
-                console.trace("matchedCommand.handleCommand failed", error);
-                interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
-            });
+            return this.callInteractionHandler(
+                matchedCommand,
+                matchedCommand.handleCommand,
+                interaction
+            );
 
         if (interaction.isContextMenu() && matchedCommand.handleContextMenu)
-            await matchedCommand.handleContextMenu(interaction).catch(error => {
-                console.trace("matchedCommand.handleContextMenu failed", error);
-                interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
-            });
+            return this.callInteractionHandler(
+                matchedCommand,
+                matchedCommand.handleContextMenu,
+                interaction
+            );
+    }
+
+    async handleButtonInteraction(interaction: ButtonInteraction): Promise<void> {
+        for (const [, command] of this.commands.entries()) {
+            if (!command.buttonData) continue;
+
+            for (const button of command.buttonData()) {
+                if (button === interaction.customId) {
+                    if (!command.handleButton)
+                        throw new Error(
+                            `${command.constructor.name}: handleButton has to be implemented if buttonData lists customId`
+                        );
+
+                    return this.callInteractionHandler(command, command.handleButton, interaction);
+                }
+            }
+        }
+    }
+
+    private async callInteractionHandler<T>(
+        command: Command,
+        handler: (interaction: T) => Promise<void>,
+        interaction: T & { reply: BaseCommandInteraction["reply"] }
+    ): Promise<void> {
+        await handler.call(command, interaction).catch(error => {
+            console.trace("matchedCommand.handleContextMenu failed", error);
+            interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
+        });
     }
 }

@@ -5,6 +5,7 @@
  */
 
 import {
+    ButtonInteraction,
     ChatInputApplicationCommandData,
     CommandInteraction,
     Interaction,
@@ -44,6 +45,10 @@ export class ManCommand extends Command {
         };
     }
 
+    override buttonData(): Array<string> {
+        return ["/man:maximize", "/man:minimize"];
+    }
+
     override async handleCommand(interaction: CommandInteraction): Promise<void> {
         const section = interaction.options.getInteger("section", true).toString();
         const page = interaction.options.getString("page", true);
@@ -68,14 +73,45 @@ export class ManCommand extends Command {
         }
     }
 
+    override async handleButton(interaction: ButtonInteraction): Promise<void> {
+        if (!interaction.channel) return;
+
+        const message = await interaction.channel.messages.fetch(interaction.message.id);
+
+        if (interaction.user.id !== message.interaction?.user.id) {
+            return interaction.reply({
+                ephemeral: true,
+                content: `Only ${message.interaction?.user.tag} can update this embed`,
+            });
+        }
+
+        const collapsed: boolean = interaction.customId === "/man:minimize";
+
+        if (message.embeds.length === 1) {
+            const embed: MessageEmbed = message.embeds[0];
+
+            if (!embed.url) return;
+
+            const result = await githubAPI.fetchSerenityManpageByUrl(embed.url);
+
+            if (result == null) return;
+
+            const { markdown, url, page, section } = result;
+
+            interaction.update({
+                embeds: [ManCommand.embedForMan(markdown, url, section, page, collapsed)],
+            });
+        }
+    }
+
     static async buttons(interaction: Interaction): Promise<MessageActionRow> {
         const maximizeButton = new MessageButton()
-            .setCustomId("maximize")
+            .setCustomId("/man:maximize")
             .setLabel("Maximize")
             .setStyle("PRIMARY");
 
         const minimizeButton = new MessageButton()
-            .setCustomId("minimize")
+            .setCustomId("/man:minimize")
             .setLabel("Minimize")
             .setStyle("PRIMARY");
 
