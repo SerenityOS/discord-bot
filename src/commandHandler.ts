@@ -76,7 +76,7 @@ export default class CommandHandler {
     }
 
     /** Executes user commands contained in a message if appropriate. */
-    async handleBaseCommandInteraction(interaction: BaseCommandInteraction): Promise<void> {
+    async handleInteraction(interaction: BaseCommandInteraction): Promise<void> {
         if (interaction.user.bot) return;
 
         if (!this.production) {
@@ -111,16 +111,9 @@ export default class CommandHandler {
                 content: "I don't recognize that command. Try **!help**.",
             });
 
-        if (interaction.isCommand())
-            await matchedCommand.handleCommand(interaction).catch(error => {
-                console.trace("matchedCommand.handleCommand failed", error);
-                interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
-            });
-
-        if (interaction.isContextMenu() && matchedCommand.handleContextMenu)
-            await matchedCommand.handleContextMenu(interaction).catch(error => {
-                console.trace("matchedCommand.handleContextMenu failed", error);
-                interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
-            });
+        await matchedCommand.run(interaction).catch(error => {
+            console.trace("matchedCommand failed", error);
+            interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
+        });
     }
 }
