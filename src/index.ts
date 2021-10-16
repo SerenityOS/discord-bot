@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import Discord, { Intents, Interaction } from "discord.js";
+import Discord, { Intents, Interaction, Message, MessageEmbed } from "discord.js";
+import githubAPI from "./apis/githubAPI";
 import CommandHandler from "./commandHandler";
+import { ManCommand } from "./commands";
 import config from "./config/botConfig";
 import { DISCORD_TOKEN } from "./config/secrets";
 
@@ -37,12 +39,41 @@ client.on("ready", () => {
     }
 });
 client.on("interactionCreate", async (interaction: Interaction) => {
-    if (interaction.user.bot) return;
+    if (interaction.isButton()) {
+        if (!interaction.channel) return;
+
+        const message: Message = await interaction.channel.messages.fetch(interaction.message.id);
+
+        if (interaction.user.id !== message.interaction?.user.id) {
+            return interaction.reply({
+                ephemeral: true,
+                content: `Only ${message.interaction?.user.tag} can update this embed`,
+            });
+        }
+
+        const collapsed: boolean = interaction.customId === "minimize";
+
+        if (message.embeds.length === 1) {
+            const embed: MessageEmbed = message.embeds[0];
+
+            if (!embed.url) return;
+
+            const result = await githubAPI.fetchSerenityManpageByUrl(embed.url);
+
+            if (result == null) return;
+
+            const { markdown, url, page, section } = result;
+
+            interaction.update({
+                embeds: [ManCommand.embedForMan(markdown, url, section, page, collapsed)],
+            });
+        }
+
+        return;
+    }
 
     if (interaction.isCommand() || interaction.isContextMenu())
         commandHandler.handleBaseCommandInteraction(interaction);
-
-    if (interaction.isButton()) commandHandler.handleButtonInteraction(interaction);
 });
 client.on("error", e => {
     console.error("Discord client error!", e);
