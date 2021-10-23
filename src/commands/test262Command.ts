@@ -22,6 +22,7 @@ import {
     getSkeleyak,
     getYakslice,
     getYaksplode,
+    getYakstack,
 } from "../util/emoji";
 import Command from "./command";
 
@@ -166,6 +167,8 @@ export class Test262Command extends Command {
                 return (await getYaksplode(client))?.toString() ?? label;
             case "runner_exception":
                 return (await getNeoyak(client))?.toString() ?? label;
+            case "todo_error":
+                return (await getYakstack(client))?.toString() ?? label;
             default:
                 return label;
         }
