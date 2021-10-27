@@ -100,7 +100,7 @@ export class GithubCommand extends Command {
             description = description.slice(0, 300) + "...";
         }
 
-        const color = issue.state === "open" ? "#57ab5a" : "#e5534b";
+        const color = issue.state === "open" ? "#57ab5a" : "#6e40c9";
 
         const embed = new MessageEmbed()
             .setColor(color)
