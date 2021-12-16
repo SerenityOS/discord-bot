@@ -116,7 +116,8 @@ export class GithubCommand extends Command {
             .setDescription(description)
             .addField("Type", "Issue", true)
             .addField("Created", `<t:${new Date(issue.created_at).valueOf() / 1000}:R>`, true)
-            .addField("Comments", issue.comments.toString(), true);
+            .addField("Comments", issue.comments.toString(), true)
+            .addField("State", issue.state === "open" ? "Open" : "Closed", true);
 
         const labels = issue.labels
             .map(label => (typeof label === "string" ? label : label.name))
@@ -152,15 +153,25 @@ export class GithubCommand extends Command {
             description = description.slice(0, 300) + "...";
         }
 
+        const state = new Array<string>();
+
         let color: ColorResolvable;
+
+        if (pull.draft) state.push("Draft");
 
         if (pull.merged) {
             color = GitHubColor.Merged;
+
+            state.push("Merged");
         } else if (pull.state === "closed") {
             color = GitHubColor.Closed;
+
+            state.push("Closed");
         } else {
             if (pull.draft) color = GitHubColor.Draft;
             else color = GitHubColor.Open;
+
+            state.push("Open");
         }
 
         const embed = new MessageEmbed()
@@ -171,7 +182,10 @@ export class GithubCommand extends Command {
             .addField("Type", "Pull Request", true)
             .addField("Created", `<t:${new Date(pull.created_at).valueOf() / 1000}:R>`, true)
             .addField("Commits", `${pull.commits} (+${pull.additions} -${pull.deletions})`, true)
-            .addField("Comments", pull.comments.toString(), true);
+            .addField("Comments", pull.comments.toString(), true)
+            // @ts-expect-error Intl.ListFormat is not yet part of the typescript library definitions,
+            //                  see https://github.com/microsoft/TypeScript/issues/46907
+            .addField("State", new Intl.ListFormat().format(state), true);
 
         const labels = pull.labels
             .map(label => label.name)
