@@ -111,7 +111,7 @@ export class GithubCommand extends Command {
 
         const embed = new MessageEmbed()
             .setColor(color)
-            .setTitle(issue.title)
+            .setTitle(`#${issue.number}: ${issue.title}`)
             .setURL(issue.html_url)
             .setDescription(description)
             .addField("Type", "Issue", true)
@@ -176,7 +176,7 @@ export class GithubCommand extends Command {
 
         const embed = new MessageEmbed()
             .setColor(color)
-            .setTitle(pull.title)
+            .setTitle(`#${pull.number}: ${pull.title}`)
             .setURL(pull.html_url)
             .setDescription(description)
             .addField("Type", "Pull Request", true)
