@@ -154,12 +154,13 @@ export class GithubCommand extends Command {
 
         let color: ColorResolvable;
 
-        if (pull.draft) {
-            color = GitHubColor.Draft;
-        } else if (pull.merged) {
+        if (pull.merged) {
             color = GitHubColor.Merged;
+        } else if (pull.state === "closed") {
+            color = GitHubColor.Closed;
         } else {
-            color = pull.state === "open" ? GitHubColor.Open : GitHubColor.Closed;
+            if (pull.draft) color = GitHubColor.Draft;
+            else color = GitHubColor.Open;
         }
 
         const embed = new MessageEmbed()
