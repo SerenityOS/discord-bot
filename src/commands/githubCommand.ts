@@ -16,6 +16,13 @@ import githubAPI from "../apis/githubAPI";
 import { getSadCaret } from "../util/emoji";
 import Command from "./command";
 
+const enum GitHubColor {
+    Open = "#57ab5a",
+    Closed = "#e5534b",
+    Merged = "#6e40c9",
+    Draft = "#768390",
+}
+
 export class GithubCommand extends Command {
     override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
         const options: Array<ApplicationCommandOptionData> = [
@@ -100,7 +107,7 @@ export class GithubCommand extends Command {
             description = description.slice(0, 300) + "...";
         }
 
-        const color = issue.state === "open" ? "#57ab5a" : "#6e40c9";
+        const color = issue.state === "open" ? GitHubColor.Open : GitHubColor.Merged;
 
         const embed = new MessageEmbed()
             .setColor(color)
@@ -148,11 +155,11 @@ export class GithubCommand extends Command {
         let color: ColorResolvable;
 
         if (pull.draft) {
-            color = "#768390";
+            color = GitHubColor.Draft;
         } else if (pull.merged) {
-            color = "#6e40c9";
+            color = GitHubColor.Merged;
         } else {
-            color = pull.state === "open" ? "#57ab5a" : "#e5534b";
+            color = pull.state === "open" ? GitHubColor.Open : GitHubColor.Closed;
         }
 
         const embed = new MessageEmbed()
