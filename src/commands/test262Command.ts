@@ -10,7 +10,7 @@ import {
     CommandInteraction,
     MessageEmbed,
 } from "discord.js";
-import fetch from "node-fetch";
+import axios from "axios";
 import githubAPI from "../apis/githubAPI";
 import {
     getBuggiemagnify,
@@ -74,10 +74,9 @@ export class Test262Command extends Command {
     }
 
     override async handleCommand(interaction: CommandInteraction): Promise<void> {
-        const results: Array<Result> = await (
-            await fetch("https://libjs.dev/test262/data/results.json")
-        ).json();
+        const response = await axios.get<Result[]>("https://libjs.dev/test262/data/results.json");
 
+        const results: Result[] = response.data;
         let result: Result = results[results.length - 1];
         let previousResult: Result = results[results.length - 2];
 
