@@ -78,9 +78,9 @@ export default class CommandHandler {
     /** Executes user commands contained in a message if appropriate. */
     async handleBaseCommandInteraction(interaction: BaseCommandInteraction): Promise<void> {
         if (!this.production) {
-            const msg = `Buggie bot received '${JSON.stringify(interaction)}' from ${
-                interaction.user.tag
-            }`;
+            const msg = `Buggie bot received '${JSON.stringify(interaction, (_, v) =>
+                typeof v === "bigint" ? `${v.toString()}n` : v
+            )} from '${interaction.user.tag}`;
             await interaction.channel?.send(msg);
             await console.log(msg);
         }
