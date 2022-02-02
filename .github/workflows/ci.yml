@@ -25,3 +25,6 @@ jobs:
       - run: yarn lint
         if: ${{ matrix.node-env == 'development' }}
 
+      - run: yarn test
+        if: ${{ matrix.node-env == 'development' }}
+
