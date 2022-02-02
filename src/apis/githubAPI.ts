@@ -135,7 +135,7 @@ class GithubAPI {
     async fetchSerenityFortunes(): Promise<Fortune[]> {
         const requestPath = `GET /repos/${this.repository}/contents/${this.fortunesPath}`;
         const results = await this.octokit.request(requestPath);
-        const json = Buffer.from(results.data["content"], "base64").toString("binary");
+        const json = Buffer.from(results.data["content"], "base64").toString("utf-8");
         return JSON.parse(json);
     }
 
