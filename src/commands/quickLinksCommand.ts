@@ -64,6 +64,12 @@ export class QuickLinksCommand extends Command {
             response: "Configuring the QT Creator IDE: <${this.documentation}/UsingQtCreator.md>`",
             help: "Get a link to the directions for configuring the QT Creator IDE",
         },
+        {
+            name: "vscode",
+            response:
+                "Configuring the Visual Studio Code IDE: <${this.documentation}/VSCodeConfiguration.md>`",
+            help: "Get a link to the directions for configuring the Visual Studio Code IDE",
+        },
     ];
 
     override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
