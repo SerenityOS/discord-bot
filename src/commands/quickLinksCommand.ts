@@ -56,9 +56,9 @@ export class QuickLinksCommand extends Command {
         },
         {
             name: "clion",
-            response: "Configuring the CLion IDE: <${this.documentation}/CLionConfiguration.md>`,
+            response: "Configuring the CLion IDE: <${this.documentation}/CLionConfiguration.md>`",
             help: "Get a link to the directions for configuring the CLion IDE",
-        }
+        },
     ];
 
     override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
