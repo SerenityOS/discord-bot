@@ -56,18 +56,17 @@ export class QuickLinksCommand extends Command {
         },
         {
             name: "clion",
-            response: "Configuring the CLion IDE: <${this.documentation}/CLionConfiguration.md>`",
+            response: `Configuring the CLion IDE: <${this.documentation}/CLionConfiguration.md>`,
             help: "Get a link to the directions for configuring the CLion IDE",
         },
         {
             name: "qtcreator",
-            response: "Configuring the QT Creator IDE: <${this.documentation}/UsingQtCreator.md>`",
+            response: `Configuring the QT Creator IDE: <${this.documentation}/UsingQtCreator.md>`,
             help: "Get a link to the directions for configuring the QT Creator IDE",
         },
         {
             name: "vscode",
-            response:
-                "Configuring the Visual Studio Code IDE: <${this.documentation}/VSCodeConfiguration.md>`",
+            response: `Configuring the Visual Studio Code IDE: <${this.documentation}/VSCodeConfiguration.md>`,
             help: "Get a link to the directions for configuring the Visual Studio Code IDE",
         },
     ];
