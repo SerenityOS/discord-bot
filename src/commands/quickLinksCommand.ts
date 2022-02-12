@@ -59,6 +59,11 @@ export class QuickLinksCommand extends Command {
             response: "Configuring the CLion IDE: <${this.documentation}/CLionConfiguration.md>`",
             help: "Get a link to the directions for configuring the CLion IDE",
         },
+        {
+            name: "qtcreator",
+            response: "Configuring the QT Creator IDE: <${this.documentation}/UsingQtCreator.md>`",
+            help: "Get a link to the directions for configuring the QT Creator IDE",
+        },
     ];
 
     override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
