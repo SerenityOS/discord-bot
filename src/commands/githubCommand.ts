@@ -23,6 +23,8 @@ const enum GitHubColor {
     Draft = "#768390",
 }
 
+const URL_REGEX = /github.com\/SerenityOS\/serenity\/(?:issues|pull)\/(\d+)/g;
+
 export class GithubCommand extends Command {
     override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
         const options: Array<ApplicationCommandOptionData> = [
@@ -34,6 +36,11 @@ export class GithubCommand extends Command {
             {
                 name: "query",
                 description: "A string to query issues and pull requests with",
+                type: "STRING",
+            },
+            {
+                name: "url",
+                description: "The full url to an issue or pull request",
                 type: "STRING",
             },
         ];
@@ -62,11 +69,23 @@ export class GithubCommand extends Command {
     override async handleCommand(interaction: CommandInteraction): Promise<void> {
         const number = interaction.options.getNumber("number");
         const query = interaction.options.getString("query");
+        const url = interaction.options.getString("url");
 
         if (number !== null) {
             const result = await this.embedFromIssueOrPull(await githubAPI.getIssueOrPull(number));
 
             if (result) return await interaction.reply({ embeds: [result] });
+        }
+
+        if (url && URL_REGEX.test(url)) {
+            const matches = url.match(URL_REGEX);
+            if (matches !== null && matches[1]) {
+                const number = parseInt(matches[1]);
+                const result = await this.embedFromIssueOrPull(
+                    await githubAPI.getIssueOrPull(number)
+                );
+                if (result) return await interaction.reply({ embeds: [result] });
+            }
         }
 
         if (query) {
