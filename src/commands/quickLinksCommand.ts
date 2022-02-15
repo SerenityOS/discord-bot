@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, the SerenityOS developers.
+ * Copyright (c) 2022, the SerenityOS developers.
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -68,6 +68,11 @@ export class QuickLinksCommand extends Command {
             name: "vscode",
             response: `Configuring the Visual Studio Code IDE: <${this.documentation}/VSCodeConfiguration.md>`,
             help: "Get a link to the directions for configuring the Visual Studio Code IDE",
+        },
+        {
+            name: "git-rewrite",
+            response: "https://youtu.be/ElRzTuYln0M",
+            help: "Get a link to a video explaining how to rewrite git history",
         },
     ];
 
