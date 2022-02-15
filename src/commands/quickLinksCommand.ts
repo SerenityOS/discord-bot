@@ -13,9 +13,10 @@ export class QuickLinksCommand extends Command {
 
     readonly links: { help: string; response: string; name: string }[] = [
         {
-            name: "faq",
-            response: `FAQ: <${this.documentation}/FAQ.md>`,
-            help: "Get a link to the SerenityOS FAQ",
+            name: "botsrc",
+            response:
+                "Bot Source: <https://github.com/SerenityOS/discord-bot/tree/master/src/commands>",
+            help: "Get a link to the source code for bot commands",
         },
         {
             name: "build",
@@ -23,9 +24,19 @@ export class QuickLinksCommand extends Command {
             help: "Get a link to the build docs",
         },
         {
-            name: "wsl",
-            response: `WSL Specific Notes: <${this.documentation}/BuildInstructionsWindows.md>`,
-            help: "Get a link to the wsl specific notes",
+            name: "clion",
+            response: `Configuring the CLion IDE: <${this.documentation}/CLionConfiguration.md>`,
+            help: "Get a link to the directions for configuring the CLion IDE",
+        },
+        {
+            name: "faq",
+            response: `FAQ: <${this.documentation}/FAQ.md>`,
+            help: "Get a link to the SerenityOS FAQ",
+        },
+        {
+            name: "git-rewrite",
+            response: "https://youtu.be/ElRzTuYln0M",
+            help: "Get a link to a video explaining how to rewrite git history",
         },
         {
             name: "hardware",
@@ -43,10 +54,9 @@ export class QuickLinksCommand extends Command {
             help: "Respond with the iso image policy + FAQ link",
         },
         {
-            name: "botsrc",
-            response:
-                "Bot Source: <https://github.com/SerenityOS/discord-bot/tree/master/src/commands>",
-            help: "Get a link to the source code for bot commands",
+            name: "qtcreator",
+            response: `Configuring the QT Creator IDE: <${this.documentation}/UsingQtCreator.md>`,
+            help: "Get a link to the directions for configuring the QT Creator IDE",
         },
         {
             name: "soytineres",
@@ -55,24 +65,14 @@ export class QuickLinksCommand extends Command {
             help: "!SOytinereS ot emocleW",
         },
         {
-            name: "clion",
-            response: `Configuring the CLion IDE: <${this.documentation}/CLionConfiguration.md>`,
-            help: "Get a link to the directions for configuring the CLion IDE",
-        },
-        {
-            name: "qtcreator",
-            response: `Configuring the QT Creator IDE: <${this.documentation}/UsingQtCreator.md>`,
-            help: "Get a link to the directions for configuring the QT Creator IDE",
-        },
-        {
             name: "vscode",
             response: `Configuring the Visual Studio Code IDE: <${this.documentation}/VSCodeConfiguration.md>`,
             help: "Get a link to the directions for configuring the Visual Studio Code IDE",
         },
         {
-            name: "git-rewrite",
-            response: "https://youtu.be/ElRzTuYln0M",
-            help: "Get a link to a video explaining how to rewrite git history",
+            name: "wsl",
+            response: `WSL Specific Notes: <${this.documentation}/BuildInstructionsWindows.md>`,
+            help: "Get a link to the wsl specific notes",
         },
     ];
 
