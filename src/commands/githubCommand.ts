@@ -23,7 +23,7 @@ const enum GitHubColor {
     Draft = "#768390",
 }
 
-const URL_REGEX = /github.com\/SerenityOS\/serenity\/(?:issues|pull)\/(\d+)/g;
+const URL_REGEX = /.+github.com\/SerenityOS\/serenity\/(?:issues|pull)\/(\d+).+/g;
 
 export class GithubCommand extends Command {
     override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
