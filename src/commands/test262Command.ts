@@ -205,7 +205,11 @@ export class Test262Command extends Command {
             .join("\n");
 
         const embed = new MessageEmbed()
-            .setAuthor(`@${commit.author.login}`, commit.author.avatar_url, commit.author.html_url)
+            .setAuthor({
+                name: commit.author ? commit.author.login : commit.commit.author.name,
+                url: commit.author?.html_url,
+                iconURL: commit.author?.avatar_url,
+            })
             .setTitle(commit.commit.message.split("\n")[0])
             .setDescription(description)
             .setTimestamp(new Date(result.run_timestamp * 1000))
