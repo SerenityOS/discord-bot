@@ -4,7 +4,12 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { BaseCommandInteraction, ButtonInteraction, Client } from "discord.js";
+import {
+    BaseCommandInteraction,
+    ButtonInteraction,
+    Client,
+    SelectMenuInteraction,
+} from "discord.js";
 import {
     EmojiCommand,
     GithubCommand,
@@ -124,6 +129,35 @@ export default class CommandHandler {
             );
     }
 
+    async handleSelectInteraction(interaction: SelectMenuInteraction): Promise<void> {
+        let matchedCommand;
+
+        for (const [names, command] of this.commands.entries()) {
+            for (const name of names) {
+                if (
+                    interaction.inCachedGuild() &&
+                    name.toLowerCase() === interaction.message.interaction?.commandName
+                ) {
+                    matchedCommand = command;
+                    break;
+                }
+            }
+        }
+
+        if (!matchedCommand)
+            return await interaction.reply({
+                ephemeral: true,
+                content: "I don't recognize that command.",
+            });
+
+        if (matchedCommand.handleSelectMenu)
+            return this.callInteractionHandler(
+                matchedCommand,
+                matchedCommand.handleSelectMenu,
+                interaction
+            );
+    }
+
     async handleButtonInteraction(interaction: ButtonInteraction): Promise<void> {
         for (const [, command] of this.commands.entries()) {
             if (!command.buttonData) continue;
@@ -147,7 +181,7 @@ export default class CommandHandler {
         interaction: T & { reply: BaseCommandInteraction["reply"] }
     ): Promise<void> {
         await handler.call(command, interaction).catch(error => {
-            console.trace("matchedCommand.handleContextMenu failed", error);
+            console.trace("matchedCommand.handle{Select|Context}Menu failed", error);
             interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
         });
     }
