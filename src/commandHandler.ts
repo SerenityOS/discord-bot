@@ -113,7 +113,7 @@ export default class CommandHandler {
         if (!matchedCommand)
             return await interaction.reply({
                 ephemeral: true,
-                content: "I don't recognize that command. Try **!help**.",
+                content: "I don't recognize that command.",
             });
 
         if (interaction.isCommand())
