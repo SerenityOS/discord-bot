@@ -101,3 +101,28 @@ export async function getThonk(clientOrParent: ClientOrParent): Promise<Emoji | 
 export async function getYakstack(clientOrParent: ClientOrParent): Promise<Emoji | null> {
     return await getEmoji(clientOrParent, "yakstack");
 }
+
+/** Alias function for the :open_issue: emoji */
+export async function getOpenIssue(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "open_issue");
+}
+
+/** Alias function for the :closed_issue: emoji */
+export async function getClosedIssue(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "closed_issue");
+}
+
+/** Alias function for the :open_pull: emoji */
+export async function getOpenPull(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "open_pull");
+}
+
+/** Alias function for the :closed_pull: emoji */
+export async function getClosedPull(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "closed_pull");
+}
+
+/** Alias function for the :merged_pull: emoji */
+export async function getMergedPull(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "merged_pull");
+}
