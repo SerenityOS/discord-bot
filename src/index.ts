@@ -43,6 +43,8 @@ client.on("interactionCreate", async (interaction: Interaction) => {
         commandHandler.handleBaseCommandInteraction(interaction);
 
     if (interaction.isButton()) commandHandler.handleButtonInteraction(interaction);
+
+    if (interaction.isSelectMenu()) commandHandler.handleSelectInteraction(interaction);
 });
 client.on("error", e => {
     console.error("Discord client error!", e);

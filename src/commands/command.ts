@@ -9,6 +9,7 @@ import {
     ButtonInteraction,
     CommandInteraction,
     ContextMenuInteraction,
+    SelectMenuInteraction,
 } from "discord.js";
 
 export default abstract class Command {
@@ -16,6 +17,8 @@ export default abstract class Command {
     abstract handleCommand(interaction: CommandInteraction): Promise<void>;
 
     handleContextMenu?(interaction: ContextMenuInteraction): Promise<void>;
+
+    handleSelectMenu?(interaction: SelectMenuInteraction): Promise<void>;
 
     handleButton?(interaction: ButtonInteraction): Promise<void>;
 
