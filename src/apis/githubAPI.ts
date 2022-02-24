@@ -25,6 +25,17 @@ export interface Fortune {
     context?: string;
 }
 
+type PromiseResolvedType<T> = T extends Promise<infer R> ? R : never; // from https://timm.preetz.name/articles/typescript-async-function-return-value
+type SearchResultReturnType = Exclude<
+    PromiseResolvedType<ReturnType<Octokit["search"]["issuesAndPullRequests"]>>["data"]["items"],
+    number
+>;
+
+export interface UserIssuesAndPulls {
+    pulls: SearchResultReturnType;
+    issues: SearchResultReturnType;
+}
+
 class GithubAPI {
     private readonly octokit: Octokit;
 
@@ -164,6 +175,30 @@ class GithubAPI {
             return;
         }
         return result.data.number;
+    }
+
+    async fetchUserIssuesAndPulls(username: string): Promise<UserIssuesAndPulls> {
+        const queryOpts = {
+            repo: this.repository,
+            author: username,
+        };
+        let userPulls: SearchResultReturnType = [];
+        const pulls = await this.octokit.search.issuesAndPullRequests({
+            q: Object.entries({ ...queryOpts, is: "pr" })
+                .map(([k, v]) => k + ":" + v)
+                .join("+"),
+            per_page: 20,
+        });
+        if (pulls.status === 200) userPulls = pulls.data.items;
+        let userIssues: SearchResultReturnType = [];
+        const issues = await this.octokit.search.issuesAndPullRequests({
+            q: Object.entries({ ...queryOpts, is: "issue" })
+                .map(([k, v]) => k + ":" + v)
+                .join("+"),
+            per_page: 20,
+        });
+        if (issues.status === 200) userIssues = issues.data.items;
+        return { pulls: userPulls, issues: userIssues };
     }
 }
 
