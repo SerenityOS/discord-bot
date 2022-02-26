@@ -77,7 +77,7 @@ export class UserCommand extends Command {
                         .setPlaceholder("Issues")
                         .addOptions(
                             response.issues.map(issue => ({
-                                label: issue.title,
+                                label: trimString(issue.title),
                                 description: "",
                                 value: issue.number.toString(),
                                 emoji: issue.state === "closed" ? closedIssueEmoji : openIssueEmoji,
@@ -102,7 +102,7 @@ export class UserCommand extends Command {
                                     emoji = closedPullEmoji;
                                 }
                                 return {
-                                    label: pull.title,
+                                    label: trimString(pull.title),
                                     description: "",
                                     value: pull.number.toString(),
                                     emoji: emoji,
@@ -127,4 +127,9 @@ export class UserCommand extends Command {
         );
         if (newEmbed) interaction.update({ embeds: [newEmbed], components: [] });
     }
+}
+
+// Discord limits length of titles to 100 chars.
+function trimString(str: string) {
+    return str.length >= 100 ? str.slice(0, 97) + "..." : str;
 }
