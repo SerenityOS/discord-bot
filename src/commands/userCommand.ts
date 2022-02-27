@@ -122,6 +122,8 @@ export class UserCommand extends Command {
     }
 
     override async handleSelectMenu(interaction: SelectMenuInteraction): Promise<void> {
+        const cachedInteraction = interaction as SelectMenuInteraction<"cached">;
+        if (interaction.user !== cachedInteraction.message.interaction?.user) return;
         const newEmbed = await embedFromIssueOrPull(
             await githubAPI.getIssueOrPull(parseInt(interaction.values[0]))
         );
