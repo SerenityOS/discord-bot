@@ -136,10 +136,8 @@ export default class CommandHandler {
 
         for (const [names, command] of this.commands.entries()) {
             for (const name of names) {
-                if (
-                    interaction.inCachedGuild() &&
-                    name.toLowerCase() === interaction.message.interaction?.commandName
-                ) {
+                const cachedInteraction = interaction as SelectMenuInteraction<"cached">;
+                if (name.toLowerCase() === cachedInteraction.message.interaction?.commandName) {
                     matchedCommand = command;
                     break;
                 }
