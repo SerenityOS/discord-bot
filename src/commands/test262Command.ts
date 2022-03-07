@@ -169,6 +169,8 @@ export class Test262Command extends Command {
                 return (await getNeoyak(client))?.toString() ?? label;
             case "todo_error":
                 return (await getYakstack(client))?.toString() ?? label;
+            case "percentage_passing":
+                return (await getLibjs(client))?.toString() ?? label;
             default:
                 return label;
         }
@@ -227,14 +229,19 @@ export class Test262Command extends Command {
                 : 0;
             const percentageDifference = (percentage - previousPercentage).toFixed(2);
 
+            const libjsEmoji = await Test262Command.statusIconForLabel(
+                client,
+                "percentage_passing"
+            );
+
             if (percentageDifference !== "0.00" && percentageDifference !== "-0.00") {
                 fields.push(
-                    `${(await getLibjs(client))?.toString()} ${percentage.toFixed(2)}% (${
+                    `${libjsEmoji} ${percentage.toFixed(2)}% (${
                         percentageDifference.startsWith("-") ? "" : "+"
                     }${percentageDifference}) `
                 );
             } else {
-                fields.push(`${(await getLibjs(client))?.toString()} ${percentage.toFixed(2)}%`);
+                fields.push(`${libjsEmoji} ${percentage.toFixed(2)}%`);
             }
 
             for (const [label, value] of Object.entries(test.results)) {
