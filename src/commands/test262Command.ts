@@ -20,6 +20,7 @@ import {
     getPoggie,
     getSadCaret,
     getSkeleyak,
+    getYak,
     getYakslice,
     getYaksplode,
     getYakstack,
@@ -153,7 +154,7 @@ export class Test262Command extends Command {
             case "passed":
                 return (await getPoggie(client))?.toString() ?? label;
             case "failed":
-                return "🦬";
+                return (await getYak(client))?.toString() ?? label;
             case "skipped":
                 return (await getBuggiemagnify(client))?.toString() ?? label;
             case "metadata_error":

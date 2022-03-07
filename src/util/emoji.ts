@@ -126,3 +126,8 @@ export async function getClosedPull(clientOrParent: ClientOrParent): Promise<Emo
 export async function getMergedPull(clientOrParent: ClientOrParent): Promise<Emoji | null> {
     return await getEmoji(clientOrParent, "merged_pull");
 }
+
+/** Alias function for the :yak: emoji */
+export async function getYak(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "yak");
+}
