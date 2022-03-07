@@ -269,7 +269,20 @@ export class Test262Command extends Command {
                 }
             }
 
-            embed.addField(`${name} (${test.duration.toFixed(2)}s)`, fields.join(" | "), false);
+            const previousDuration = previousTest?.duration ?? 0;
+            const durationLabel = `${test.duration.toFixed(2)}s`;
+            if (previousDuration - test.duration !== 0) {
+                const difference = test.duration - previousDuration;
+                const differenceSign = difference > 0 ? "+" : "";
+                const differenceLabel = `${differenceSign}${difference.toFixed(2)}s`;
+                embed.addField(
+                    `${name} (${durationLabel}) (${differenceLabel})`,
+                    fields.join(" | "),
+                    false
+                );
+            } else {
+                embed.addField(`${name} (${durationLabel})`, fields.join(" | "), false);
+            }
         }
 
         return embed;
