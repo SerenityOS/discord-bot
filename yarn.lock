@@ -1551,10 +1551,10 @@ normalize-url@^4.1.0:
   resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-4.5.1.tgz#0dd90cf1288ee1d1313b87081c9a5932ee48518a"
   integrity sha512-9UZCFRHQdNrfTpGg8+1INIg93B6zE0aXMVFkw1WFwvO4SlZywU6aLg5Of0Ap/PgcbSw4LNxvMWXMeugwMCX0AA==
 
-octokit-plugin-create-pull-request@^3.10.1:
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/octokit-plugin-create-pull-request/-/octokit-plugin-create-pull-request-3.10.1.tgz#d4a37eabbf7d93aaa5e1a8216fc1de3c0f0802c7"
-  integrity sha512-ajPkxGC+10ran5vUuxeYxFDt2tG5KJDPyIxQm+kOi1JX8dQDO5ikRqZZycpUCz2VBn+wwDRe1vsBP7eeAorBxA==
+octokit-plugin-create-pull-request@^3.11.0:
+  version "3.11.0"
+  resolved "https://registry.yarnpkg.com/octokit-plugin-create-pull-request/-/octokit-plugin-create-pull-request-3.11.0.tgz#11f496176111eaa04955fb2bb7e4d953501423d0"
+  integrity sha512-ZD025HTrm/KoBMRmPYbcCw3tfGomOdAYFB6/K1xiMW+/NFsOyDOeFrEGBbL82b57dhNsPRibs0eL64lpJ3xyvw==
   dependencies:
     "@octokit/types" "^6.8.2"
 
