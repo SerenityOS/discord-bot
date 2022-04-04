@@ -217,7 +217,7 @@ export class Test262Command extends Command {
             .setTitle(commit.commit.message.split("\n")[0])
             .setDescription(description)
             .setTimestamp(new Date(result.run_timestamp * 1000))
-            .setFooter("Tests started");
+            .setFooter({ text: "Tests started" });
 
         for (const [name, test] of Object.entries(result.tests)) {
             const previousTest = previousResult?.tests[name];
