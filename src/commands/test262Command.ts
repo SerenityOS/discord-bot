@@ -16,6 +16,7 @@ import {
     getBuggiemagnify,
     getBuggus,
     getLibjs,
+    getMakemore,
     getNeoyak,
     getPoggie,
     getSadCaret,
@@ -246,10 +247,17 @@ export class Test262Command extends Command {
 
             for (const [label, value] of Object.entries(test.results)) {
                 const previousValue = previousTest?.results[label] ?? 0;
-                const icon = await Test262Command.statusIconForLabel(client, label);
+                let icon = await Test262Command.statusIconForLabel(client, label);
 
                 if (previousValue - value !== 0) {
                     const difference = value - previousValue;
+
+                    // NOTE: Show :makemore: for the number of tests in case they increased.
+                    if (label === "total" && difference > 0) {
+                        const makemore = await getMakemore(client);
+
+                        if (makemore) icon = makemore.toString();
+                    }
 
                     fields.push(`${icon} ${value} (${difference > 0 ? "+" : ""}${difference})`);
 
