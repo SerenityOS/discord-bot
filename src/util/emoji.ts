@@ -131,3 +131,8 @@ export async function getMergedPull(clientOrParent: ClientOrParent): Promise<Emo
 export async function getYak(clientOrParent: ClientOrParent): Promise<Emoji | null> {
     return await getEmoji(clientOrParent, "yak");
 }
+
+/** Alias function for the :makemore: emoji */
+export async function getMakemore(clientOrParent: ClientOrParent): Promise<Emoji | null> {
+    return await getEmoji(clientOrParent, "makemore");
+}
