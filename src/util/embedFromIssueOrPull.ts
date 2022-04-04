@@ -75,7 +75,11 @@ export function embedFromIssue(
     }
 
     if (issue.user != null) {
-        embed.setAuthor(`@${issue.user.login}`, issue.user.avatar_url, issue.user.html_url);
+        embed.setAuthor({
+            name: `@${issue.user.login}`,
+            iconURL: issue.user.avatar_url,
+            url: issue.user.html_url,
+        });
     }
 
     return embed;
@@ -143,7 +147,11 @@ export function embedFromPull(
     }
 
     if (pull.user != null) {
-        embed.setAuthor(`@${pull.user.login}`, pull.user.avatar_url, pull.user.html_url);
+        embed.setAuthor({
+            name: `@${pull.user.login}`,
+            iconURL: pull.user.avatar_url,
+            url: pull.user.html_url,
+        });
     }
 
     return embed;

@@ -174,14 +174,14 @@ export class ManCommand extends Command {
                 embed.addField(paragraph.title, paragraph.content);
 
         if (truncated && !collapsed)
-            embed.setFooter(
-                `The following paragraphs have been truncated: ${paragraphs
+            embed.setFooter({
+                text: `The following paragraphs have been truncated: ${paragraphs
                     .filter(paragraph => paragraph.title && paragraph.truncateFollowingLines)
                     .map(paragraph => paragraph.title)
-                    .join(", ")}`
-            );
+                    .join(", ")}`,
+            });
 
-        if (collapsed) embed.setFooter("React with maximize to expand sections");
+        if (collapsed) embed.setFooter({ text: "React with maximize to expand sections" });
 
         return embed;
     }
