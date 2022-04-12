@@ -166,7 +166,7 @@ export class ManCommand extends Command {
         const embed = new MessageEmbed()
             .setTitle(`${page}(${section})`)
             .setDescription(name ?? "Name not found")
-            .setURL(url)
+            .setURL(`https://man.serenityos.org/man${section}/${page}.html`)
             .setTimestamp();
 
         for (const paragraph of paragraphs)
