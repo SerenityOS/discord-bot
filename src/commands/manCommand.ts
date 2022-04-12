@@ -56,11 +56,11 @@ export class ManCommand extends Command {
         const result = await githubAPI.fetchSerenityManpage(section, page);
 
         if (result) {
-            const { markdown, url } = result;
+            const { markdown, url: githubUrl } = result;
 
             await interaction.reply({
                 fetchReply: true,
-                embeds: [ManCommand.embedForMan(markdown, url, section, page, true)],
+                embeds: [ManCommand.embedForMan(markdown, githubUrl, section, page, true)],
                 components: [await ManCommand.buttons(interaction)],
             });
         } else {
@@ -96,10 +96,10 @@ export class ManCommand extends Command {
 
             if (result == null) return;
 
-            const { markdown, url, page, section } = result;
+            const { markdown, url: githubUrl, page, section } = result;
 
             interaction.update({
-                embeds: [ManCommand.embedForMan(markdown, url, section, page, collapsed)],
+                embeds: [ManCommand.embedForMan(markdown, githubUrl, section, page, collapsed)],
             });
         }
     }
@@ -126,7 +126,7 @@ export class ManCommand extends Command {
 
     static embedForMan(
         markdown: string,
-        url: string,
+        githubUrl: string,
         section: string,
         page: string,
         collapsed: boolean
@@ -141,7 +141,7 @@ export class ManCommand extends Command {
             if (line.startsWith("## ")) {
                 if (currentParagraph.content !== "") {
                     if (currentParagraph.title === "Name") {
-                        name = currentParagraph.content;
+                        name = currentParagraph.content.replace(/[\r\n]/g, "");
                     } else {
                         paragraphs.push(currentParagraph);
                     }
@@ -163,10 +163,16 @@ export class ManCommand extends Command {
             }
         }
 
+        const url = `https://man.serenityos.org/man${section}/${page}.html`;
+
         const embed = new MessageEmbed()
             .setTitle(`${page}(${section})`)
-            .setDescription(name ?? "Name not found")
-            .setURL(`https://man.serenityos.org/man${section}/${page}.html`)
+            .setDescription(
+                `${
+                    name ?? "Name not found"
+                }\n\n[View on GitHub](${githubUrl}) - [View on man.serenityos.org](${url})`
+            )
+            .setURL(url)
             .setTimestamp();
 
         for (const paragraph of paragraphs)
