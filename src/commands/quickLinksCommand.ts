@@ -70,6 +70,12 @@ export class QuickLinksCommand extends Command {
             help: "Get a link to the directions for configuring the Visual Studio Code IDE",
         },
         {
+            name: "whf",
+            response:
+                "WHF is short for 'Well hello friends', the greeting used by Andreas in his coding videos",
+            help: "Explains the meaning of 'whf'",
+        },
+        {
             name: "wsl",
             response: `WSL Specific Notes: <${this.documentation}/BuildInstructionsWindows.md>`,
             help: "Get a link to the wsl specific notes",
