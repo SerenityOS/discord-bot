@@ -29,6 +29,11 @@ export class QuickLinksCommand extends Command {
             help: "Get a link to the directions for configuring the CLion IDE",
         },
         {
+            name: "emacs",
+            response: `Configuring Emacs: <${this.documentation}/EmacsConfiguration.md>`,
+            help: "Get a link to the directions for configuring Emacs",
+        },
+        {
             name: "faq",
             response: `FAQ: <${this.documentation}/FAQ.md>`,
             help: "Get a link to the SerenityOS FAQ",
