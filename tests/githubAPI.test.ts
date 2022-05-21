@@ -1,4 +1,4 @@
-import githubAPI from "../src/apis/githubAPI";
+import githubAPI, { SERENITY_REPOSITORY } from "../src/apis/githubAPI";
 import { GITHUB_TOKEN } from "../src/config/secrets";
 import { assert } from "chai";
 
@@ -14,7 +14,7 @@ describe("githubApi", function () {
         // The test  if the environment is configured for serenity, or
         // if we don't have a github API token setup.
         assert.isFalse(
-            githubAPI.repository.startsWith("SerenityOS"),
+            SERENITY_REPOSITORY.owner === "SerenityOS",
             "We should never run this test against the real repo."
         );
         assert.isDefined(GITHUB_TOKEN, "We need a valid configured github token to run this test.");

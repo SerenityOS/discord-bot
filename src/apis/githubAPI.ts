@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, the SerenityOS developers.
+ * Copyright (c) 2021-2022, the SerenityOS developers.
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -30,6 +30,11 @@ export interface Repository {
     name: string;
 }
 
+export const SERENITY_REPOSITORY = {
+    owner: "SerenityOS",
+    name: "serenity",
+};
+
 type SearchResultReturnType = Exclude<
     Awaited<ReturnType<Octokit["search"]["issuesAndPullRequests"]>>["data"]["items"],
     number
@@ -42,10 +47,6 @@ export interface UserIssuesAndPulls {
 
 class GithubAPI {
     private readonly octokit: Octokit;
-
-    private readonly repositoryOwner: string = "SerenityOS";
-    private readonly repositoryName: string = "serenity";
-    readonly repository: string = `${this.repositoryOwner}/${this.repositoryName}`;
     private readonly manPath: string = "Base/usr/share/man";
     private readonly fortunesPath: string = "Base/res/fortunes.json";
 
@@ -56,8 +57,8 @@ class GithubAPI {
         });
     }
 
-    async searchIssuesOrPulls(query: string) {
-        const qualifiers = [query, `repo:${this.repository}`];
+    async searchIssuesOrPulls(query: string, repository: Repository = SERENITY_REPOSITORY) {
+        const qualifiers = [query, `repo:${repository.owner}/${repository.name}`];
         const results = await this.octokit.search.issuesAndPullRequests({
             q: qualifiers.join("+"),
             per_page: 1,
@@ -70,11 +71,11 @@ class GithubAPI {
         return items[0];
     }
 
-    async getIssueOrPull(number: number) {
+    async getIssueOrPull(number: number, repository: Repository = SERENITY_REPOSITORY) {
         try {
             const results = await this.octokit.issues.get({
-                owner: "SerenityOS",
-                repo: "serenity",
+                owner: repository.owner,
+                repo: repository.name,
                 issue_number: number,
             });
             return results.data;
@@ -84,11 +85,11 @@ class GithubAPI {
         }
     }
 
-    async getPull(number: number) {
+    async getPull(number: number, repository: Repository = SERENITY_REPOSITORY) {
         try {
             const results = await this.octokit.pulls.get({
-                owner: "SerenityOS",
-                repo: "serenity",
+                owner: repository.owner,
+                repo: repository.name,
                 pull_number: number,
             });
             return results.data;
@@ -98,14 +99,14 @@ class GithubAPI {
         }
     }
 
-    async searchCommit(commitHash: string) {
+    async searchCommit(commitHash: string, repository: Repository = SERENITY_REPOSITORY) {
         try {
             const results = await this.octokit.request(
                 "GET /repos/{owner}/{repo}/commits/{commit_sha}",
                 {
                     commit_sha: commitHash,
-                    owner: "SerenityOS",
-                    repo: "serenity",
+                    owner: repository.owner,
+                    repo: repository.name,
                 }
             );
             return results.data;
@@ -122,7 +123,11 @@ class GithubAPI {
 
         if (result === null) return;
 
-        if (result[1] !== this.repository || result[2] !== this.manPath) return;
+        if (
+            result[1] !== `${SERENITY_REPOSITORY.owner}/${SERENITY_REPOSITORY.name}` ||
+            result[2] !== this.manPath
+        )
+            return;
 
         return await this.fetchSerenityManpage(result[3], result[4]);
     }
@@ -130,13 +135,14 @@ class GithubAPI {
     /* Attempts to fetch the content of a man page. */
     async fetchSerenityManpage(section: string, page: string): Promise<ManPage | undefined> {
         try {
+            const repositoryPath = `${SERENITY_REPOSITORY.owner}/${SERENITY_REPOSITORY.name}`;
             const path = `${this.manPath}/man${section}/${page}.md`;
-            const requestPath = `GET /repos/${this.repository}/contents/${path}`;
+            const requestPath = `GET /repos/${repositoryPath}/contents/${path}`;
             const results = await this.octokit.request(requestPath);
             const markdown = Buffer.from(results.data["content"], "base64").toString("binary");
 
             return {
-                url: `https://github.com/${this.repository}/blob/master/${path}`,
+                url: `https://github.com/${repositoryPath}/blob/master/${path}`,
                 section,
                 page,
                 markdown,
@@ -148,7 +154,7 @@ class GithubAPI {
     }
 
     async fetchSerenityFortunes(): Promise<Fortune[]> {
-        const requestPath = `GET /repos/${this.repository}/contents/${this.fortunesPath}`;
+        const requestPath = `GET /repos/${SERENITY_REPOSITORY.owner}/${SERENITY_REPOSITORY.name}/contents/${this.fortunesPath}`;
         const results = await this.octokit.request(requestPath);
         const json = Buffer.from(results.data["content"], "base64").toString("utf-8");
         return JSON.parse(json);
@@ -160,8 +166,8 @@ class GithubAPI {
     ): Promise<number | undefined> {
         const json = JSON.stringify(fortunes, null, 2);
         const result = await composeCreatePullRequest(this.octokit, {
-            owner: this.repositoryOwner,
-            repo: this.repositoryName,
+            owner: SERENITY_REPOSITORY.owner,
+            repo: SERENITY_REPOSITORY.name,
             title: "Base: Add a quote to the fortunes database",
             body: `Triggered by ${triggeredBy} on Discord.`,
             head: `add-quote-${Math.floor(Date.now() / 1000)}`,
@@ -183,7 +189,7 @@ class GithubAPI {
 
     async fetchUserIssuesAndPulls(username: string): Promise<UserIssuesAndPulls> {
         const queryOpts = {
-            repo: this.repository,
+            repo: `${SERENITY_REPOSITORY.owner}/${SERENITY_REPOSITORY.name}`,
             author: username,
         };
         let userPulls: SearchResultReturnType = [];
