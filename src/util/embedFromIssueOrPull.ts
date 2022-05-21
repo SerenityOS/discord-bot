@@ -11,7 +11,7 @@ import {
     InteractionReplyOptions,
     MessageEmbed,
 } from "discord.js";
-import GithubAPI from "../apis/githubAPI";
+import GithubAPI, { Repository } from "../apis/githubAPI";
 import { getSadCaret } from "./emoji";
 
 export const enum GitHubColor {
@@ -37,14 +37,15 @@ export async function embedFromIssueOrPull(
     if (issueOrPull.pull_request) {
         const pull = await GithubAPI.getPull(issueOrPull.number, repository);
 
-        if (pull) return embedFromPull(pull);
+        if (pull) return embedFromPull(pull, repository);
     }
 
-    return embedFromIssue(issueOrPull);
+    return embedFromIssue(issueOrPull, repository);
 }
 
 export function embedFromIssue(
-    issue: RestEndpointMethodTypes["issues"]["get"]["response"]["data"]
+    issue: RestEndpointMethodTypes["issues"]["get"]["response"]["data"],
+    repository: Repository
 ): MessageEmbed {
     let description = issue.body || "";
     if (description.length > 300) {
@@ -55,7 +56,7 @@ export function embedFromIssue(
 
     const embed = new MessageEmbed()
         .setColor(color)
-        .setTitle(`#${issue.number}: ${issue.title}`)
+        .setTitle(`${repository.name} #${issue.number}: ${issue.title}`)
         .setURL(issue.html_url)
         .setDescription(description)
         .addField("Type", "Issue", true)
@@ -94,7 +95,8 @@ export function embedFromIssue(
 }
 
 export function embedFromPull(
-    pull: RestEndpointMethodTypes["pulls"]["get"]["response"]["data"]
+    pull: RestEndpointMethodTypes["pulls"]["get"]["response"]["data"],
+    repository: Repository
 ): MessageEmbed {
     let description = pull.body || "";
     if (description.length > 300) {
@@ -124,7 +126,7 @@ export function embedFromPull(
 
     const embed = new MessageEmbed()
         .setColor(color)
-        .setTitle(`#${pull.number}: ${pull.title}`)
+        .setTitle(`${repository.name} #${pull.number}: ${pull.title}`)
         .setURL(pull.html_url)
         .setDescription(description)
         .addField("Type", "Pull Request", true)
