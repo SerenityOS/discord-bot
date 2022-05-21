@@ -26,8 +26,16 @@ export async function embedFromIssueOrPull(
 ): Promise<MessageEmbed | undefined> {
     if (!issueOrPull) return undefined;
 
+    // FIXME: We already had this information in a nice format when fetching
+    //        issueOrPull, find a way to include that object in the argument.
+    const parts = issueOrPull.repository_url.split("/").reverse();
+    const repository = {
+        owner: parts[1],
+        name: parts[0],
+    };
+
     if (issueOrPull.pull_request) {
-        const pull = await GithubAPI.getPull(issueOrPull.number);
+        const pull = await GithubAPI.getPull(issueOrPull.number, repository);
 
         if (pull) return embedFromPull(pull);
     }
