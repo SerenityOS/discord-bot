@@ -14,7 +14,7 @@ import {
     MessageReference,
     User,
 } from "discord.js";
-import githubAPI from "../apis/githubAPI";
+import githubAPI, { SERENITY_REPOSITORY } from "../apis/githubAPI";
 import { QUOTE_ROLE_ID } from "../config/secrets";
 import { getSadCaret } from "../util/emoji";
 import Command from "./command";
@@ -102,7 +102,7 @@ export class QuoteCommand extends Command {
         }
 
         await interaction.reply(
-            `Pull Request opened! https://github.com/${githubAPI.repository}/pull/${pullRequestNumber}`
+            `Pull Request opened! https://github.com/${SERENITY_REPOSITORY.owner}/${SERENITY_REPOSITORY.name}/pull/${pullRequestNumber}`
         );
     }
 
