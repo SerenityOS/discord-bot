@@ -25,9 +25,13 @@ export interface Fortune {
     context?: string;
 }
 
-type PromiseResolvedType<T> = T extends Promise<infer R> ? R : never; // from https://timm.preetz.name/articles/typescript-async-function-return-value
+export interface Repository {
+    owner: string;
+    name: string;
+}
+
 type SearchResultReturnType = Exclude<
-    PromiseResolvedType<ReturnType<Octokit["search"]["issuesAndPullRequests"]>>["data"]["items"],
+    Awaited<ReturnType<Octokit["search"]["issuesAndPullRequests"]>>["data"]["items"],
     number
 >;
 
