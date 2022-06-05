@@ -5,7 +5,7 @@
   "main": "index.js",
   "license": "BSD-2-Clause",
   "engines": {
-    "node": ">=16.6"
+    "node": "16.x"
   },
   "scripts": {
     "lint": "eslint . --ext .ts",
