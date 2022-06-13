@@ -49,5 +49,26 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 client.on("error", e => {
     console.error("Discord client error!", e);
 });
+client.on("message", message => {
+    if (message.author.bot) return;
+
+    for (const embed of message.embeds) {
+        if (!embed.url) continue;
+
+        const url = new URL(embed.url);
+        if (url.host !== "github.com") continue;
+
+        // eg.: embed.url: "https://github.com/SerenityOS/serenity/blob/master/AK/AllOf.h"
+        //      url.pathname: "/SerenityOS/serenity/blob/master/AK/AllOf.h"
+        //      segments: ["", "SerenityOS", "serenity", "blob", "master", "AK", "AllOf.h"]
+        //      githubUrlType: "blob"
+        const segments = url.pathname.split("/");
+        const githubUrlType: string | undefined = segments[3];
+        if (githubUrlType === "tree" || githubUrlType === "blob") {
+            message.suppressEmbeds();
+            return;
+        }
+    }
+});
 
 client.login(DISCORD_TOKEN);
