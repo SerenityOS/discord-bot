@@ -49,8 +49,10 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 client.on("error", e => {
     console.error("Discord client error!", e);
 });
-client.on("message", message => {
+client.on("message", async message => {
     if (message.author.bot) return;
+
+    await message.fetch();
 
     for (const embed of message.embeds) {
         if (!embed.url) continue;
