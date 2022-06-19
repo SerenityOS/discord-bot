@@ -162,13 +162,14 @@ class GithubAPI {
 
     async openFortunesPullRequest(
         fortunes: Fortune[],
-        triggeredBy: string
+        triggeredBy: string,
+        fortuneAuthor: string
     ): Promise<number | undefined> {
         const json = JSON.stringify(fortunes, null, 2);
         const result = await composeCreatePullRequest(this.octokit, {
             owner: SERENITY_REPOSITORY.owner,
             repo: SERENITY_REPOSITORY.name,
-            title: "Base: Add a quote to the fortunes database",
+            title: `Base: Add a quote from ${fortuneAuthor} to the fortunes database`,
             body: `Triggered by ${triggeredBy} on Discord.`,
             head: `add-quote-${Math.floor(Date.now() / 1000)}`,
             changes: [
