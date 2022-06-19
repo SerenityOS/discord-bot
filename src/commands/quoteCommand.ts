@@ -68,6 +68,10 @@ export class QuoteCommand extends Command {
             });
         }
 
+        // Accessing GitHub APIs for PR creation can easily exceed 3s.
+        // After that, the interaction ID is gone if we don't defer the reply.
+        await interaction.deferReply();
+
         const guildId: string = messageReference.guildId;
         const guild = await this.getGuild(interaction.client, guildId);
         if (!guild) return;
@@ -95,13 +99,11 @@ export class QuoteCommand extends Command {
         if (pullRequestNumber == undefined) {
             const sadcaret = await getSadCaret(interaction);
 
-            return await interaction.reply({
-                content: `Failed creating a pull request ${sadcaret ?? ":^("}`,
-                ephemeral: true,
-            });
+            await interaction.editReply(`Failed creating a pull request ${sadcaret ?? ":^("}`);
+            return;
         }
 
-        await interaction.reply(
+        await interaction.editReply(
             `Pull Request opened! https://github.com/${SERENITY_REPOSITORY.owner}/${SERENITY_REPOSITORY.name}/pull/${pullRequestNumber}`
         );
     }
