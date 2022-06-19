@@ -93,7 +93,8 @@ export class QuoteCommand extends Command {
         const commandIssuerNick = await this.getAuthorNick(guild, interaction.user);
         const pullRequestNumber = await githubAPI.openFortunesPullRequest(
             fortunes,
-            commandIssuerNick
+            commandIssuerNick,
+            nickname
         );
 
         if (pullRequestNumber == undefined) {

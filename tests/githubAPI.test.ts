@@ -31,7 +31,8 @@ describe("githubApi", function () {
         const commandIssuerNick = "Unit Test Executor";
         const pullRequestNumber = await githubAPI.openFortunesPullRequest(
             fortunes,
-            commandIssuerNick
+            commandIssuerNick,
+            "unit tests"
         );
 
         assert.isDefined(
