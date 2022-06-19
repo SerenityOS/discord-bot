@@ -12,7 +12,7 @@ import {
 import Command from "./command";
 
 export class PlanCommand extends Command {
-    private readonly baseReply: string = `> Will SerenityOS support \`$THING\`?\nMaybe. Maybe not. There is no plan.\n\nSee: [FAQ](<https://github.com/SerenityOS/serenity/blob/master/Documentation/FAQ.md>)`;
+    private readonly baseReply: string = `> Will SerenityOS support \`$THING\`?\nMaybe. Maybe not. There is no plan.\n\nSee: [FAQ](<https://github.com/SerenityOS/serenity/blob/master/FAQ.md>)`;
 
     override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
         const description = "Check if a feature is part of the plan";

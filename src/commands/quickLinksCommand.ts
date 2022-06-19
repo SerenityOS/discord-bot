@@ -6,10 +6,11 @@
 
 import { ChatInputApplicationCommandData, CommandInteraction } from "discord.js";
 import Command from "./command";
+import { SERENITY_REPOSITORY } from "../apis/githubAPI";
 
 export class QuickLinksCommand extends Command {
-    private readonly documentation: string =
-        "https://github.com/SerenityOS/serenity/blob/master/Documentation";
+    private readonly repository: string = `https://github.com/${SERENITY_REPOSITORY.owner}/${SERENITY_REPOSITORY.name}/blob/master`;
+    private readonly manpages: string = `${this.repository}/Base/usr/share/man`;
 
     readonly links: { help: string; response: string; name: string }[] = [
         {
@@ -20,22 +21,22 @@ export class QuickLinksCommand extends Command {
         },
         {
             name: "build",
-            response: `How To Build: <${this.documentation}/BuildInstructions.md>`,
+            response: `How To Build: <${this.manpages}/man9/BuildInstructions.md>`,
             help: "Get a link to the build docs",
         },
         {
             name: "clion",
-            response: `Configuring the CLion IDE: <${this.documentation}/CLionConfiguration.md>`,
+            response: `Configuring the CLion IDE: <${this.manpages}/man9/CLionConfiguration.md>`,
             help: "Get a link to the directions for configuring the CLion IDE",
         },
         {
             name: "emacs",
-            response: `Configuring Emacs: <${this.documentation}/EmacsConfiguration.md>`,
+            response: `Configuring Emacs: <${this.manpages}/man9/EmacsConfiguration.md>`,
             help: "Get a link to the directions for configuring Emacs",
         },
         {
             name: "faq",
-            response: `FAQ: <${this.documentation}/FAQ.md>`,
+            response: `FAQ: <${this.repository}/FAQ.md>`,
             help: "Get a link to the SerenityOS FAQ",
         },
         {
@@ -45,22 +46,22 @@ export class QuickLinksCommand extends Command {
         },
         {
             name: "hardware",
-            response: `Hardware Compatibility: <${this.documentation}/HardwareCompatibility.md>`,
+            response: `Hardware Compatibility: <${this.manpages}/man9/HardwareCompatibility.md>`,
             help: "Get a link to the hardware compatibility list",
         },
         {
             name: "install",
-            response: `Installing on real hardware: <${this.documentation}/BareMetalInstallation.md>`,
+            response: `Installing on real hardware: <${this.manpages}/man9/BareMetalInstallation.md>`,
             help: "Get a link to the directions for installing SerenityOS on real hardware",
         },
         {
             name: "iso",
-            response: `There are no ISO images. This project does not cater to non-technical users.\nSee the FAQ: <${this.documentation}/FAQ.md>`,
+            response: `There are no ISO images. This project does not cater to non-technical users.\nSee the FAQ: <${this.repository}/FAQ.md>`,
             help: "Respond with the iso image policy + FAQ link",
         },
         {
             name: "qtcreator",
-            response: `Configuring the QT Creator IDE: <${this.documentation}/UsingQtCreator.md>`,
+            response: `Configuring the QT Creator IDE: <${this.manpages}/man9/UsingQtCreator.md>`,
             help: "Get a link to the directions for configuring the QT Creator IDE",
         },
         {
@@ -71,7 +72,7 @@ export class QuickLinksCommand extends Command {
         },
         {
             name: "vscode",
-            response: `Configuring the Visual Studio Code IDE: <${this.documentation}/VSCodeConfiguration.md>`,
+            response: `Configuring the Visual Studio Code IDE: <${this.manpages}/man9/VSCodeConfiguration.md>`,
             help: "Get a link to the directions for configuring the Visual Studio Code IDE",
         },
         {
@@ -82,7 +83,7 @@ export class QuickLinksCommand extends Command {
         },
         {
             name: "wsl",
-            response: `WSL Specific Notes: <${this.documentation}/BuildInstructionsWindows.md>`,
+            response: `WSL Specific Notes: <${this.manpages}/man9/BuildInstructionsWindows.md>`,
             help: "Get a link to the wsl specific notes",
         },
     ];
