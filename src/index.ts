@@ -52,7 +52,7 @@ client.on("error", e => {
 client.on("messageCreate", async message => {
     if (message.author.bot) return;
 
-    await message.fetch();
+    message = await message.fetch();
 
     for (const embed of message.embeds) {
         if (!embed.url) continue;
