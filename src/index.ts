@@ -49,7 +49,7 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 client.on("error", e => {
     console.error("Discord client error!", e);
 });
-client.on("message", async message => {
+client.on("messageCreate", async message => {
     if (message.author.bot) return;
 
     await message.fetch();
