@@ -50,53 +50,26 @@ client.on("error", e => {
     console.error("Discord client error!", e);
 });
 client.on("messageCreate", async message => {
-    try {
-        if (message.author.bot) {
-            console.log(
-                `messageCreate: Message ${message.id} has been authored by a bot, returning`
-            );
+    if (message.author.bot) return;
+
+    await message.fetch();
+
+    for (const embed of message.embeds) {
+        if (!embed.url) continue;
+
+        const url = new URL(embed.url);
+        if (url.host !== "github.com") continue;
+
+        // eg.: embed.url: "https://github.com/SerenityOS/serenity/blob/master/AK/AllOf.h"
+        //      url.pathname: "/SerenityOS/serenity/blob/master/AK/AllOf.h"
+        //      segments: ["", "SerenityOS", "serenity", "blob", "master", "AK", "AllOf.h"]
+        //      githubUrlType: "blob"
+        const segments = url.pathname.split("/");
+        const githubUrlType: string | undefined = segments[3];
+        if (githubUrlType === "tree" || githubUrlType === "blob") {
+            await message.suppressEmbeds();
             return;
         }
-
-        await message.fetch();
-
-        console.log(`messageCreate: Message ${message.id} has ${message.embeds.length} embeds`);
-
-        for (const embed of message.embeds) {
-            if (!embed.url) {
-                console.log(
-                    `messageCreate: Message ${message.id} has embed without url, trying the next embed`
-                );
-                continue;
-            }
-
-            const url = new URL(embed.url);
-            if (url.host !== "github.com") {
-                console.log(
-                    `messageCreate: Message ${message.id} has embed with non github.com host '${embed.url}', trying the next embed`
-                );
-                continue;
-            }
-
-            // eg.: embed.url: "https://github.com/SerenityOS/serenity/blob/master/AK/AllOf.h"
-            //      url.pathname: "/SerenityOS/serenity/blob/master/AK/AllOf.h"
-            //      segments: ["", "SerenityOS", "serenity", "blob", "master", "AK", "AllOf.h"]
-            //      githubUrlType: "blob"
-            const segments = url.pathname.split("/");
-            const githubUrlType: string | undefined = segments[3];
-
-            console.log(
-                `messageCreate: Message ${message.id} has github embed with type '${githubUrlType}'`
-            );
-
-            if (githubUrlType === "tree" || githubUrlType === "blob") {
-                await message.suppressEmbeds();
-                console.log(`messageCreate: Message ${message.id}'s embeds were suppressed`);
-                return;
-            }
-        }
-    } catch (e) {
-        console.log("messageCreate: A runtime error occurred in the event handler:", e);
     }
 });
 
