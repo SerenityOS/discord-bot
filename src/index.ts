@@ -67,7 +67,7 @@ client.on("messageCreate", async message => {
         const segments = url.pathname.split("/");
         const githubUrlType: string | undefined = segments[3];
         if (githubUrlType === "tree" || githubUrlType === "blob") {
-            message.suppressEmbeds();
+            await message.suppressEmbeds();
             return;
         }
     }
