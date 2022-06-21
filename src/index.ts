@@ -9,6 +9,10 @@ import CommandHandler from "./commandHandler";
 import config from "./config/botConfig";
 import { DISCORD_TOKEN } from "./config/secrets";
 
+process.on("unhandledRejection", reason => {
+    console.log("Unhandled Rejection:", reason);
+});
+
 const client = new Discord.Client({
     intents: [
         Intents.FLAGS.GUILDS,
