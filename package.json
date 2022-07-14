@@ -54,7 +54,7 @@
     "mocha": "^10.0.0",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
-    "ts-node": "^10.8.2"
+    "ts-node": "^10.9.0"
   },
   "dependencies": {
     "@octokit/rest": "^19.0.3",
