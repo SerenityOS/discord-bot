@@ -61,7 +61,7 @@
     "@types/node": "^18.6.1",
     "axios": "^0.27.2",
     "bufferutil": "^4.0.6",
-    "discord.js": "^13.8.1",
+    "discord.js": "^14.0.3",
     "dotenv": "^16.0.1",
     "octokit-plugin-create-pull-request": "^3.12.2",
     "rimraf": "^3.0.2",
