@@ -43,7 +43,7 @@
   "devDependencies": {
     "@octokit/types": "^7.1.1",
     "@typescript-eslint/eslint-plugin": "^5.35.1",
-    "@typescript-eslint/parser": "^5.35.1",
+    "@typescript-eslint/parser": "^5.36.1",
     "eslint": "^8.23.0",
     "@types/chai": "^4.3.3",
     "@types/mocha": "^9.1.1",
