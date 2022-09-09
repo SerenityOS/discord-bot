@@ -1,11 +1,19 @@
 name: "CodeQL Static Analysis"
-on: pull_request
+
+on: 
+  push:
+    branches: [master]
+  pull_request:
+    branches: [main]
 
 jobs:
   CodeQL-Build:
 
     # CodeQL runs on ubuntu-latest and windows-latest
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
 
     steps:
     - name: Checkout repository
