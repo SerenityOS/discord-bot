@@ -1,0 +1,4 @@
+# See: https://github.com/codespell-project/codespell#using-a-config-file
+[codespell]
+skip = ./node_modules,./build,yarn.lock
+contex=6
