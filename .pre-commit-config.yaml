@@ -1,15 +1,32 @@
 repos:
 
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.3.0
+    hooks:
+      - id: check-case-conflict
+
+      - id: check-merge-conflict
+
+      - id: check-yaml
+
+      - id: no-commit-to-branch
+
+      # Make sure not break significant newlines in markdown
+      # files, or yaml action files.
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+        exclude: \.(yaml|yml)$
+
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.1
     hooks:
       - id: codespell
-        name: Checking for spelling issues
+        name: checking for spelling issues
 
   - repo: local
     hooks:
       - id: lint
-        name: Running yarn lint to ensure changes will pass linting on CI
+        name: running yarn lint to ensure changes will pass linting on CI
         entry:  yarn lint
         language: system
         files: \.[jt]sx?$  # *.js, *.jsx, *.ts and *.tsx

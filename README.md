@@ -26,7 +26,7 @@ See: https://www.writebots.com/discord-bot-token/
 Now you can run `yarn start:dev` and the bot will startup, and then restart as you save changes to the source files:
 ```
 $ yarn start:dev
-[nodemon] 2.0.7 
+[nodemon] 2.0.7
 [nodemon] to restart at any time, enter `rs`
 [nodemon] watching path(s): src/**/*
 [nodemon] watching extensions: ts,js
