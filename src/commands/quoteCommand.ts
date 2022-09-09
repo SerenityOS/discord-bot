@@ -137,7 +137,7 @@ export class QuoteCommand extends Command {
         // Option 3: A command was used for quoting
         if (!interaction.isCommand()) return;
 
-        const argument = interaction.options.getString("messsage");
+        const argument = interaction.options.getString("message");
         if (!argument) return;
 
         // Option 3a: The quote was linked
