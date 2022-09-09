@@ -67,7 +67,7 @@ export class QuickLinksCommand extends Command {
             name: "soytineres",
             response:
                 "https://cdn.discordapp.com/attachments/830525235803586570/843838343905411142/IMG_20210517_170429.png",
-            help: "!SOytinereS ot emocleW",
+            help: "!SOytinereS",
         },
         {
             name: "vscode",
