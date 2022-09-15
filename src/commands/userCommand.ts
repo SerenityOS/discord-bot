@@ -6,6 +6,7 @@
 
 import {
     ApplicationCommandData,
+    ApplicationCommandType,
     CommandInteraction,
     MessageActionRow,
     MessageEmbed,
@@ -44,7 +45,7 @@ export class UserCommand extends Command {
             },
             {
                 name: "username",
-                type: "MESSAGE",
+                type: ApplicationCommandType.Message,
             },
         ];
     }

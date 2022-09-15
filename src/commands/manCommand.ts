@@ -177,7 +177,12 @@ export class ManCommand extends Command {
 
         for (const paragraph of paragraphs)
             if ((!collapsed || paragraph.title === "Description") && paragraph.title)
-                embed.addField(paragraph.title, paragraph.content);
+                embed.addFields([
+                    {
+                        name: paragraph.title,
+                        value: paragraph.content,
+                    },
+                ]);
 
         if (truncated && !collapsed)
             embed.setFooter({

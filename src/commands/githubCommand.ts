@@ -111,7 +111,10 @@ export class GithubCommand extends Command {
                         await githubAPI.getIssueOrPull(number, repository)
                     );
 
-                    if (result) return await interaction.reply({ embeds: [result] });
+                    if (result) {
+                        await interaction.reply({ embeds: [result] });
+                        return;
+                    }
                 }
             }
         }
@@ -144,7 +147,10 @@ export class GithubCommand extends Command {
                 await githubAPI.getIssueOrPull(number, repository)
             );
 
-            if (result) return await interaction.reply({ embeds: [result] });
+            if (result) {
+                await interaction.reply({ embeds: [result] });
+                return;
+            }
         }
 
         if (query) {
@@ -152,7 +158,10 @@ export class GithubCommand extends Command {
                 await githubAPI.searchIssuesOrPulls(query, repository)
             );
 
-            if (result) return await interaction.reply({ embeds: [result] });
+            if (result) {
+                await interaction.reply({ embeds: [result] });
+                return;
+            }
         }
 
         const sadcaret = await getSadCaret(interaction);

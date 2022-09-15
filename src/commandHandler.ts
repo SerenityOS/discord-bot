@@ -5,7 +5,8 @@
  */
 
 import {
-    BaseCommandInteraction,
+    ApplicationCommandType,
+    CommandInteraction,
     ButtonInteraction,
     Client,
     SelectMenuInteraction,
@@ -83,7 +84,7 @@ export default class CommandHandler {
     }
 
     /** Executes user commands contained in a message if appropriate. */
-    async handleBaseCommandInteraction(interaction: BaseCommandInteraction): Promise<void> {
+    async handleBaseCommandInteraction(interaction: CommandInteraction): Promise<void> {
         if (!this.production) {
             const msg = `Buggie bot received '${JSON.stringify(interaction, (_, v) =>
                 typeof v === "bigint" ? `${v.toString()}n` : v

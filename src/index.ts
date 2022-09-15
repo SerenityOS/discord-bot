@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import Discord, { Intents, Interaction } from "discord.js";
+import Discord, { ActivityType, GatewayIntentBits, Interaction, Partials } from "discord.js";
 import CommandHandler from "./commandHandler";
 import config from "./config/botConfig";
 import { DISCORD_TOKEN } from "./config/secrets";
@@ -15,11 +15,11 @@ process.on("unhandledRejection", reason => {
 
 const client = new Discord.Client({
     intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildEmojisAndStickers,
     ],
-    partials: ["MESSAGE", "CHANNEL", "REACTION"],
+    partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
 const commandHandler = new CommandHandler(config.production);
@@ -31,7 +31,7 @@ client.on("ready", () => {
             status: "online",
             activities: [
                 {
-                    type: "PLAYING",
+                    type: ActivityType.Playing,
                     name: "Type /help to list commands.",
                 },
             ],
@@ -43,7 +43,7 @@ client.on("ready", () => {
 client.on("interactionCreate", async (interaction: Interaction) => {
     if (interaction.user.bot) return;
 
-    if (interaction.isCommand() || interaction.isContextMenu())
+    if (interaction.isContextMenuCommand())
         commandHandler.handleBaseCommandInteraction(interaction);
 
     if (interaction.isButton()) commandHandler.handleButtonInteraction(interaction);

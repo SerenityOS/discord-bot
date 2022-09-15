@@ -283,13 +283,21 @@ export class Test262Command extends Command {
                 const difference = test.duration - previousDuration;
                 const differenceSign = difference > 0 ? "+" : "";
                 const differenceLabel = `${differenceSign}${difference.toFixed(2)}s`;
-                embed.addField(
-                    `${name} (${durationLabel}) (${differenceLabel})`,
-                    fields.join(" | "),
-                    false
-                );
+                embed.addFields([
+                    {
+                        name: `${name} (${durationLabel}) (${differenceLabel})`,
+                        value: fields.join(" | "),
+                        inline: false,
+                    },
+                ]);
             } else {
-                embed.addField(`${name} (${durationLabel})`, fields.join(" | "), false);
+                embed.addFields([
+                    {
+                        name: `${name} (${durationLabel})`,
+                        value: fields.join(" | "),
+                        inline: false,
+                    },
+                ]);
             }
         }
 

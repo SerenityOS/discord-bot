@@ -6,9 +6,12 @@
 
 import {
     ApplicationCommandData,
-    BaseCommandInteraction,
+    ApplicationCommandOptionType,
+    ApplicationCommandType,
+    CommandInteraction,
+    ChannelType,
     Client,
-    ContextMenuInteraction,
+    ContextMenuCommandInteraction,
     Guild,
     Message,
     MessageReference,
@@ -109,12 +112,12 @@ export class QuoteCommand extends Command {
         );
     }
 
-    override async handleContextMenu(interaction: ContextMenuInteraction): Promise<void> {
+    override async handleContextMenu(interaction: ContextMenuCommandInteraction): Promise<void> {
         return this.handleCommand(interaction);
     }
 
     private async getMessageReference(
-        interaction: BaseCommandInteraction
+        interaction: CommandInteraction
     ): Promise<MessageReference | undefined> {
         if (!interaction.inGuild()) {
             interaction.reply({
@@ -126,7 +129,7 @@ export class QuoteCommand extends Command {
         }
 
         // Option 2: A context menu was used on the quote
-        if (interaction.isContextMenu() && interaction.targetType === "MESSAGE") {
+        if (interaction.isMessageContextMenuCommand()) {
             return {
                 guildId: interaction.guildId,
                 channelId: interaction.channelId,
@@ -175,7 +178,7 @@ export class QuoteCommand extends Command {
         if (messageReference.messageId == null) return;
         try {
             const channel = guild.channels.resolve(messageReference.channelId);
-            if (channel == null || !channel.isText()) return;
+            if (channel == null || !channel.isTextBased()) return;
             return await channel.messages.fetch(messageReference.messageId);
         } catch (e) {
             console.trace(e);
