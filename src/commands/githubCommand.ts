@@ -46,6 +46,18 @@ const repositories: Array<{
             "976984132376744027",
         ],
     },
+    {
+        name: "ladybird",
+        repository: {
+            owner: "SerenityOS",
+            name: "ladybird",
+        },
+        urlRegex: /.+github.com\/SerenityOS\/ladybird\/(?:issues|pull)\/(\d+).*/,
+        defaultChannels: [
+            // #browser-qt
+            "1022888574925947040",
+        ],
+    },
 ];
 
 export class GithubCommand extends Command {
