@@ -19,7 +19,8 @@ const repositories: Array<{
     name: string;
     urlRegex: RegExp;
     repository: Repository;
-    defaultCategories: Array<string>;
+    defaultCategories?: Array<string>;
+    defaultChannels?: Array<string>;
 }> = [
     {
         name: "serenity",
@@ -125,15 +126,32 @@ export class GithubCommand extends Command {
             )?.repository;
         }
 
-        // If no repository name was provided, try to use the channel category to infer a repository
+        // If no repository name was provided, try to use the channel to infer a repository
+        if (repository === undefined) {
+            const channelId = interaction.channel?.id;
+
+            if (channelId) {
+                const findByChannelId = repositories.find(repository =>
+                    repository.defaultChannels?.includes(channelId)
+                );
+
+                if (findByChannelId) repository = findByChannelId.repository;
+            }
+        }
+
+        // If the repository could not be inferred by channel, try to infer by category
         if (repository === undefined) {
             const categoryId = await interaction.channel
                 ?.fetch()
                 .then(channel => (channel instanceof TextChannel ? channel.parentId : undefined));
 
-            repository = repositories.find(repo =>
-                repo.defaultCategories.includes(categoryId as string)
-            )?.repository;
+            if (categoryId) {
+                const findByCategoryId = repositories.find(repository =>
+                    repository.defaultCategories?.includes(categoryId)
+                );
+
+                if (findByCategoryId) repository = findByCategoryId.repository;
+            }
         }
 
         // Fall back to the serenity repository
