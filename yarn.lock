@@ -224,7 +224,7 @@
     "@octokit/plugin-request-log" "^1.0.4"
     "@octokit/plugin-rest-endpoint-methods" "^6.0.0"
 
-"@octokit/types@^6.0.3", "@octokit/types@^6.16.1", "@octokit/types@^6.39.0", "@octokit/types@^6.8.2":
+"@octokit/types@^6.0.3", "@octokit/types@^6.16.1", "@octokit/types@^6.39.0":
   version "6.41.0"
   resolved "https://registry.yarnpkg.com/@octokit/types/-/types-6.41.0.tgz#e58ef78d78596d2fb7df9c6259802464b5f84a04"
   integrity sha512-eJ2jbzjdijiL3B4PrSQaSjuF2sPEQPVCPzBvTHJD9Nz+9dw2SGH4K4xeQJ77YfTq5bRQ+bD8wT11JbeDPmxmGg==
@@ -1381,12 +1381,12 @@ normalize-path@^3.0.0, normalize-path@~3.0.0:
   resolved "https://registry.yarnpkg.com/normalize-path/-/normalize-path-3.0.0.tgz#0dcd69ff23a1c9b11fd0978316644a0388216a65"
   integrity sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==
 
-octokit-plugin-create-pull-request@^3.13.1:
-  version "3.13.1"
-  resolved "https://registry.yarnpkg.com/octokit-plugin-create-pull-request/-/octokit-plugin-create-pull-request-3.13.1.tgz#fe6f15375cc4592dfa25730778c090f9f2721979"
-  integrity sha512-nsWZRn7NrqZvqGl3E0VcDDyyS/4xbNNvwWM2yk65TViLdEBoOhIU5SqKdfqANa+WPwv5DwHsO3T10DK1qMg72w==
+octokit-plugin-create-pull-request@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/octokit-plugin-create-pull-request/-/octokit-plugin-create-pull-request-4.0.0.tgz#1ea0c093882cc4944cd1f72eb4d018b32cc1e97c"
+  integrity sha512-ieo9CHoz4Q4W0Wu7bVTeQUBamH8HwZR+SrARY13cB99/kTCj8rP5SGHpw9cxEvCoZs0LGdoYemiQk+sgPDeU3g==
   dependencies:
-    "@octokit/types" "^6.8.2"
+    "@octokit/types" "^8.0.0"
 
 once@^1.3.0, once@^1.4.0:
   version "1.4.0"
