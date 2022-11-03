@@ -9,6 +9,7 @@
 import { GITHUB_TOKEN } from "../config/secrets";
 import { Octokit } from "@octokit/rest";
 import { composeCreatePullRequest } from "octokit-plugin-create-pull-request";
+import config from "../config/botConfig";
 
 export interface ManPage {
     url: string;
@@ -108,42 +109,93 @@ class GithubAPI {
         }
     }
 
-    async getCommits(author: string, limit = 5, repository: Repository = SERENITY_REPOSITORY) {
+    async getUser(author: string) {
         try {
-            const results = await this.octokit.repos.listCommits({
-                owner: repository.owner,
-                repo: repository.name,
-                author,
-                par_page: limit,
+            let username = author;
+            if (author.includes("@")) {
+                const search = await this.octokit.search.users({
+                    q: `${author.includes("@") ? `${author} in:email` : `user:${author}`}:`,
+                    per_page: 1,
+                });
+
+                if (search.data.total_count <= 0)
+                    throw new Error(`A GitHub user with the primary email ${author} was not found`);
+
+                username = search.data.items[0].login;
+            }
+
+            const results = await this.octokit.users.getByUsername({
+                username,
             });
-            return results.data.slice(0, limit);
-        } catch (e) {
+
+            return results.data;
+        } catch (e: any) {
+            if (e.status === 404) return null;
+
             console.trace(e);
-            return undefined;
+            throw e;
         }
     }
 
-    async getCommitsCount(author: string, repository: Repository = SERENITY_REPOSITORY) {
+    async getCommitsCount(
+        author: string,
+        repository: Repository = SERENITY_REPOSITORY,
+        attempt = 0
+    ): Promise<number | undefined> {
         try {
-            const results = await this.octokit.paginate(
-                this.octokit.repos.listCommits,
-                {
-                    owner: repository.owner,
-                    repo: repository.name,
-                    author,
-                    per_page: 100,
-                },
-                res => res.data
-            );
-            return results.length;
-        } catch (e) {
+            const results = await this.octokit.search.commits({
+                q: `${author.includes("@") ? "author-email" : "author"}:${author}+repo:${
+                    repository.owner
+                }/${repository.name}`,
+                sort: "committer-date",
+                order: "desc",
+                per_page: 1,
+            });
+
+            return results.data?.total_count;
+        } catch (e: any) {
+            // TODO: Generalize rate-limiting retrying?
+            if (e.status === 403 && attempt < 5) {
+                const resetTimestamp = e.response?.headers?.["x-ratelimit-reset"]
+                    ? Number.parseInt(e.response?.headers?.["x-ratelimit-reset"], 10) * 1000
+                    : 0;
+
+                // Use a 60 seconds timeout as a fallback.
+                const timeout =
+                    resetTimestamp > Date.now()
+                        ? resetTimestamp - Date.now() + 1000 * 5
+                        : 1000 * 60;
+
+                console.info(
+                    `github(${repository.owner}/${
+                        repository.name
+                    }): Got rate limited for at least ${timeout / 1000} second(s)`
+                );
+
+                await new Promise(resolve => setTimeout(resolve, timeout));
+                return await this.getCommitsCount(author, repository, ++attempt);
+            }
+
             console.trace(e);
-            return undefined;
+            throw e;
         }
     }
 
-    async searchCommit(commitHash: string, repository: Repository = SERENITY_REPOSITORY) {
+    async searchCommit(
+        commitHash?: string,
+        query?: string,
+        repository: Repository = SERENITY_REPOSITORY
+    ) {
         try {
+            if (query) {
+                const results = await this.octokit.search.commits({
+                    q: `${query}+repo:${repository.owner}/${repository.name}`,
+                    sort: "committer-date",
+                    order: "desc",
+                });
+                return results.data;
+            }
+
             const results = await this.octokit.request(
                 "GET /repos/{owner}/{repo}/commits/{commit_sha}",
                 {
@@ -259,10 +311,12 @@ class GithubAPI {
         const results = await this.octokit.repos.listForOrg({
             org: SERENITY_REPOSITORY.owner,
         });
-        return results.data.map((repo: any) => ({
-            owner: repo.owner.login,
-            name: repo.name,
-        }));
+        return results.data
+            .map(repo => ({
+                owner: repo.owner.login,
+                name: repo.name,
+            }))
+            .filter(({ name }) => !config.excludedRepositories.includes(name));
     }
 }
 

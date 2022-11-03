@@ -11,6 +11,7 @@ import {
     SelectMenuInteraction,
 } from "discord.js";
 import {
+    CommitStatsCommand,
     EmojiCommand,
     GithubCommand,
     ManCommand,
@@ -30,6 +31,7 @@ export default class CommandHandler {
 
     constructor(private readonly production: boolean) {
         const commandClasses = [
+            CommitStatsCommand,
             ManCommand,
             PlanCommand,
             GithubCommand,

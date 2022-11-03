@@ -17,6 +17,7 @@
  * DO NOT export command classes using default
  */
 
+export * from "./commitStatsCommand";
 export * from "./manCommand";
 export * from "./planCommand";
 export * from "./githubCommand";
