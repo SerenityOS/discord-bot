@@ -26,6 +26,7 @@ import {
     getOpenIssue,
     getOpenPull,
 } from "../util/emoji";
+import { trimString } from "../util/text";
 
 export class UserCommand extends Command {
     override data(): ApplicationCommandData | ApplicationCommandData[] {
@@ -129,9 +130,4 @@ export class UserCommand extends Command {
         );
         if (newEmbed) interaction.update({ embeds: [newEmbed], components: [] });
     }
-}
-
-// Discord limits length of titles to 100 chars.
-function trimString(str: string) {
-    return str.length >= 100 ? str.slice(0, 97) + "..." : str;
 }
