@@ -8,13 +8,12 @@ import Discord, { Intents, Interaction } from "discord.js";
 
 import CommandHandler from "./commandHandler";
 import { DISCORD_TOKEN } from "./config/secrets";
-import config from "./config/botConfig";
 import logger from "./util/logger";
 
 logger.info("Starting BuggieBot!");
 
 process.on("unhandledRejection", reason => {
-    console.log("Unhandled Rejection:", reason);
+    logger.info("Unhandled Rejection:", reason);
 });
 
 const client = new Discord.Client({
@@ -27,11 +26,11 @@ const client = new Discord.Client({
 });
 
 logger.setClient(client).then(() => logger.start());
-const commandHandler = new CommandHandler(config.production);
+const commandHandler = new CommandHandler();
 
 client.on("ready", () => {
     if (client.user != null) {
-        console.log(`Logged in as ${client.user.tag}.`);
+        logger.info(`Logged in as ${client.user.tag}. Took ${process.uptime()} seconds!`);
         client.user.setPresence({
             status: "online",
             activities: [
@@ -56,7 +55,7 @@ client.on("interactionCreate", async (interaction: Interaction) => {
     if (interaction.isSelectMenu()) commandHandler.handleSelectInteraction(interaction);
 });
 client.on("error", e => {
-    console.error("Discord client error!", e);
+    logger.error("Discord client error!", e);
 });
 client.on("messageCreate", async message => {
     if (message.author.bot) return;

@@ -10,6 +10,7 @@ import {
     CommandInteraction,
 } from "discord.js";
 import githubAPI, { Commit, Repository } from "../apis/githubAPI";
+import logger from "../util/logger";
 import Command from "./command";
 
 export class CommitStatsCommand extends Command {
@@ -205,7 +206,7 @@ export class CommitStatsCommand extends Command {
                 });
             }
         } catch (e) {
-            console.trace(e);
+            logger.trace(e);
             await interaction.editReply({
                 content: `Something went really wrong :^(\n\n\`\`\`${
                     (e as Error)?.stack ?? e ?? ""

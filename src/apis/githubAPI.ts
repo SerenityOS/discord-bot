@@ -11,6 +11,7 @@ import { Octokit } from "@octokit/rest";
 import { throttling as OctokitThrottling } from "@octokit/plugin-throttling";
 import { composeCreatePullRequest } from "octokit-plugin-create-pull-request";
 import config from "../config/botConfig";
+import logger from "../util/logger";
 
 export interface ManPage {
     url: string;
@@ -94,8 +95,8 @@ class GithubAPI {
                 issue_number: number,
             });
             return results.data;
-        } catch (e) {
-            console.trace(e);
+        } catch (e: any) {
+            logger.trace(e);
             return undefined;
         }
     }
@@ -108,8 +109,8 @@ class GithubAPI {
                 pull_number: number,
             });
             return results.data;
-        } catch (e) {
-            console.trace(e);
+        } catch (e: any) {
+            logger.trace(e);
             return undefined;
         }
     }
@@ -137,7 +138,7 @@ class GithubAPI {
         } catch (e: any) {
             if (e.status === 404) return null;
 
-            console.trace(e);
+            logger.trace(e);
             throw e;
         }
     }
@@ -157,7 +158,7 @@ class GithubAPI {
             });
 
             return results.data?.total_count;
-        } catch (e: any) {
+        } catch (e) {
             console.trace(e);
             throw e;
         }
@@ -187,8 +188,8 @@ class GithubAPI {
                 }
             );
             return results.data;
-        } catch (e) {
-            console.trace(e);
+        } catch (e: any) {
+            logger.trace(e);
             return undefined;
         }
     }
@@ -224,8 +225,8 @@ class GithubAPI {
                 page,
                 markdown,
             };
-        } catch (e) {
-            console.trace(e);
+        } catch (e: any) {
+            logger.trace(e);
             return;
         }
     }
@@ -259,7 +260,7 @@ class GithubAPI {
             ],
         });
         if (result == null) {
-            console.trace("Failed to create pull request");
+            logger.error("Failed to create pull request");
             return;
         }
         return result.data.number;

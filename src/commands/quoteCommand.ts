@@ -17,6 +17,7 @@ import {
 import githubAPI, { SERENITY_REPOSITORY } from "../apis/githubAPI";
 import { QUOTE_ROLE_ID } from "../config/secrets";
 import { getSadCaret } from "../util/emoji";
+import logger from "../util/logger";
 import Command from "./command";
 
 export class QuoteCommand extends Command {
@@ -162,8 +163,8 @@ export class QuoteCommand extends Command {
                 channelId: message.channel.id,
                 messageId: message.id,
             };
-        } catch (e) {
-            console.trace(e);
+        } catch (e: any) {
+            logger.trace(e);
             return;
         }
     }
@@ -177,8 +178,8 @@ export class QuoteCommand extends Command {
             const channel = guild.channels.resolve(messageReference.channelId);
             if (channel == null || !channel.isText()) return;
             return await channel.messages.fetch(messageReference.messageId);
-        } catch (e) {
-            console.trace(e);
+        } catch (e: any) {
+            logger.trace(e);
             return;
         }
     }
@@ -186,8 +187,8 @@ export class QuoteCommand extends Command {
     private async getGuild(client: Client, guildId: string): Promise<Guild | undefined> {
         try {
             return await client.guilds.fetch(guildId);
-        } catch (e) {
-            console.trace(e);
+        } catch (e: any) {
+            logger.trace(e);
             return;
         }
     }

@@ -21,15 +21,17 @@ import {
     Test262Command,
     UserCommand,
 } from "./commands";
+
 import Command from "./commands/command";
-import config from "./config/botConfig";
 import { GUILD_ID } from "./config/secrets";
+import config from "./config/botConfig";
+import logger from "./util/logger";
 
 export default class CommandHandler {
     private readonly commands: Map<string[], Command>;
     private readonly help: string;
 
-    constructor(private readonly production: boolean) {
+    constructor() {
         const commandClasses = [
             CommitStatsCommand,
             ManCommand,
@@ -86,14 +88,6 @@ export default class CommandHandler {
 
     /** Executes user commands contained in a message if appropriate. */
     async handleBaseCommandInteraction(interaction: BaseCommandInteraction): Promise<void> {
-        if (!this.production) {
-            const msg = `Buggie bot received '${JSON.stringify(interaction, (_, v) =>
-                typeof v === "bigint" ? `${v.toString()}n` : v
-            )} from '${interaction.user.tag}`;
-            await interaction.channel?.send(msg);
-            await console.log(msg);
-        }
-
         if (interaction.commandName === "help") {
             return await interaction.reply({
                 ephemeral: true,
@@ -183,7 +177,7 @@ export default class CommandHandler {
         interaction: T & { reply: BaseCommandInteraction["reply"] }
     ): Promise<void> {
         await handler.call(command, interaction).catch(error => {
-            console.trace("matchedCommand.handle{Select|Context}Menu failed", error);
+            logger.trace("matchedCommand.handle{Select|Context}Menu failed", error);
             interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
         });
     }
