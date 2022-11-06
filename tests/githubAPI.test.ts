@@ -1,6 +1,8 @@
+import { assert, expect } from "chai";
 import githubAPI, { SERENITY_REPOSITORY } from "../src/apis/githubAPI";
+
 import { GITHUB_TOKEN } from "../src/config/secrets";
-import { assert } from "chai";
+import config from "../src/config/botConfig";
 
 describe("githubApi", function () {
     // Disable the test timeout for our async tests.
@@ -39,5 +41,23 @@ describe("githubApi", function () {
             pullRequestNumber,
             "We should retrieve a valid pull request number, undefined is an error"
         );
+    });
+
+    describe("fetchSerenityRepos", () => {
+        it("Should be able to fetch repositories", async () => {
+            const repos = await githubAPI.fetchSerenityRepos();
+
+            expect(
+                repos.filter(({ name }) => ["serenity", "jakt"].includes(name)).length
+            ).to.be.greaterThanOrEqual(2);
+        });
+
+        it("Should filter repositories", async () => {
+            const repos = await githubAPI.fetchSerenityRepos();
+
+            expect(
+                repos.filter(({ name }) => config.excludedRepositories.includes(name)).length
+            ).to.be.lessThanOrEqual(0);
+        });
     });
 });
