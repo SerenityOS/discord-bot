@@ -5,9 +5,13 @@
  */
 
 import Discord, { Intents, Interaction } from "discord.js";
+
 import CommandHandler from "./commandHandler";
-import config from "./config/botConfig";
 import { DISCORD_TOKEN } from "./config/secrets";
+import config from "./config/botConfig";
+import logger from "./util/logger";
+
+logger.info("Starting BuggieBot!");
 
 process.on("unhandledRejection", reason => {
     console.log("Unhandled Rejection:", reason);
@@ -22,6 +26,7 @@ const client = new Discord.Client({
     partials: ["MESSAGE", "CHANNEL", "REACTION"],
 });
 
+logger.setClient(client).then(() => logger.start());
 const commandHandler = new CommandHandler(config.production);
 
 client.on("ready", () => {
