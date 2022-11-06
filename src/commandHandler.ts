@@ -14,6 +14,7 @@ import {
     CommitStatsCommand,
     EmojiCommand,
     GithubCommand,
+    LogCommand,
     ManCommand,
     PlanCommand,
     QuickLinksCommand,
@@ -42,6 +43,7 @@ export default class CommandHandler {
             EmojiCommand,
             QuoteCommand,
             UserCommand,
+            LogCommand,
         ];
 
         const availableCommands = new Array<string>();
@@ -112,12 +114,17 @@ export default class CommandHandler {
                 content: "I don't recognize that command.",
             });
 
-        if (interaction.isCommand())
+        if (interaction.isCommand()) {
+            logger.silly(
+                `${interaction.user.tag} is executing ${interaction.commandName}`,
+                interaction.options
+            );
             return this.callInteractionHandler(
                 matchedCommand,
                 matchedCommand.handleCommand,
                 interaction
             );
+        }
 
         if (interaction.isContextMenu() && matchedCommand.handleContextMenu)
             return this.callInteractionHandler(
@@ -177,7 +184,7 @@ export default class CommandHandler {
         interaction: T & { reply: BaseCommandInteraction["reply"] }
     ): Promise<void> {
         await handler.call(command, interaction).catch(error => {
-            logger.trace("matchedCommand.handle{Select|Context}Menu failed", error);
+            logger.trace(error);
             interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
         });
     }

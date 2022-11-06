@@ -26,3 +26,4 @@ export * from "./test262Command";
 export * from "./emojiCommand";
 export * from "./quoteCommand";
 export * from "./userCommand";
+export * from "./logCommand";
