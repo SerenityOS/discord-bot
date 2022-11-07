@@ -8,6 +8,7 @@
 /* eslint camelcase: [2, { "properties": "never" }] */
 import { GITHUB_TOKEN } from "../config/secrets";
 import { Octokit } from "@octokit/rest";
+import { throttling as OctokitThrottling } from "@octokit/plugin-throttling";
 import { composeCreatePullRequest } from "octokit-plugin-create-pull-request";
 import config from "../config/botConfig";
 
@@ -61,9 +62,13 @@ class GithubAPI {
     private readonly fortunesPath: string = "Base/res/fortunes.json";
 
     constructor() {
-        this.octokit = new Octokit({
+        this.octokit = new (Octokit.plugin(OctokitThrottling))({
             userAgent: "BuggieBot",
             auth: GITHUB_TOKEN,
+            throttle: {
+                onRateLimit: () => true,
+                onSecondaryRateLimit: () => true,
+            },
         });
     }
 
@@ -139,8 +144,7 @@ class GithubAPI {
 
     async getCommitsCount(
         author: string,
-        repository: Repository = SERENITY_REPOSITORY,
-        attempt = 0
+        repository: Repository = SERENITY_REPOSITORY
     ): Promise<number | undefined> {
         try {
             const results = await this.octokit.search.commits({
@@ -154,28 +158,6 @@ class GithubAPI {
 
             return results.data?.total_count;
         } catch (e: any) {
-            // TODO: Generalize rate-limiting retrying?
-            if (e.status === 403 && attempt < 5) {
-                const resetTimestamp = e.response?.headers?.["x-ratelimit-reset"]
-                    ? Number.parseInt(e.response?.headers?.["x-ratelimit-reset"], 10) * 1000
-                    : 0;
-
-                // Use a 60 seconds timeout as a fallback.
-                const timeout =
-                    resetTimestamp > Date.now()
-                        ? resetTimestamp - Date.now() + 1000 * 5
-                        : 1000 * 60;
-
-                console.info(
-                    `github(${repository.owner}/${
-                        repository.name
-                    }): Got rate limited for at least ${timeout / 1000} second(s)`
-                );
-
-                await new Promise(resolve => setTimeout(resolve, timeout));
-                return await this.getCommitsCount(author, repository, ++attempt);
-            }
-
             console.trace(e);
             throw e;
         }

@@ -181,6 +181,14 @@
     "@octokit/types" "^6.39.0"
     deprecation "^2.3.1"
 
+"@octokit/plugin-throttling@^4.3.2":
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/@octokit/plugin-throttling/-/plugin-throttling-4.3.2.tgz#d5eb363d5282c74b2839454a87545c5f90591a80"
+  integrity sha512-ZaCK599h3tzcoy0Jtdab95jgmD7X9iAk59E2E7hYKCAmnURaI4WpzwL9vckImilybUGrjY1JOWJapDs2N2D3vw==
+  dependencies:
+    "@octokit/types" "^8.0.0"
+    bottleneck "^2.15.3"
+
 "@octokit/request-error@^2.0.5", "@octokit/request-error@^2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@octokit/request-error/-/request-error-2.1.0.tgz#9e150357831bfc788d13a4fd4b1913d60c74d677"
@@ -506,6 +514,11 @@ binary-extensions@^2.0.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
+
+bottleneck@^2.15.3:
+  version "2.19.5"
+  resolved "https://registry.yarnpkg.com/bottleneck/-/bottleneck-2.19.5.tgz#5df0b90f59fd47656ebe63c78a98419205cadd91"
+  integrity sha512-VHiNCbI1lKdl44tGrhNfU3lup0Tj/ZBMJB5/2ZbNXRCPuRCO7ed2mgcK4r17y+KB2EfuYuRaVlwNbAeaWGSpbw==
 
 brace-expansion@^1.1.7:
   version "1.1.11"
