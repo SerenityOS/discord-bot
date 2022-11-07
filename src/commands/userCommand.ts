@@ -12,11 +12,7 @@ import {
     MessageSelectMenu,
     SelectMenuInteraction,
 } from "discord.js";
-import {
-    embedFromIssueOrPull,
-    noMatchingFoundMessage,
-    GitHubColor,
-} from "../util/embedFromIssueOrPull";
+import { embedFromIssueOrPull, noMatchingFoundMessage } from "../util/embedFromIssueOrPull";
 import githubAPI from "../apis/githubAPI";
 import Command from "./command";
 import {
@@ -27,6 +23,7 @@ import {
     getOpenPull,
 } from "../util/emoji";
 import { trimString } from "../util/text";
+import { GitHubColor } from "../util/color";
 
 export class UserCommand extends Command {
     override data(): ApplicationCommandData | ApplicationCommandData[] {
