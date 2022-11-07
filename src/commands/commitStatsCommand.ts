@@ -71,20 +71,35 @@ export class CommitStatsCommand extends Command {
             await interaction.deferReply({ ephemeral: silent });
 
             const repos = await githubAPI.fetchSerenityRepos();
+
+            // GitHub may return non-complete data for some people
+            // when using either their username or their email (even
+            // if it's connected as the primary one).
+            //
+            // So as a work-around we'll test both the email and the
+            // username to figure out which one of them returns the
+            // complete set of commits.
+            //
+            // https://support.github.com/ticket/personal/0/1867096
+            const useEmail =
+                ((await githubAPI.getCommitsCount(user.email ?? author)) ?? 0) >
+                ((await githubAPI.getCommitsCount(user.login ?? author)) ?? 0);
+
             const userCommits = (
                 await Promise.all(
-                    repos.map<Promise<RepoInfo>>(async repo => ({
-                        repo,
-                        commits:
-                            (
-                                await githubAPI.searchCommit(
-                                    undefined,
-                                    `author:${user.login}`,
-                                    repo
-                                )
-                            )?.items ?? [],
-                        totalCount: await githubAPI.getCommitsCount(user.login ?? author, repo),
-                    }))
+                    repos.map<Promise<RepoInfo>>(async repo => {
+                        const commits = await githubAPI.searchCommit(
+                            undefined,
+                            useEmail ? `author-email:${user.email}` : `author:${user.login}`,
+                            repo
+                        );
+
+                        return {
+                            repo,
+                            commits: commits?.items ?? [],
+                            totalCount: commits.total_count,
+                        };
+                    })
                 )
             ).sort((a, b) => (b.totalCount ?? 0) - (a.totalCount ?? 0));
 
