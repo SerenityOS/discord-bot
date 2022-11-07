@@ -5,6 +5,7 @@
  */
 
 import { Client, Emoji } from "discord.js";
+
 import { GUILD_ID } from "../config/secrets";
 
 type ClientOrParent = Client | { client: Client };
@@ -135,4 +136,17 @@ export async function getYak(clientOrParent: ClientOrParent): Promise<Emoji | nu
 /** Alias function for the :makemore: emoji */
 export async function getMakemore(clientOrParent: ClientOrParent): Promise<Emoji | null> {
     return await getEmoji(clientOrParent, "makemore");
+}
+
+export function toMedal(index: number) {
+    switch (index) {
+        case 1:
+            return "🥇";
+        case 2:
+            return "🥈";
+        case 3:
+            return "🥉";
+        default:
+            return "";
+    }
 }
