@@ -90,9 +90,11 @@ export class ManCommand extends Command {
         if (message.embeds.length === 1) {
             const embed: MessageEmbed = message.embeds[0];
 
-            if (!embed.url) return;
+            if (!embed.description) return;
 
-            const result = await githubAPI.fetchSerenityManpageByUrl(embed.url);
+            const result = await githubAPI.fetchSerenityManpageByUrl(
+                embed.description?.match(/\(([^)]+)\)/)![1]
+            );
 
             if (result == null) return;
 
