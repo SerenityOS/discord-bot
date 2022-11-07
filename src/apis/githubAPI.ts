@@ -215,8 +215,9 @@ class GithubAPI {
             const repositoryPath = `${SERENITY_REPOSITORY.owner}/${SERENITY_REPOSITORY.name}`;
             const path = `${this.manPath}/man${section}/${page}.md`;
             const requestPath = `GET /repos/${repositoryPath}/contents/${path}`;
-            const results = await this.octokit.request(requestPath);
-            const markdown = Buffer.from(results.data["content"], "base64").toString("binary");
+            const { data } = await this.octokit.request(requestPath);
+
+            const markdown = Buffer.from(data.content, data.encoding).toString("utf8");
 
             return {
                 url: `https://github.com/${repositoryPath}/blob/master/${path}`,
