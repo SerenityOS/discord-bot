@@ -7,9 +7,14 @@
 import {
     ApplicationCommandOptionData,
     ChatInputApplicationCommandData,
+    ColorResolvable,
     CommandInteraction,
+    MessageEmbed,
 } from "discord.js";
 import githubAPI, { Commit, Repository } from "../apis/githubAPI";
+import { CommitClubColor, GitHubColor } from "../util/color";
+import { toMedal } from "../util/emoji";
+import { extractCopy, trimString } from "../util/text";
 import Command from "./command";
 
 export class CommitStatsCommand extends Command {
@@ -69,7 +74,6 @@ export class CommitStatsCommand extends Command {
             }
 
             await interaction.deferReply({ ephemeral: silent });
-
             const repos = await githubAPI.fetchSerenityRepos();
 
             // GitHub may return non-complete data for some people
@@ -108,102 +112,66 @@ export class CommitStatsCommand extends Command {
                 0
             );
 
-            if (totalCommits <= 0) {
-                await interaction.editReply({
-                    content: `Couldn't find any contributions from ${user.login} :^(`,
+            const name = `__${user.name ?? user.login}__`;
+            const total = `**${totalCommits.toLocaleString("en-US")}** commit${
+                totalCommits === 0 || totalCommits > 1 ? "s" : ""
+            }`;
+
+            const { title, description, color } = extractCopy(totalCommits, milestonesCopy);
+
+            const card = new MessageEmbed()
+                .setTitle(
+                    title({
+                        name,
+                        total,
+                    })
+                )
+                .setDescription(
+                    description?.({
+                        name,
+                        total,
+                    }) || "\u200b"
+                )
+                .setColor((color?.({}) as ColorResolvable) || GitHubColor.Draft)
+                .setThumbnail(user.avatar_url)
+                .addFields(
+                    ...userCommits
+                        .slice(0, 3)
+                        .filter(({ totalCount }) => totalCount! > 0)
+                        .map(({ repo, commits, totalCount }, index) => ({
+                            name: `${toMedal(index + 1)} **${repo.owner}/${
+                                repo.name
+                            }** - **${totalCount?.toLocaleString("en-US")} commit${
+                                totalCount! > 1 ? "s" : ""
+                            }**`,
+                            value: [
+                                ...commits
+                                    .slice(0, 3)
+                                    .map(
+                                        ({ commit, sha, html_url: url }) =>
+                                            `\u200b\u2001- ${trimString(
+                                                commit.message.split("\n")[0],
+                                                45
+                                            )} ([${sha.slice(0, 7)}](${url})).`
+                                    ),
+                                commits.length > 3
+                                    ? `\u200b\u2001- [**View All...**](<https://github.com/${repo.owner}/${repo.name}/commits?author=${user.login}>)`
+                                    : null,
+                            ]
+                                .filter(a => a)
+                                .join("\n"),
+                        }))
+                        .flat()
+                )
+                .setTimestamp()
+                .setFooter({
+                    text: "SerenityOS Contributor Statistics",
+                    iconURL: "https://github.com/SerenityOS.png",
                 });
-                return;
-            }
 
-            const formatSection = (item: RepoInfo): string[] | null => {
-                const { repo, commits, totalCount } = item;
-
-                if (!totalCount || totalCount <= 0) {
-                    return null;
-                }
-                const { owner, name } = repo;
-
-                const content = [
-                    `**[${owner}/${name}](<https://github.com/${owner}/${name}>)** - **${
-                        totalCount ?? "unknown"
-                    } commits**`,
-                ];
-
-                for (let i = 0; i < commits.length && i < 3; i++) {
-                    const { commit, html_url: url, sha } = commits[i];
-                    content.push(
-                        `    - ${commit.message.split("\n")[0]} ([${sha.slice(0, 7)}](${url})).`
-                    );
-                }
-
-                // If we failed to load the actual commit data
-                if (commits.length <= 0) {
-                    content.push(`    - \`Commits failed to load\``);
-                }
-
-                if (totalCount > 3) {
-                    content.push(
-                        `    - [*View All...*](<https://github.com/${owner}/${name}/commits?author=${user.login}>)`
-                    );
-                }
-
-                return [content.join("\n"), ""];
-            };
-
-            const header = `**__[${user.login}](<${
-                user.html_url
-            }>)__ has landed a total of ${totalCommits} commit${
-                totalCommits == 1 ? "" : "s"
-            } across the SerenityOS project <:catdog:1037719954214092840>**\n`;
-
-            const content = userCommits.map(formatSection).filter(i => i);
-
-            const blocks = [[header], ...content].flat();
-            const complete = blocks.join("\n");
-
-            // Discord messages currently have a hard limit
-            // on 2000 characters per message. even for bots.
-            // The following is to kind of hack around that.
-            if (complete.length <= 2000) {
-                await interaction.editReply({
-                    content: complete,
-                });
-                return;
-            }
-
-            // If we need to split up the content into multiple
-            // messages they'll all have the initial reply as the
-            // parent. So let's keep it short, sweet and to the point.
             await interaction.editReply({
-                content: blocks.shift(),
+                embeds: [card],
             });
-
-            const messages: string[] = [];
-            let message = "";
-
-            // The most stupidly simple way to split up a list
-            // of string into max 2000 characters long messages.
-            // FIXME: Turn this into a utility function?
-            for (let i = 0; i < blocks.length; i++) {
-                const line = blocks[i];
-
-                if ((message + line + "\n").length > 2000) {
-                    messages.push(message);
-                    message = "";
-                }
-
-                message += line + "\n";
-            }
-            if (message != "") messages.push(message);
-
-            for (let i = 0; i < messages.length; i++) {
-                const content = messages[i];
-
-                await interaction.followUp({
-                    ephemeral: silent,
-                    content,
-                });
-            }
         } catch (e) {
             console.trace(e);
             await interaction.editReply({
@@ -214,3 +182,90 @@ export class CommitStatsCommand extends Command {
         }
     }
 }
+
+interface MilestonesContentCopy {
+    [text: string]: (a: { [index: string]: string }) => string;
+}
+
+const milestonesCopy: Array<{
+    min: number;
+    max: number;
+    copy: MilestonesContentCopy;
+}> = [
+    {
+        min: Number.MIN_VALUE,
+        max: 0,
+        copy: {
+            color: () => GitHubColor.Closed,
+            title: ({ name }) => `${name} has not started contributing yet`,
+            description: () =>
+                [
+                    "If you need some inspiration on where to start, you can always",
+                    "[take a look at these issues](<https://github.com/SerenityOS/serenity/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22>).",
+                ].join(" "),
+        },
+    },
+    {
+        min: 1,
+        max: 24,
+        copy: {
+            color: () => GitHubColor.Draft,
+            title: ({ name, total }) =>
+                `A wild ${name} has appeared, and they've already got ${total} under their belt`,
+        },
+    },
+    {
+        min: 25,
+        max: 49,
+        copy: {
+            color: () => GitHubColor.Open,
+            title: ({ name, total }) =>
+                `${name} has so far landed a total of ${total} across the SerenityOS project(s)`,
+        },
+    },
+    {
+        min: 50,
+        max: 99,
+        copy: {
+            color: () => GitHubColor.Open,
+            title: ({ name, total }) =>
+                `${name} has crossed the halfway point on the road to triple digits with their ${total} contributed so far`,
+        },
+    },
+    {
+        min: 100,
+        max: 499,
+        copy: {
+            color: () => CommitClubColor.OneHundred,
+            title: ({ name, total }) =>
+                `${name} is a "100 Commit Club" member with an unbelievable ${total} contributed as of right now`,
+        },
+    },
+    {
+        min: 500,
+        max: 999,
+        copy: {
+            color: () => CommitClubColor.FiveHundred,
+            title: ({ name, total }) =>
+                `${name} is a "500 Commit Club" member with their ${total} contributed so far`,
+        },
+    },
+    {
+        min: 1000,
+        max: 9999,
+        copy: {
+            color: () => CommitClubColor.OneThousand,
+            title: ({ name, total }) =>
+                `${name} is a "1000 Commit Club" member with a whopping ${total} contributed to SerenityOS`,
+        },
+    },
+    {
+        min: 10000,
+        max: Number.MAX_VALUE,
+        copy: {
+            color: () => CommitClubColor.TenThousand,
+            title: ({ name, total }) =>
+                `${name} is a "10,000 Commit Club" member with an incredible ${total}`,
+        },
+    },
+];
