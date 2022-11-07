@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { RestEndpointMethodTypes } from "@octokit/rest";
 import {
     ColorResolvable,
     CommandInteraction,
@@ -12,14 +11,10 @@ import {
     MessageEmbed,
 } from "discord.js";
 import GithubAPI, { Repository } from "../apis/githubAPI";
-import { getSadCaret } from "./emoji";
 
-export const enum GitHubColor {
-    Open = "#57ab5a",
-    Closed = "#e5534b",
-    Merged = "#6e40c9",
-    Draft = "#768390",
-}
+import { GitHubColor } from "./color";
+import { RestEndpointMethodTypes } from "@octokit/rest";
+import { getSadCaret } from "./emoji";
 
 export async function embedFromIssueOrPull(
     issueOrPull: RestEndpointMethodTypes["issues"]["get"]["response"]["data"] | undefined
