@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { ChatInputApplicationCommandData, CommandInteraction } from "discord.js";
+import { ApplicationCommandData, ChatInputCommandInteraction } from "discord.js";
 import Command from "./command";
 
 export class QuickLinksCommand extends Command {
@@ -87,16 +87,20 @@ export class QuickLinksCommand extends Command {
         },
     ];
 
-    override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
+    override data(): ApplicationCommandData[] {
         return this.links.map(link => ({
             name: link.name,
             description: link.help,
         }));
     }
 
-    override async handleCommand(interaction: CommandInteraction): Promise<void> {
+    override async handleCommand(interaction: ChatInputCommandInteraction) {
         for (const link of this.links)
-            if (link.name === interaction.commandName)
-                return interaction.reply({ content: link.response });
+            if (link.name === interaction.commandName) {
+                interaction.reply({ content: link.response });
+                return;
+            }
+
+        throw new Error(`QuickLinksCommand: Invalid command "${interaction.commandName}"`);
     }
 }

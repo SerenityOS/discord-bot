@@ -5,13 +5,15 @@
  */
 
 import {
+    ActionRowBuilder,
+    ButtonBuilder,
     ButtonInteraction,
-    ChatInputApplicationCommandData,
-    CommandInteraction,
+    ButtonStyle,
+    ChatInputCommandInteraction,
+    Embed,
+    EmbedBuilder,
     Interaction,
-    MessageActionRow,
-    MessageButton,
-    MessageEmbed,
+    SlashCommandBuilder,
 } from "discord.js";
 import githubAPI from "../apis/githubAPI";
 import { getMaximize, getMinimize, getSadCaret } from "../util/emoji";
@@ -24,36 +26,36 @@ interface Paragraph {
 }
 
 export class ManCommand extends Command {
-    override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
-        return {
-            name: "man",
-            description: "Display a SerenityOS man page",
-            options: [
-                {
-                    name: "section",
-                    type: "INTEGER",
-                    description: "The section in which the page to display is",
-                    required: true,
-                },
-                {
-                    name: "page",
-                    type: "STRING",
-                    description: "The name of the page to display",
-                    required: true,
-                },
-            ],
-        };
+    override data() {
+        return [
+            new SlashCommandBuilder()
+                .setName("man")
+                .setDescription("Show user's total amount of commits")
+                .addIntegerOption(section =>
+                    section
+                        .setName("section")
+                        .setDescription("The section in which the page to display is")
+                        .setRequired(true)
+                )
+                .addStringOption(page =>
+                    page
+                        .setName("page")
+                        .setDescription("The name of the page to display")
+                        .setRequired(true)
+                )
+                .toJSON(),
+        ];
     }
 
     override buttonData(): Array<string> {
         return ["/man:maximize", "/man:minimize"];
     }
 
-    override async handleCommand(interaction: CommandInteraction): Promise<void> {
+    override async handleCommand(interaction: ChatInputCommandInteraction): Promise<void> {
         const section = interaction.options.getInteger("section", true).toString();
         const page = interaction.options.getString("page", true);
 
-        const result = await githubAPI.fetchSerenityManpage(section, page);
+        const result = await githubAPI.fetchSerenityManpage(section, page).catch(() => null);
 
         if (result) {
             const { markdown, url: githubUrl } = result;
@@ -63,14 +65,14 @@ export class ManCommand extends Command {
                 embeds: [ManCommand.embedForMan(markdown, githubUrl, section, page, true)],
                 components: [await ManCommand.buttons(interaction)],
             });
-        } else {
-            const sadcaret = await getSadCaret(interaction);
-
-            await interaction.reply({
-                ephemeral: true,
-                content: `No matching man page found for ${page}(${section}) ${sadcaret ?? ":^("}`,
-            });
+            return;
         }
+
+        const sadcaret = await getSadCaret(interaction);
+        await interaction.reply({
+            ephemeral: true,
+            content: `No matching man page found for ${page}(${section}) ${sadcaret ?? ":^("}`,
+        });
     }
 
     override async handleButton(interaction: ButtonInteraction): Promise<void> {
@@ -79,16 +81,17 @@ export class ManCommand extends Command {
         const message = await interaction.channel.messages.fetch(interaction.message.id);
 
         if (interaction.user.id !== message.interaction?.user.id) {
-            return interaction.reply({
+            interaction.reply({
                 ephemeral: true,
                 content: `Only ${message.interaction?.user.tag} can update this embed`,
             });
+            return;
         }
 
         const collapsed: boolean = interaction.customId === "/man:minimize";
 
         if (message.embeds.length === 1) {
-            const embed: MessageEmbed = message.embeds[0];
+            const embed: Embed = message.embeds[0];
 
             if (!embed.description) return;
 
@@ -106,16 +109,16 @@ export class ManCommand extends Command {
         }
     }
 
-    static async buttons(interaction: Interaction): Promise<MessageActionRow> {
-        const maximizeButton = new MessageButton()
+    static async buttons(interaction: Interaction) {
+        const maximizeButton = new ButtonBuilder()
             .setCustomId("/man:maximize")
             .setLabel("Maximize")
-            .setStyle("PRIMARY");
+            .setStyle(ButtonStyle.Primary);
 
-        const minimizeButton = new MessageButton()
+        const minimizeButton = new ButtonBuilder()
             .setCustomId("/man:minimize")
             .setLabel("Minimize")
-            .setStyle("PRIMARY");
+            .setStyle(ButtonStyle.Primary);
 
         const maximizeEmote = await getMaximize(interaction);
         const minimizeEmote = await getMinimize(interaction);
@@ -123,7 +126,7 @@ export class ManCommand extends Command {
         if (maximizeEmote) maximizeButton.setEmoji(maximizeEmote.identifier);
         if (minimizeEmote) minimizeButton.setEmoji(minimizeEmote.identifier);
 
-        return new MessageActionRow().addComponents(maximizeButton, minimizeButton);
+        return new ActionRowBuilder<ButtonBuilder>().addComponents(maximizeButton, minimizeButton);
     }
 
     static embedForMan(
@@ -132,7 +135,7 @@ export class ManCommand extends Command {
         section: string,
         page: string,
         collapsed: boolean
-    ): MessageEmbed {
+    ): EmbedBuilder {
         const paragraphs: Array<Paragraph> = new Array<Paragraph>();
 
         let currentParagraph: Paragraph = { content: "" };
@@ -167,7 +170,7 @@ export class ManCommand extends Command {
 
         const url = `https://man.serenityos.org/man${section}/${page}.html`;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setTitle(`${page}(${section})`)
             .setDescription(
                 `${
@@ -179,7 +182,10 @@ export class ManCommand extends Command {
 
         for (const paragraph of paragraphs)
             if ((!collapsed || paragraph.title === "Description") && paragraph.title)
-                embed.addField(paragraph.title, paragraph.content);
+                embed.addFields({
+                    name: paragraph.title,
+                    value: paragraph.content,
+                });
 
         if (truncated && !collapsed)
             embed.setFooter({

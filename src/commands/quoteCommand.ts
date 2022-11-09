@@ -5,14 +5,17 @@
  */
 
 import {
-    ApplicationCommandData,
-    BaseCommandInteraction,
     Client,
-    ContextMenuInteraction,
+    ChatInputCommandInteraction,
     Guild,
     Message,
     MessageReference,
     User,
+    SlashCommandBuilder,
+    ContextMenuCommandBuilder,
+    ApplicationCommandType,
+    ContextMenuCommandInteraction,
+    ChannelType,
 } from "discord.js";
 import githubAPI, { SERENITY_REPOSITORY } from "../apis/githubAPI";
 import { QUOTE_ROLE_ID } from "../config/secrets";
@@ -23,38 +26,43 @@ export class QuoteCommand extends Command {
     private readonly messageLinkRegex: RegExp =
         /https:\/\/(?:(?:ptb|canary)\.)?discord\.com\/channels\/(?<guild>[0-9]{17,18})\/(?<channel>[0-9]{17,18})\/(?<message>[0-9]{17,18})/;
 
-    override data(): ApplicationCommandData | ApplicationCommandData[] {
+    override data() {
+        if (!QUOTE_ROLE_ID) return [];
+
         return [
-            {
-                name: "quote",
-                description: "Quote a message",
-                options: [
-                    {
-                        name: "message",
-                        description: "The id or url of the message to quote",
-                        type: "STRING",
-                    },
-                ],
-            },
-            {
-                name: "quote",
-                type: "MESSAGE",
-            },
+            new SlashCommandBuilder()
+                .setName("quote")
+                .setDescription("Quote a message")
+                .addStringOption(message =>
+                    message
+                        .setName("message")
+                        .setDescription("The id or url of the message to quote")
+                        .setRequired(true)
+                )
+                .toJSON(),
+            new ContextMenuCommandBuilder()
+                .setName("quote")
+                .setType(ApplicationCommandType.Message)
+                .toJSON(),
         ];
     }
 
-    override async handleCommand(interaction: BaseCommandInteraction): Promise<void> {
+    override async handleCommand(interaction: ChatInputCommandInteraction): Promise<void> {
         if (!QUOTE_ROLE_ID) return;
 
         const commandIssuerMember = await interaction.guild?.members?.fetch(interaction.user);
-        if (!commandIssuerMember)
-            return interaction.reply({
+        if (!commandIssuerMember) {
+            interaction.reply({
                 ephemeral: true,
                 content: "Command only available on the SerenityOS Discord Server",
             });
+            return;
+        }
 
-        if (!commandIssuerMember.roles.cache.has(QUOTE_ROLE_ID))
-            return interaction.reply({ ephemeral: true, content: "Insufficient permission" });
+        if (!commandIssuerMember.roles.cache.has(QUOTE_ROLE_ID)) {
+            interaction.reply({ ephemeral: true, content: "Insufficient permission" });
+            return;
+        }
 
         const messageReference = await this.getMessageReference(interaction);
         if (!messageReference) return;
@@ -62,10 +70,11 @@ export class QuoteCommand extends Command {
         if (messageReference.guildId == undefined) {
             const sadcaret = await getSadCaret(interaction);
 
-            return await interaction.reply({
+            await interaction.reply({
                 content: `Failed to obtain the guild ID ${sadcaret ?? ":^("}`,
                 ephemeral: true,
             });
+            return;
         }
 
         // Accessing GitHub APIs for PR creation can easily exceed 3s.
@@ -109,12 +118,12 @@ export class QuoteCommand extends Command {
         );
     }
 
-    override async handleContextMenu(interaction: ContextMenuInteraction): Promise<void> {
-        return this.handleCommand(interaction);
+    override async handleContextMenu(interaction: ContextMenuCommandInteraction): Promise<void> {
+        return this.handleCommand(interaction as unknown as ChatInputCommandInteraction);
     }
 
     private async getMessageReference(
-        interaction: BaseCommandInteraction
+        interaction: ContextMenuCommandInteraction | ChatInputCommandInteraction
     ): Promise<MessageReference | undefined> {
         if (!interaction.inGuild()) {
             interaction.reply({
@@ -126,7 +135,7 @@ export class QuoteCommand extends Command {
         }
 
         // Option 2: A context menu was used on the quote
-        if (interaction.isContextMenu() && interaction.targetType === "MESSAGE") {
+        if (interaction.isContextMenuCommand()) {
             return {
                 guildId: interaction.guildId,
                 channelId: interaction.channelId,
@@ -175,7 +184,7 @@ export class QuoteCommand extends Command {
         if (messageReference.messageId == null) return;
         try {
             const channel = guild.channels.resolve(messageReference.channelId);
-            if (channel == null || !channel.isText()) return;
+            if (channel == null || channel.type !== ChannelType.GuildText) return;
             return await channel.messages.fetch(messageReference.messageId);
         } catch (e) {
             console.trace(e);

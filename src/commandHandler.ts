@@ -1,13 +1,16 @@
 /*
  * Copyright (c) 2021, the SerenityOS developers.
+ * Copyright (c) 2022, Filiph Sandström <filiph.sandstrom@filfatstudios.com>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
 import {
-    BaseCommandInteraction,
+    ApplicationCommandType,
     ButtonInteraction,
     Client,
+    CommandInteraction,
+    Interaction,
     SelectMenuInteraction,
 } from "discord.js";
 import {
@@ -21,9 +24,10 @@ import {
     Test262Command,
     UserCommand,
 } from "./commands";
+
 import Command from "./commands/command";
-import config from "./config/botConfig";
 import { GUILD_ID } from "./config/secrets";
+import config from "./config/botConfig";
 
 export default class CommandHandler {
     private readonly commands: Map<string[], Command>;
@@ -49,13 +53,11 @@ export default class CommandHandler {
                 const command = new commandClass();
                 const data = command.data();
 
-                const dataArray = Array.isArray(data) ? data : [data];
-
-                for (const entry of dataArray)
-                    if (!entry.type || entry.type === "CHAT_INPUT")
+                for (const entry of data)
+                    if (!entry.type || entry.type === ApplicationCommandType.ChatInput)
                         availableCommands.push(`**${entry.name}** - ${entry.description}`);
 
-                return [dataArray.map(entry => entry.name), command];
+                return [data.map(entry => entry.name), command];
             })
         );
 
@@ -85,24 +87,28 @@ export default class CommandHandler {
     }
 
     /** Executes user commands contained in a message if appropriate. */
-    async handleBaseCommandInteraction(interaction: BaseCommandInteraction): Promise<void> {
+    async handleCommandInteraction(interaction: Interaction): Promise<void> {
         if (!this.production) {
-            const msg = `Buggie bot received '${JSON.stringify(interaction, (_, v) =>
-                typeof v === "bigint" ? `${v.toString()}n` : v
+            const msg = `Buggie bot received ${JSON.stringify(
+                interaction,
+                (_, v) => (typeof v === "bigint" ? `${v.toString()}n` : v),
+                4
             )} from '${interaction.user.tag}`;
             await interaction.channel?.send(msg);
             await console.log(msg);
         }
 
+        if (!interaction.isCommand()) throw new Error("Invalid command interaction");
+
         if (interaction.commandName === "help") {
-            return await interaction.reply({
+            await interaction.reply({
                 ephemeral: true,
                 content: this.help,
             });
+            return;
         }
 
         let matchedCommand;
-
         for (const [names, command] of this.commands.entries()) {
             for (const name of names) {
                 if (name.toLowerCase() === interaction.commandName) {
@@ -112,25 +118,37 @@ export default class CommandHandler {
             }
         }
 
-        if (!matchedCommand)
-            return await interaction.reply({
+        if (!matchedCommand) {
+            await interaction.reply({
                 ephemeral: true,
                 content: "I don't recognize that command.",
             });
+            return;
+        }
 
-        if (interaction.isCommand())
-            return this.callInteractionHandler(
-                matchedCommand,
-                matchedCommand.handleCommand,
-                interaction
-            );
+        if (
+            interaction.isContextMenuCommand() ||
+            interaction.isUserContextMenuCommand() ||
+            interaction.isMessageContextMenuCommand()
+        ) {
+            if (matchedCommand.handleContextMenu)
+                return this.callInteractionHandler(
+                    matchedCommand,
+                    matchedCommand.handleContextMenu,
+                    interaction
+                );
 
-        if (interaction.isContextMenu() && matchedCommand.handleContextMenu)
-            return this.callInteractionHandler(
-                matchedCommand,
-                matchedCommand.handleContextMenu,
-                interaction
+            throw new Error(
+                `${matchedCommand.constructor.name}: Missing handleContextMenu handler`
             );
+        }
+
+        // NOTE: At this point we can we be sure that it's a command
+        return this.callInteractionHandler(
+            matchedCommand,
+            matchedCommand.handleCommand,
+            interaction
+        );
     }
 
     async handleSelectInteraction(interaction: SelectMenuInteraction): Promise<void> {
@@ -146,11 +164,13 @@ export default class CommandHandler {
             }
         }
 
-        if (!matchedCommand)
-            return await interaction.reply({
+        if (!matchedCommand) {
+            await interaction.reply({
                 ephemeral: true,
                 content: "I don't recognize that command.",
             });
+            return;
+        }
 
         if (matchedCommand.handleSelectMenu)
             return this.callInteractionHandler(
@@ -158,6 +178,8 @@ export default class CommandHandler {
                 matchedCommand.handleSelectMenu,
                 interaction
             );
+
+        throw new Error(`${matchedCommand.constructor.name}: Missing handleSelectMenu handler`);
     }
 
     async handleButtonInteraction(interaction: ButtonInteraction): Promise<void> {
@@ -175,14 +197,18 @@ export default class CommandHandler {
                 }
             }
         }
+
+        throw new Error(
+            `handleButtonInteraction: No registered command matches "${interaction.customId}"`
+        );
     }
 
     private async callInteractionHandler<T>(
         command: Command,
         handler: (interaction: T) => Promise<void>,
-        interaction: T & { reply: BaseCommandInteraction["reply"] }
+        interaction: T & { reply: CommandInteraction["reply"] }
     ): Promise<void> {
-        await handler.call(command, interaction).catch(error => {
+        return await handler.call(command, interaction).catch(error => {
             console.trace("matchedCommand.handle{Select|Context}Menu failed", error);
             interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
         });

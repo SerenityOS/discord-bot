@@ -7,22 +7,22 @@
 import {
     ApplicationCommandData,
     ButtonInteraction,
-    CommandInteraction,
-    ContextMenuInteraction,
+    ChatInputCommandInteraction,
+    ContextMenuCommandInteraction,
     SelectMenuInteraction,
 } from "discord.js";
 
 export default abstract class Command {
     /** Execute the command. */
-    abstract handleCommand(interaction: CommandInteraction): Promise<void>;
+    abstract handleCommand(interaction: ChatInputCommandInteraction): Promise<void>;
 
-    handleContextMenu?(interaction: ContextMenuInteraction): Promise<void>;
+    handleContextMenu?(interaction: ContextMenuCommandInteraction): Promise<void>;
 
     handleSelectMenu?(interaction: SelectMenuInteraction): Promise<void>;
 
     handleButton?(interaction: ButtonInteraction): Promise<void>;
 
-    abstract data(): ApplicationCommandData | ApplicationCommandData[];
+    abstract data(): ApplicationCommandData[];
 
     buttonData?(): Array<string>;
 }

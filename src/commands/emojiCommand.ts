@@ -4,33 +4,31 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { ChatInputApplicationCommandData, CommandInteraction, MessageEmbed } from "discord.js";
+import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { getEmoji } from "../util/emoji";
 import Command from "./command";
 
 export class EmojiCommand extends Command {
-    override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
-        return {
-            name: "emoji",
-            description: "Make Buggie post an emoji",
-            options: [
-                {
-                    name: "emoji",
-                    description: "The emoji to post",
-                    type: "STRING",
-                    required: true,
-                },
-            ],
-        };
+    override data() {
+        return [
+            new SlashCommandBuilder()
+                .setName("emoji")
+                .setDescription("Make Buggie post an emoji")
+                .addStringOption(emoji =>
+                    emoji.setName("emoji").setDescription("The emoji to post").setRequired(true)
+                )
+                .toJSON(),
+        ];
     }
 
-    override async handleCommand(interaction: CommandInteraction): Promise<void> {
+    override async handleCommand(interaction: ChatInputCommandInteraction) {
         const result = await getEmoji(interaction, interaction.options.getString("emoji", true));
 
         if (result?.url) {
-            return await interaction.reply({
-                embeds: [new MessageEmbed().setThumbnail(result.url)],
+            await interaction.reply({
+                embeds: [new EmbedBuilder().setThumbnail(result.url)],
             });
+            return;
         }
 
         await interaction.reply({ ephemeral: true, content: "Emoji not found" });

@@ -4,12 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import {
-    ChatInputApplicationCommandData,
-    Client,
-    CommandInteraction,
-    MessageEmbed,
-} from "discord.js";
+import { Client, EmbedBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import axios from "axios";
 import githubAPI from "../apis/githubAPI";
 import {
@@ -50,32 +45,28 @@ interface Result {
 /* eslint-enable camelcase */
 
 export class Test262Command extends Command {
-    override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
-        return {
-            name: "test262",
-            description: "Display LibJS test262 results",
-            options: [
-                {
-                    name: "commit",
-                    description: "The commit to use the results from",
-                    type: "STRING",
-                },
-                {
-                    name: "labels",
-                    description: "Print the meaning of label emojis",
-                    type: "STRING",
-                    choices: [
-                        {
+    override data() {
+        return [
+            new SlashCommandBuilder()
+                .setName("test262")
+                .setDescription("Display LibJS test262 results")
+                .addStringOption(commit =>
+                    commit.setName("commit").setDescription("The commit to use the results fro")
+                )
+                .addStringOption(labels =>
+                    labels
+                        .setName("labels")
+                        .setDescription("Print the meaning of label emojis")
+                        .setChoices({
                             name: "labels",
                             value: "labels",
-                        },
-                    ],
-                },
-            ],
-        };
+                        })
+                )
+                .toJSON(),
+        ];
     }
 
-    override async handleCommand(interaction: CommandInteraction): Promise<void> {
+    override async handleCommand(interaction: ChatInputCommandInteraction): Promise<void> {
         const response = await axios.get<Result[]>("https://libjs.dev/test262/data/results.json");
 
         const results: Result[] = response.data;
@@ -94,10 +85,11 @@ export class Test262Command extends Command {
                 );
             }
 
-            return await interaction.reply({
+            await interaction.reply({
                 ephemeral: true,
-                embeds: [new MessageEmbed().setDescription(lines.join("\n"))],
+                embeds: [new EmbedBuilder().setDescription(lines.join("\n"))],
             });
+            return;
         }
 
         const commit = interaction.options.getString("commit");
@@ -119,10 +111,10 @@ export class Test262Command extends Command {
             if (!foundCommit) {
                 const sadcaret = await getSadCaret(interaction);
 
-                return await interaction.reply({
+                await interaction.reply({
                     ephemeral: true,
                     embeds: [
-                        new MessageEmbed()
+                        new EmbedBuilder()
                             .setTitle("Not found")
                             .setDescription(
                                 `Could not find a commit that ran test262 matching '${commit}' ${
@@ -131,6 +123,7 @@ export class Test262Command extends Command {
                             ),
                     ],
                 });
+                return;
             }
         }
 
@@ -181,13 +174,13 @@ export class Test262Command extends Command {
         client: Client,
         result: Result,
         previousResult?: Result
-    ): Promise<MessageEmbed> {
+    ): Promise<EmbedBuilder> {
         const commit = await githubAPI.searchCommit(result.versions.serenity);
 
         if (commit == null) {
             const sadcaret = await getSadCaret(client);
 
-            return new MessageEmbed()
+            return new EmbedBuilder()
                 .setTitle("Error")
                 .setDescription(
                     `Could not fetch the matching commit ('${
@@ -208,7 +201,7 @@ export class Test262Command extends Command {
             })
             .join("\n");
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setAuthor({
                 name: commit.author ? commit.author.login : commit.commit.author.name,
                 url: commit.author?.html_url,
@@ -283,13 +276,17 @@ export class Test262Command extends Command {
                 const difference = test.duration - previousDuration;
                 const differenceSign = difference > 0 ? "+" : "";
                 const differenceLabel = `${differenceSign}${difference.toFixed(2)}s`;
-                embed.addField(
-                    `${name} (${durationLabel}) (${differenceLabel})`,
-                    fields.join(" | "),
-                    false
-                );
+                embed.addFields({
+                    name: `${name} (${durationLabel}) (${differenceLabel})`,
+                    value: fields.join(" | "),
+                    inline: false,
+                });
             } else {
-                embed.addField(`${name} (${durationLabel})`, fields.join(" | "), false);
+                embed.addFields({
+                    name: `${name} (${durationLabel})`,
+                    value: fields.join(" | "),
+                    inline: false,
+                });
             }
         }
 
