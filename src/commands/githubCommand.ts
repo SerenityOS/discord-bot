@@ -4,12 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import {
-    ApplicationCommandOptionData,
-    ChatInputApplicationCommandData,
-    CommandInteraction,
-    TextChannel,
-} from "discord.js";
+import { ChatInputCommandInteraction, SlashCommandBuilder, TextChannel } from "discord.js";
 import githubAPI, { Repository, SERENITY_REPOSITORY } from "../apis/githubAPI";
 import { embedFromIssueOrPull } from "../util/embedFromIssueOrPull";
 import { getSadCaret } from "../util/emoji";
@@ -61,53 +56,36 @@ const repositories: Array<{
 ];
 
 export class GithubCommand extends Command {
-    override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
-        const options: Array<ApplicationCommandOptionData> = [
-            {
-                name: "number",
-                description: "The issue or pull request number",
-                type: "NUMBER",
-            },
-            {
-                name: "query",
-                description: "A string to query issues and pull requests with",
-                type: "STRING",
-            },
-            {
-                name: "url",
-                description: "The full url to an issue or pull request",
-                type: "STRING",
-            },
-            {
-                name: "repository",
-                description: "The repository to query in",
-                type: "STRING",
-                choices: Object.values(repositories).map(({ name }) => ({ name, value: name })),
-            },
-        ];
-
+    override data() {
+        const aliases = ["github", "issue", "pull"];
         const description = "Link an issue or pull request";
 
-        return [
-            {
-                name: "github",
-                description,
-                options,
-            },
-            {
-                name: "issue",
-                description,
-                options,
-            },
-            {
-                name: "pull",
-                description,
-                options,
-            },
-        ];
+        const baseCommand = new SlashCommandBuilder()
+            .setDescription(description)
+            .addNumberOption(number =>
+                number.setName("number").setDescription("The issue or pull request number")
+            )
+            .addStringOption(query =>
+                query
+                    .setName("query")
+                    .setDescription("A string to query issues and pull requests with")
+            )
+            .addStringOption(url =>
+                url.setName("url").setDescription("The full url to an issue or pull request")
+            )
+            .addStringOption(repository =>
+                repository
+                    .setName("repository")
+                    .setDescription("The repository to query in")
+                    .setChoices(
+                        ...Object.values(repositories).map(({ name }) => ({ name, value: name }))
+                    )
+            );
+
+        return aliases.map(name => baseCommand.setName(name).toJSON());
     }
 
-    override async handleCommand(interaction: CommandInteraction): Promise<void> {
+    override async handleCommand(interaction: ChatInputCommandInteraction): Promise<void> {
         const url = interaction.options.getString("url");
         const repositoryName = interaction.options.getString("repository");
         const number = interaction.options.getNumber("number");
@@ -124,7 +102,10 @@ export class GithubCommand extends Command {
                         await githubAPI.getIssueOrPull(number, repository)
                     );
 
-                    if (result) return await interaction.reply({ embeds: [result] });
+                    if (result) {
+                        await interaction.reply({ embeds: [result] });
+                        return;
+                    }
                 }
             }
         }
@@ -174,7 +155,10 @@ export class GithubCommand extends Command {
                 await githubAPI.getIssueOrPull(number, repository)
             );
 
-            if (result) return await interaction.reply({ embeds: [result] });
+            if (result) {
+                await interaction.reply({ embeds: [result] });
+                return;
+            }
         }
 
         if (query) {
@@ -182,11 +166,13 @@ export class GithubCommand extends Command {
                 await githubAPI.searchIssuesOrPulls(query, repository)
             );
 
-            if (result) return await interaction.reply({ embeds: [result] });
+            if (result) {
+                await interaction.reply({ embeds: [result] });
+                return;
+            }
         }
 
         const sadcaret = await getSadCaret(interaction);
-
         await interaction.reply({
             content: `No matching issues or pull requests found ${sadcaret ?? ":^("}`,
             ephemeral: true,

@@ -5,11 +5,10 @@
  */
 
 import {
-    ApplicationCommandOptionData,
-    ChatInputApplicationCommandData,
+    ChatInputCommandInteraction,
     ColorResolvable,
-    CommandInteraction,
-    MessageEmbed,
+    EmbedBuilder,
+    SlashCommandBuilder,
 } from "discord.js";
 import githubAPI, { Commit, Repository } from "../apis/githubAPI";
 import { CommitClubColor, GitHubColor } from "../util/color";
@@ -18,40 +17,35 @@ import { extractCopy, trimString } from "../util/text";
 import Command from "./command";
 
 export class CommitStatsCommand extends Command {
-    override data(): ChatInputApplicationCommandData | ChatInputApplicationCommandData[] {
-        const description = "Show user's total amount of commits";
-        const options: ApplicationCommandOptionData[] = [
-            {
-                name: "author",
-                description: "Username or email of the commit author",
-                type: "STRING",
-                required: true,
-            },
-            {
-                name: "silent",
-                type: "BOOLEAN",
-                description: "Set this to `false` to broadcast the output",
-                required: false,
-            },
-        ];
-
+    override data() {
         return [
-            {
-                name: "commit-stats",
-                description,
-                options,
-            },
+            new SlashCommandBuilder()
+                .setName("commits")
+                .setDescription("Show user's total amount of commits")
+                .addStringOption(author =>
+                    author
+                        .setName("author")
+                        .setDescription("Username or email of the commit author")
+                        .setRequired(true)
+                )
+                .addBooleanOption(silent =>
+                    silent
+                        .setName("silent")
+                        .setDescription("Set this to `false` to broadcast the output")
+                        .setRequired(false)
+                )
+                .toJSON(),
         ];
     }
 
-    override async handleCommand(interaction: CommandInteraction): Promise<void> {
+    override async handleCommand(interaction: ChatInputCommandInteraction): Promise<void> {
         if (!interaction.isCommand()) return;
 
-        const author = interaction.options.getString("author");
+        const author = interaction.options.getString("author", true);
         if (!author) return;
 
         const silent =
-            interaction.options.getBoolean("silent") !== null
+            interaction.options.getBoolean("silent", false) !== null
                 ? (interaction.options.getBoolean("silent") as boolean)
                 : true;
 
@@ -119,7 +113,7 @@ export class CommitStatsCommand extends Command {
 
             const { title, description, color } = extractCopy(totalCommits, milestonesCopy);
 
-            const card = new MessageEmbed()
+            const card = new EmbedBuilder()
                 .setTitle(
                     title({
                         name,

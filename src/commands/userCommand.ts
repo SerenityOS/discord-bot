@@ -5,12 +5,12 @@
  */
 
 import {
-    ApplicationCommandData,
-    CommandInteraction,
-    MessageActionRow,
-    MessageEmbed,
-    MessageSelectMenu,
+    ActionRowBuilder,
+    ChatInputCommandInteraction,
+    EmbedBuilder,
+    SelectMenuBuilder,
     SelectMenuInteraction,
+    SlashCommandBuilder,
 } from "discord.js";
 import { embedFromIssueOrPull, noMatchingFoundMessage } from "../util/embedFromIssueOrPull";
 import githubAPI from "../apis/githubAPI";
@@ -26,68 +26,65 @@ import { trimString } from "../util/text";
 import { GitHubColor } from "../util/color";
 
 export class UserCommand extends Command {
-    override data(): ApplicationCommandData | ApplicationCommandData[] {
+    override data() {
         return [
-            {
-                name: "user",
-                description: "Show user's recent issues and prs",
-                options: [
-                    {
-                        name: "username",
-                        description: "Username to search Github with",
-                        type: "STRING",
-                        required: true,
-                    },
-                ],
-            },
-            {
-                name: "username",
-                type: "MESSAGE",
-            },
+            new SlashCommandBuilder()
+                .setName("user")
+                .setDescription("Show user's recent issues and PRs")
+                .addStringOption(username =>
+                    username
+                        .setName("username")
+                        .setDescription("Username to search Github with")
+                        .setRequired(true)
+                )
+                .toJSON(),
         ];
     }
 
-    override async handleCommand(interaction: CommandInteraction): Promise<void> {
-        await interaction.deferReply();
-        const username = interaction.options.getString("username");
+    override async handleCommand(interaction: ChatInputCommandInteraction) {
+        await interaction.deferReply({ ephemeral: true });
+        const username = interaction.options.getString("username", true);
+
         if (username === null) {
             const message = await noMatchingFoundMessage(interaction);
-            interaction.editReply(message);
-            return;
+            await interaction.editReply(message);
+            throw new Error(message.content);
         }
-        const response = await githubAPI.fetchUserIssuesAndPulls(username);
-        if (response.issues.length === 0 && response.pulls.length === 0) {
+
+        const response = await githubAPI.fetchUserIssuesAndPulls(username).catch(() => null);
+        if (!response || (response.issues.length === 0 && response.pulls.length === 0)) {
             const message = await noMatchingFoundMessage(interaction);
-            interaction.editReply(message);
-            return;
+            await interaction.editReply(message);
+            throw new Error(message.content);
         }
-        const rows = [];
-        const openIssueEmoji = (await getOpenIssue(interaction.client))?.toString() ?? "";
-        const closedIssueEmoji = (await getClosedIssue(interaction.client))?.toString() ?? "";
-        const openPullEmoji = (await getOpenPull(interaction.client))?.toString() ?? "";
-        const mergedPullEmoji = (await getMergedPull(interaction.client))?.toString() ?? "";
-        const closedPullEmoji = (await getClosedPull(interaction.client))?.toString() ?? "";
-        if (response.issues.length > 0) {
+
+        const rows: ActionRowBuilder<SelectMenuBuilder>[] = [];
+        const openIssueEmoji = (await getOpenIssue(interaction.client))?.toString();
+        const closedIssueEmoji = (await getClosedIssue(interaction.client))?.toString();
+        const openPullEmoji = (await getOpenPull(interaction.client))?.toString();
+        const mergedPullEmoji = (await getMergedPull(interaction.client))?.toString();
+        const closedPullEmoji = (await getClosedPull(interaction.client))?.toString();
+
+        if (response.issues.length > 0)
             rows.push(
-                new MessageActionRow().addComponents(
-                    new MessageSelectMenu()
+                new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+                    new SelectMenuBuilder()
                         .setCustomId("issues")
                         .setPlaceholder("Issues")
                         .addOptions(
                             response.issues.map(issue => ({
                                 label: trimString(issue.title),
-                                description: "",
                                 value: issue.number.toString(),
                                 emoji: issue.state === "closed" ? closedIssueEmoji : openIssueEmoji,
                             }))
                         )
                 )
             );
-        }
-        if (response.pulls.length > 0) {
+
+        if (response.pulls.length > 0)
             rows.push(
-                new MessageActionRow().addComponents(
-                    new MessageSelectMenu()
+                new ActionRowBuilder<SelectMenuBuilder>().addComponents(
+                    new SelectMenuBuilder()
                         .setCustomId("pulls")
                         .setPlaceholder("Pull Requests")
                         .addOptions(
@@ -101,7 +98,6 @@ export class UserCommand extends Command {
                                 }
                                 return {
                                     label: trimString(pull.title),
-                                    description: "",
                                     value: pull.number.toString(),
                                     emoji: emoji,
                                 };
@@ -109,22 +105,24 @@ export class UserCommand extends Command {
                         )
                 )
             );
-        }
-        if (rows.length === 0) return;
-        const embed = new MessageEmbed()
+
+        if (rows.length === 0) throw new Error("User has no recent issues or prs");
+        const embed = new EmbedBuilder()
             .setColor(GitHubColor.Open)
             .setTitle(
                 `Select a Pull Request or Issue to display from ${username}'s recent github activity.`
             );
-        await interaction.editReply({ embeds: [embed], components: rows });
+
+        await interaction.editReply({
+            embeds: [embed],
+            components: rows,
+        });
     }
 
-    override async handleSelectMenu(interaction: SelectMenuInteraction): Promise<void> {
-        const cachedInteraction = interaction as SelectMenuInteraction<"cached">;
-        if (interaction.user !== cachedInteraction.message.interaction?.user) return;
+    override async handleSelectMenu(interaction: SelectMenuInteraction) {
         const newEmbed = await embedFromIssueOrPull(
             await githubAPI.getIssueOrPull(parseInt(interaction.values[0]))
         );
-        if (newEmbed) interaction.update({ embeds: [newEmbed], components: [] });
+        if (newEmbed) await interaction.update({ embeds: [newEmbed], components: [] });
     }
 }

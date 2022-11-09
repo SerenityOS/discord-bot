@@ -7,8 +7,8 @@
 import {
     ColorResolvable,
     CommandInteraction,
+    EmbedBuilder,
     InteractionReplyOptions,
-    MessageEmbed,
 } from "discord.js";
 import GithubAPI, { Repository } from "../apis/githubAPI";
 
@@ -18,7 +18,7 @@ import { getSadCaret } from "./emoji";
 
 export async function embedFromIssueOrPull(
     issueOrPull: RestEndpointMethodTypes["issues"]["get"]["response"]["data"] | undefined
-): Promise<MessageEmbed | undefined> {
+): Promise<EmbedBuilder | undefined> {
     if (!issueOrPull) return undefined;
 
     // FIXME: We already had this information in a nice format when fetching
@@ -41,7 +41,7 @@ export async function embedFromIssueOrPull(
 export function embedFromIssue(
     issue: RestEndpointMethodTypes["issues"]["get"]["response"]["data"],
     repository: Repository
-): MessageEmbed {
+): EmbedBuilder {
     let description = issue.body || "";
     if (description.length > 300) {
         description = description.slice(0, 300) + "...";
@@ -49,15 +49,29 @@ export function embedFromIssue(
 
     const color = issue.state === "open" ? GitHubColor.Open : GitHubColor.Merged;
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
         .setColor(color)
         .setTitle(`${repository.name} #${issue.number}: ${issue.title}`)
         .setURL(issue.html_url)
-        .setDescription(description)
-        .addField("Type", "Issue", true)
-        .addField("Created", `<t:${new Date(issue.created_at).valueOf() / 1000}:R>`, true)
-        .addField("Comments", issue.comments.toString(), true)
-        .addField("State", issue.state === "open" ? "Open" : "Closed", true);
+        .setDescription(description || null)
+        .addFields(
+            { name: "Type", value: "Issue", inline: true },
+            {
+                name: "Created",
+                value: `<t:${new Date(issue.created_at).valueOf() / 1000}:R>`,
+                inline: true,
+            },
+            {
+                name: "Comments",
+                value: issue.comments.toString(),
+                inline: true,
+            },
+            {
+                name: "State",
+                value: issue.state === "open" ? "Open" : "Closed",
+                inline: true,
+            }
+        );
 
     const labels = issue.labels
         .map(label => (typeof label === "string" ? label : label.name))
@@ -65,17 +79,21 @@ export function embedFromIssue(
         .join(", ");
 
     if (labels.length !== 0) {
-        embed.addField("Labels", labels, true);
+        embed.addFields({
+            name: "Labels",
+            value: labels,
+            inline: true,
+        });
     }
 
     if (issue.closed_at && issue.closed_by != null) {
-        embed.addField(
-            "Closed",
-            `<t:${new Date(issue.closed_at).valueOf() / 1000}:R> by [${issue.closed_by.login}](${
-                issue.closed_by.html_url
-            })`,
-            true
-        );
+        embed.addFields({
+            name: "Closed",
+            value: `<t:${new Date(issue.closed_at).valueOf() / 1000}:R> by [${
+                issue.closed_by.login
+            }](${issue.closed_by.html_url})`,
+            inline: true,
+        });
     }
 
     if (issue.user != null) {
@@ -92,7 +110,7 @@ export function embedFromIssue(
 export function embedFromPull(
     pull: RestEndpointMethodTypes["pulls"]["get"]["response"]["data"],
     repository: Repository
-): MessageEmbed {
+): EmbedBuilder {
     let description = pull.body || "";
     if (description.length > 300) {
         description = description.slice(0, 300) + "...";
@@ -119,18 +137,36 @@ export function embedFromPull(
         state.push("Open");
     }
 
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
         .setColor(color)
         .setTitle(`${repository.name} #${pull.number}: ${pull.title}`)
         .setURL(pull.html_url)
-        .setDescription(description)
-        .addField("Type", "Pull Request", true)
-        .addField("Created", `<t:${new Date(pull.created_at).valueOf() / 1000}:R>`, true)
-        .addField("Commits", `${pull.commits} (+${pull.additions} -${pull.deletions})`, true)
-        .addField("Comments", pull.comments.toString(), true)
-        // @ts-expect-error Intl.ListFormat is not yet part of the typescript library definitions,
-        //                  see https://github.com/microsoft/TypeScript/issues/46907
-        .addField("State", new Intl.ListFormat().format(state), true);
+        .setDescription(description || null)
+        .addFields(
+            { name: "Type", value: "Pull Request", inline: true },
+            {
+                name: "Created",
+                value: `<t:${new Date(pull.created_at).valueOf() / 1000}:R>`,
+                inline: true,
+            },
+            {
+                name: "Commits",
+                value: `${pull.commits} (+${pull.additions} -${pull.deletions})`,
+                inline: true,
+            },
+            {
+                name: "Comments",
+                value: pull.comments.toString(),
+                inline: true,
+            },
+            {
+                name: "State",
+                // @ts-expect-error Intl.ListFormat is not yet part of the typescript library definitions,
+                //                  see https://github.com/microsoft/TypeScript/issues/46907
+                value: new Intl.ListFormat().format(state),
+                inline: true,
+            }
+        );
 
     const labels = pull.labels
         .map(label => label.name)
@@ -138,17 +174,21 @@ export function embedFromPull(
         .join(", ");
 
     if (pull.labels.length !== 0) {
-        embed.addField("Labels", labels, true);
+        embed.addFields({
+            name: "Labels",
+            value: labels,
+            inline: true,
+        });
     }
 
     if (pull.merged && pull.merged_at && pull.merged_by != null) {
-        embed.addField(
-            "Merged",
-            `<t:${new Date(pull.merged_at).valueOf() / 1000}:R> by [${pull.merged_by.login}](${
-                pull.merged_by.html_url
-            })`,
-            true
-        );
+        embed.addFields({
+            name: "Merged",
+            value: `<t:${new Date(pull.merged_at).valueOf() / 1000}:R> by [${
+                pull.merged_by.login
+            }](${pull.merged_by.html_url})`,
+            inline: true,
+        });
     }
 
     if (pull.user != null) {
