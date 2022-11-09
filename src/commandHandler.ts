@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+import * as Commands from "./commands";
+
 import {
     ApplicationCommandType,
     ButtonInteraction,
@@ -13,17 +15,6 @@ import {
     Interaction,
     SelectMenuInteraction,
 } from "discord.js";
-import {
-    CommitStatsCommand,
-    EmojiCommand,
-    GithubCommand,
-    ManCommand,
-    PlanCommand,
-    QuickLinksCommand,
-    QuoteCommand,
-    Test262Command,
-    UserCommand,
-} from "./commands";
 
 import Command from "./commands/command";
 import { GUILD_ID } from "./config/secrets";
@@ -34,22 +25,10 @@ export default class CommandHandler {
     private readonly help: string;
 
     constructor(private readonly production: boolean) {
-        const commandClasses = [
-            CommitStatsCommand,
-            ManCommand,
-            PlanCommand,
-            GithubCommand,
-            QuickLinksCommand,
-            Test262Command,
-            EmojiCommand,
-            QuoteCommand,
-            UserCommand,
-        ];
-
         const availableCommands = new Array<string>();
 
         this.commands = new Map(
-            commandClasses.map(commandClass => {
+            Object.values(Commands).map(commandClass => {
                 const command = new commandClass();
                 const data = command.data();
 
