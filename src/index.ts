@@ -5,7 +5,13 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import Discord, { ActivityType, GatewayIntentBits, Interaction, Partials } from "discord.js";
+import Discord, {
+    ActivityType,
+    Events,
+    GatewayIntentBits,
+    Interaction,
+    Partials,
+} from "discord.js";
 
 import CommandHandler from "./commandHandler";
 import { DISCORD_TOKEN } from "./config/secrets";
@@ -26,7 +32,7 @@ const client = new Discord.Client({
 
 const commandHandler = new CommandHandler(config.production);
 
-client.on("ready", () => {
+client.once(Events.ClientReady, () => {
     if (client.user != null) {
         console.log(`Logged in as ${client.user.tag}.`);
         client.user.setPresence({
@@ -42,7 +48,7 @@ client.on("ready", () => {
         commandHandler.registerInteractions(client);
     }
 });
-client.on("interactionCreate", async (interaction: Interaction) => {
+client.on(Events.InteractionCreate, async (interaction: Interaction) => {
     if (interaction.user.bot) return;
 
     if (interaction.isCommand() || interaction.isContextMenuCommand())
@@ -52,10 +58,10 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 
     if (interaction.isSelectMenu()) commandHandler.handleSelectInteraction(interaction);
 });
-client.on("error", e => {
+client.on(Events.Error, e => {
     console.error("Discord client error!", e);
 });
-client.on("messageCreate", async message => {
+client.on(Events.MessageCreate, async message => {
     if (message.author.bot) return;
 
     message = await message.fetch();
