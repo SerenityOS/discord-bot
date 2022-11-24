@@ -1582,9 +1582,9 @@ shebang-regex@^3.0.0:
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
 
 simple-update-notifier@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/simple-update-notifier/-/simple-update-notifier-1.0.7.tgz#7edf75c5bdd04f88828d632f762b2bc32996a9cc"
-  integrity sha512-BBKgR84BJQJm6WjWFMHgLVuo61FBDSj1z/xSFUIozqO6wO7ii0JxCqlIud7Enr/+LhlbNI0whErq96P2qHNWew==
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/simple-update-notifier/-/simple-update-notifier-1.0.8.tgz#d78fd1857da58e115127bf363bcd9c1973585082"
+  integrity sha512-KPXw773wEyrIIhjZh83kmHGrmiAWTxwhAFOhN09IIN1I6ZAmh1luQnS9KPmFaz3X53dcIJ4II80iYV7z7LsUjQ==
   dependencies:
     semver "~7.0.0"
 
