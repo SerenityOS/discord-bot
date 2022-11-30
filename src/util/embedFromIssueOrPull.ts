@@ -9,6 +9,7 @@ import {
     CommandInteraction,
     EmbedBuilder,
     InteractionReplyOptions,
+    time,
 } from "discord.js";
 import GithubAPI, { Repository } from "../apis/githubAPI";
 
@@ -58,7 +59,7 @@ export function embedFromIssue(
             { name: "Type", value: "Issue", inline: true },
             {
                 name: "Created",
-                value: `<t:${new Date(issue.created_at).valueOf() / 1000}:R>`,
+                value: `${time(new Date(issue.created_at), "R")}`,
                 inline: true,
             },
             {
@@ -89,9 +90,9 @@ export function embedFromIssue(
     if (issue.closed_at && issue.closed_by != null) {
         embed.addFields({
             name: "Closed",
-            value: `<t:${new Date(issue.closed_at).valueOf() / 1000}:R> by [${
-                issue.closed_by.login
-            }](${issue.closed_by.html_url})`,
+            value: `${time(new Date(issue.closed_at), "R")} by [${issue.closed_by.login}](${
+                issue.closed_by.html_url
+            })`,
             inline: true,
         });
     }
@@ -146,7 +147,7 @@ export function embedFromPull(
             { name: "Type", value: "Pull Request", inline: true },
             {
                 name: "Created",
-                value: `<t:${new Date(pull.created_at).valueOf() / 1000}:R>`,
+                value: `${time(new Date(pull.created_at), "R")}`,
                 inline: true,
             },
             {
@@ -184,9 +185,9 @@ export function embedFromPull(
     if (pull.merged && pull.merged_at && pull.merged_by != null) {
         embed.addFields({
             name: "Merged",
-            value: `<t:${new Date(pull.merged_at).valueOf() / 1000}:R> by [${
-                pull.merged_by.login
-            }](${pull.merged_by.html_url})`,
+            value: `${time(new Date(pull.merged_at), "R")} by [${pull.merged_by.login}](${
+                pull.merged_by.html_url
+            })`,
             inline: true,
         });
     }
