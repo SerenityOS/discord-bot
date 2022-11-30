@@ -18,7 +18,10 @@ import { RestEndpointMethodTypes } from "@octokit/rest";
 import { getSadCaret } from "./emoji";
 
 export async function embedFromIssueOrPull(
-    issueOrPull: RestEndpointMethodTypes["issues"]["get"]["response"]["data"] | undefined
+    issueOrPull:
+        | RestEndpointMethodTypes["issues"]["get"]["response"]["data"]
+        | RestEndpointMethodTypes["search"]["issuesAndPullRequests"]["response"]["data"]["items"][0]
+        | undefined
 ): Promise<EmbedBuilder | undefined> {
     if (!issueOrPull) return undefined;
 
@@ -40,7 +43,9 @@ export async function embedFromIssueOrPull(
 }
 
 export function embedFromIssue(
-    issue: RestEndpointMethodTypes["issues"]["get"]["response"]["data"],
+    issue:
+        | RestEndpointMethodTypes["search"]["issuesAndPullRequests"]["response"]["data"]["items"][0]
+        | RestEndpointMethodTypes["issues"]["get"]["response"]["data"],
     repository: Repository
 ): EmbedBuilder {
     let description = issue.body || "";
@@ -87,12 +92,10 @@ export function embedFromIssue(
         });
     }
 
-    if (issue.closed_at && issue.closed_by != null) {
+    if (issue.closed_at) {
         embed.addFields({
             name: "Closed",
-            value: `${time(new Date(issue.closed_at), "R")} by [${issue.closed_by.login}](${
-                issue.closed_by.html_url
-            })`,
+            value: `${time(new Date(issue.closed_at), "R")}`,
             inline: true,
         });
     }
