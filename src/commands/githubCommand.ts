@@ -22,11 +22,14 @@ const repositories: Array<{
         repository: SERENITY_REPOSITORY,
         urlRegex: /.+github.com\/SerenityOS\/serenity\/(?:issues|pull)\/(\d+).*/,
         defaultCategories: [
-            // DEVELOPMENT
-            "830526756619288616",
-
             // SUPPORT
             "836187014617104394",
+
+            // LADYBIRD
+            "1027909057962573895",
+
+            // DEVELOPMENT
+            "830526756619288616",
         ],
     },
     {
