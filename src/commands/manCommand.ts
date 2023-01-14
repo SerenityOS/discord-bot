@@ -30,7 +30,7 @@ export class ManCommand extends Command {
         return [
             new SlashCommandBuilder()
                 .setName("man")
-                .setDescription("Show user's total amount of commits")
+                .setDescription("Show a particular program's man page")
                 .addIntegerOption(section =>
                     section
                         .setName("section")
