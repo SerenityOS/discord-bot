@@ -165,8 +165,6 @@ export function embedFromPull(
             },
             {
                 name: "State",
-                // @ts-expect-error Intl.ListFormat is not yet part of the typescript library definitions,
-                //                  see https://github.com/microsoft/TypeScript/issues/46907
                 value: new Intl.ListFormat().format(state),
                 inline: true,
             }
