@@ -189,7 +189,14 @@ export default class CommandHandler {
     ): Promise<void> {
         return await handler.call(command, interaction).catch(error => {
             console.trace("matchedCommand.handle{Select|Context}Menu failed", error);
-            interaction.reply({ ephemeral: true, content: `Failed because of ${error}` });
+
+            const content = `⚠️ Something went extremely wrong!\n \`\`\`\n${
+                (error as any)?.stack ?? error ?? ""
+            }\n\`\`\``;
+            if ((interaction as any).deferred || (interaction as any).replied)
+                return (interaction as any).editReply({ content });
+
+            interaction.reply({ ephemeral: true, content });
         });
     }
 }
