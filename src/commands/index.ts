@@ -24,5 +24,5 @@ export * from "./manCommand";
 export * from "./planCommand";
 export * from "./quickLinksCommand";
 export * from "./quoteCommand";
-export * from "./test262Command";
+export * from "./testCommand";
 export * from "./userCommand";
