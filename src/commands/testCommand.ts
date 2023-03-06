@@ -51,6 +51,11 @@ const variants: Record<string, TestVariant> = {
         url: "https://libjs.dev/test262/data/results.json",
         nameForCommitError: "test262",
     },
+    testwasm: {
+        description: "Display Wasm spec test results",
+        url: "https://libjs.dev/wasm/data/results.json",
+        nameForCommitError: "Wasm spec tests",
+    },
 };
 
 export class TestCommand extends Command {
