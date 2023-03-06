@@ -51,7 +51,7 @@
         "eslint-plugin-prettier": "^4.2.1",
         "eslint-plugin-unused-imports": "^2.0.0",
         "mocha": "^10.2.0",
-        "nodemon": "^2.0.20",
+        "nodemon": "^2.0.21",
         "prettier": "^2.8.4",
         "ts-node": "^10.9.1"
     },
