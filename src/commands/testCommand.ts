@@ -1,12 +1,11 @@
 /*
- * Copyright (c) 2021, the SerenityOS developers.
+ * Copyright (c) 2021-2023, the SerenityOS developers.
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import { Client, EmbedBuilder, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, ChatInputCommandInteraction, SlashCommandBuilder, Client } from "discord.js";
 import axios from "axios";
-import githubAPI from "../apis/githubAPI";
 import {
     getBuggiemagnify,
     getBuggus,
@@ -22,17 +21,13 @@ import {
     getYakstack,
 } from "../util/emoji";
 import Command from "./command";
+import githubAPI from "../apis/githubAPI";
 
 /* eslint-disable camelcase */
 interface Result {
     commit_timestamp: number;
     run_timestamp: number;
-    versions: {
-        serenity: string;
-        "libjs-test262": string;
-        test262: string;
-        "test262-parser-tests": string;
-    };
+    versions: { serenity: string } & Record<string, string>;
     tests: {
         [name: string]: {
             duration: number;
@@ -44,14 +39,28 @@ interface Result {
 }
 /* eslint-enable camelcase */
 
-export class Test262Command extends Command {
+interface TestVariant {
+    description: string;
+    url: string;
+    nameForCommitError: string;
+}
+
+const variants: Record<string, TestVariant> = {
+    test262: {
+        description: "Display LibJS test262 results",
+        url: "https://libjs.dev/test262/data/results.json",
+        nameForCommitError: "test262",
+    },
+};
+
+export class TestCommand extends Command {
     override data() {
-        return [
+        return Object.entries(variants).map(([name, { description }]) =>
             new SlashCommandBuilder()
-                .setName("test262")
-                .setDescription("Display LibJS test262 results")
+                .setName(name)
+                .setDescription(description)
                 .addStringOption(commit =>
-                    commit.setName("commit").setDescription("The commit to use the results fro")
+                    commit.setName("commit").setDescription("The commit to use the results from")
                 )
                 .addStringOption(labels =>
                     labels
@@ -62,12 +71,14 @@ export class Test262Command extends Command {
                             value: "labels",
                         })
                 )
-                .toJSON(),
-        ];
+                .toJSON()
+        );
     }
 
     override async handleCommand(interaction: ChatInputCommandInteraction): Promise<void> {
-        const response = await axios.get<Result[]>("https://libjs.dev/test262/data/results.json");
+        const variant = variants[interaction.commandName];
+
+        const response = await axios.get<Result[]>(variant.url);
 
         const results: Result[] = response.data;
         let result: Result = results[results.length - 1];
@@ -78,10 +89,7 @@ export class Test262Command extends Command {
 
             for (const label in Object.values(result.tests)[0].results) {
                 lines.push(
-                    `${await Test262Command.statusIconForLabel(
-                        interaction.client,
-                        label
-                    )}: ${label}`
+                    `${await TestCommand.statusIconForLabel(interaction.client, label)}: ${label}`
                 );
             }
 
@@ -117,9 +125,9 @@ export class Test262Command extends Command {
                         new EmbedBuilder()
                             .setTitle("Not found")
                             .setDescription(
-                                `Could not find a commit that ran test262 matching '${commit}' ${
-                                    sadcaret ?? ":^("
-                                }`
+                                `Could not find a commit that ran ${
+                                    variant.nameForCommitError
+                                } matching '${commit}' ${sadcaret ?? ":^("}`
                             ),
                     ],
                 });
@@ -129,7 +137,12 @@ export class Test262Command extends Command {
 
         await interaction.reply({
             embeds: [
-                await Test262Command.embedForResult(interaction.client, result, previousResult),
+                await TestCommand.embedForResult(
+                    interaction.client,
+                    variant,
+                    result,
+                    previousResult
+                ),
             ],
         });
     }
@@ -172,6 +185,7 @@ export class Test262Command extends Command {
 
     static async embedForResult(
         client: Client,
+        variant: TestVariant,
         result: Result,
         previousResult?: Result
     ): Promise<EmbedBuilder> {
@@ -183,15 +197,15 @@ export class Test262Command extends Command {
             return new EmbedBuilder()
                 .setTitle("Error")
                 .setDescription(
-                    `Could not fetch the matching commit ('${
-                        result.versions.serenity
-                    }') for the test262 run from github ${sadcaret ?? ":^("}`
+                    `Could not fetch the matching commit ('${result.versions.serenity}') for the ${
+                        variant.nameForCommitError
+                    } run from github ${sadcaret ?? ":^("}`
                 );
         }
 
         const description = Object.entries(result.versions)
             .map(([repository, commitHash]) => {
-                const treeUrl = Test262Command.repositoryUrlByName.get(repository);
+                const treeUrl = TestCommand.repositoryUrlByName.get(repository);
                 const shortCommitHash = commitHash.substring(0, 7);
 
                 if (treeUrl)
@@ -223,10 +237,7 @@ export class Test262Command extends Command {
                 : 0;
             const percentageDifference = (percentage - previousPercentage).toFixed(2);
 
-            const libjsEmoji = await Test262Command.statusIconForLabel(
-                client,
-                "percentage_passing"
-            );
+            const libjsEmoji = await TestCommand.statusIconForLabel(client, "percentage_passing");
 
             if (percentageDifference !== "0.00" && percentageDifference !== "-0.00") {
                 fields.push(
@@ -240,7 +251,7 @@ export class Test262Command extends Command {
 
             for (const [label, value] of Object.entries(test.results)) {
                 const previousValue = previousTest?.results[label] ?? 0;
-                let icon = await Test262Command.statusIconForLabel(client, label);
+                let icon = await TestCommand.statusIconForLabel(client, label);
 
                 if (previousValue - value !== 0) {
                     const difference = value - previousValue;
@@ -264,7 +275,7 @@ export class Test262Command extends Command {
                 for (const [label, value] of Object.entries(previousTest.results).filter(
                     ([label]) => !(label in test.results)
                 )) {
-                    const icon = await Test262Command.statusIconForLabel(client, label);
+                    const icon = await TestCommand.statusIconForLabel(client, label);
 
                     fields.push(`${icon} 0 (-${value})`);
                 }
