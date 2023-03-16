@@ -21,12 +21,7 @@
     ts-mixer "^6.0.2"
     tslib "^2.4.1"
 
-"@discordjs/collection@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@discordjs/collection/-/collection-1.3.0.tgz#65bf9674db72f38c25212be562bb28fa0dba6aa3"
-  integrity sha512-ylt2NyZ77bJbRij4h9u/wVy7qYw/aDqQLWnadjvDqW/WoWCxrsX6M3CIw9GVP5xcGCDxsrKj5e0r5evuFYwrKg==
-
-"@discordjs/collection@^1.4.0":
+"@discordjs/collection@^1.3.0", "@discordjs/collection@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@discordjs/collection/-/collection-1.4.0.tgz#6b5d5429db0691a3f5a962c21f6bc7859eef3333"
   integrity sha512-hiOJyk2CPFf1+FL3a4VKCuu1f448LlROVuu8nLz1+jCOAPokUcdFAV+l4pd3B3h6uJlJQSASoZzrdyNdjdtfzQ==
