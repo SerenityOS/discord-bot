@@ -10,21 +10,29 @@
     "@jridgewell/trace-mapping" "0.3.9"
 
 "@discordjs/builders@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@discordjs/builders/-/builders-1.4.0.tgz#b951b5e6ce4e459cd06174ce50dbd51c254c1d47"
-  integrity sha512-nEeTCheTTDw5kO93faM1j8ZJPonAX86qpq/QVoznnSa8WWcCgJpjlu6GylfINTDW6o7zZY0my2SYdxx2mfNwGA==
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@discordjs/builders/-/builders-1.5.0.tgz#f6dd4684e46707eb600eabdfdacd3b44c9e924cd"
+  integrity sha512-7XxT78mnNBPigHn2y6KAXkicxIBFtZREGWaRZ249EC1l6gBUEP8IyVY5JTciIjJArxkF+tg675aZvsTNTKBpmA==
   dependencies:
-    "@discordjs/util" "^0.1.0"
-    "@sapphire/shapeshift" "^3.7.1"
-    discord-api-types "^0.37.20"
+    "@discordjs/formatters" "^0.2.0"
+    "@discordjs/util" "^0.2.0"
+    "@sapphire/shapeshift" "^3.8.1"
+    discord-api-types "^0.37.35"
     fast-deep-equal "^3.1.3"
-    ts-mixer "^6.0.2"
-    tslib "^2.4.1"
+    ts-mixer "^6.0.3"
+    tslib "^2.5.0"
 
 "@discordjs/collection@^1.3.0", "@discordjs/collection@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@discordjs/collection/-/collection-1.4.0.tgz#6b5d5429db0691a3f5a962c21f6bc7859eef3333"
   integrity sha512-hiOJyk2CPFf1+FL3a4VKCuu1f448LlROVuu8nLz1+jCOAPokUcdFAV+l4pd3B3h6uJlJQSASoZzrdyNdjdtfzQ==
+
+"@discordjs/formatters@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@discordjs/formatters/-/formatters-0.2.0.tgz#a861d9c385dfc6c7294e44c5441beee933820a4f"
+  integrity sha512-vn4oMSXuMZUm8ITqVOtvE7/fMMISj4cI5oLsR09PEQXHKeKDAMLltG/DWeeIs7Idfy6V8Fk3rn1e69h7NfzuNA==
+  dependencies:
+    discord-api-types "^0.37.35"
 
 "@discordjs/rest@^1.4.0":
   version "1.6.0"
@@ -261,7 +269,7 @@
   resolved "https://registry.yarnpkg.com/@sapphire/async-queue/-/async-queue-1.5.0.tgz#2f255a3f186635c4fb5a2381e375d3dfbc5312d8"
   integrity sha512-JkLdIsP8fPAdh9ZZjrbHWR/+mZj0wvKS5ICibcLrRI1j84UmLMshx5n9QmL8b95d4onJ2xxiyugTgSAX7AalmA==
 
-"@sapphire/shapeshift@^3.7.1":
+"@sapphire/shapeshift@^3.8.1":
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/@sapphire/shapeshift/-/shapeshift-3.8.1.tgz#b98dc6a7180f9b38219267917b2e6fa33f9ec656"
   integrity sha512-xG1oXXBhCjPKbxrRTlox9ddaZTvVpOhYLmKmApD/vIWOV1xEYXnpoFs68zHIZBGbqztq6FrUPNPerIrO1Hqeaw==
@@ -1802,7 +1810,7 @@ tr46@~0.0.3:
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
   integrity sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==
 
-ts-mixer@^6.0.2:
+ts-mixer@^6.0.3:
   version "6.0.3"
   resolved "https://registry.yarnpkg.com/ts-mixer/-/ts-mixer-6.0.3.tgz#69bd50f406ff39daa369885b16c77a6194c7cae6"
   integrity sha512-k43M7uCG1AkTyxgnmI5MPwKoUvS/bRvLvUb7+Pgpdlmok8AoqmUaZxUUw8zKM5B1lqZrt41GjYgnvAi0fppqgQ==
