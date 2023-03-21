@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2021, the SerenityOS developers.
  * Copyright (c) 2022, Filiph Sandström <filiph.sandstrom@filfatstudios.com>
+ * Copyright (c) 2023, networkException <networkexception@serenityos.org>
  *
  * SPDX-License-Identifier: BSD-2-Clause
  */
@@ -14,8 +15,9 @@ import Discord, {
 } from "discord.js";
 
 import CommandHandler from "./commandHandler";
-import { DISCORD_TOKEN } from "./config/secrets";
 import config from "./config/botConfig";
+import { DISCORD_TOKEN, ANNOUNCEMENT_CHANNEL_ID } from "./config/secrets";
+import * as mastodon from "./mastodon";
 
 process.on("unhandledRejection", reason => {
     console.log("Unhandled Rejection:", reason);
@@ -65,6 +67,11 @@ client.on(Events.MessageCreate, async message => {
     if (message.author.bot) return;
 
     message = await message.fetch();
+
+    if (message.channelId === ANNOUNCEMENT_CHANNEL_ID) {
+        await mastodon.postAnnouncement(message);
+        return;
+    }
 
     for (const embed of message.embeds) {
         if (!embed.url) continue;
