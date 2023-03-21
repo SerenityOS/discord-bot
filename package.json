@@ -23,7 +23,7 @@
         ],
         "ext": ".ts,.js",
         "ignore": [],
-        "exec": "ts-node ./src/index.ts"
+        "exec": "ts-node --files ./src/index.ts"
     },
     "repository": {
         "type": "git",
