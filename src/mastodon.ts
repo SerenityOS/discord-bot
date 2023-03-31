@@ -10,6 +10,9 @@ import { ANNOUNCEMENT_MASTODON_TOKEN, ANNOUNCEMENT_MASTODON_URL } from "./config
 
 let mastodon: Mastodon;
 
+// Taken from https://www.freecodecamp.org/news/how-to-use-regex-to-match-emoji-including-discord-emotes/
+const emojiRegex = /<a?:(.+?):\d{18}>|\p{Extended_Pictographic}/gu;
+
 export async function postAnnouncement(message: Message): Promise<void> {
     if (!ANNOUNCEMENT_MASTODON_TOKEN) return;
 
@@ -28,7 +31,7 @@ export async function postAnnouncement(message: Message): Promise<void> {
 
     try {
         await mastodon.post("statuses", {
-            status: `${author} announces:\n\n${message.content}`,
+            status: `${author} announces:\n\n${message.content.replace(emojiRegex, ":$1:")}`,
             visibility: "public",
         });
     } catch (e) {
