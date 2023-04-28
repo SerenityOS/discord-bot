@@ -64,7 +64,7 @@
         "discord.js": "^14.7.1",
         "dotenv": "^16.0.3",
         "mastodon": "^1.2.2",
-        "octokit-plugin-create-pull-request": "^4.1.1",
+        "octokit-plugin-create-pull-request": "^4.1.2",
         "rimraf": "^5.0.0",
         "typescript": "^5.0.4",
         "utf-8-validate": "^6.0.3",
