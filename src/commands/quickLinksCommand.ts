@@ -85,6 +85,11 @@ export class QuickLinksCommand extends Command {
             response: `WSL Specific Notes: <${this.documentation}/BuildInstructionsWindows.md>`,
             help: "Get a link to the wsl specific notes",
         },
+        {
+            name: "macos",
+            response: `macOS Specific Notes: <${this.documentation}/BuildInstructionsMacOS.md>`,
+            help: "Get a link to the macOS specific notes",
+        },
     ];
 
     override data(): ApplicationCommandData[] {
