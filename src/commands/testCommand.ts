@@ -154,7 +154,7 @@ export class TestCommand extends Command {
 
     static repositoryUrlByName = new Map<string, string>([
         ["serenity", "https://github.com/SerenityOS/serenity/"],
-        ["libjs-test262", "https://github.com/linusg/libjs-test262/"],
+        ["libjs-test262", "https://github.com/SerenityOS/libjs-test262/"],
         ["test262", "https://github.com/tc39/test262/"],
         ["test262-parser-tests", "https://github.com/tc39/test262-parser-tests/"],
     ]);
