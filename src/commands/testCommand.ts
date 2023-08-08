@@ -48,12 +48,12 @@ interface TestVariant {
 const variants: Record<string, TestVariant> = {
     test262: {
         description: "Display LibJS test262 results",
-        url: "https://libjs.dev/test262/data/results.json",
+        url: "https://github.com/SerenityOS/libjs-test262-data/raw/master/test262/results.json",
         nameForCommitError: "test262",
     },
     testwasm: {
         description: "Display Wasm spec test results",
-        url: "https://libjs.dev/wasm/data/results.json",
+        url: "https://github.com/SerenityOS/libjs-test262-data/raw/master/wasm/results.json",
         nameForCommitError: "Wasm spec tests",
     },
 };
