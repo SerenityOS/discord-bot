@@ -2141,9 +2141,9 @@ undefsafe@^2.0.5:
   integrity sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==
 
 undici@^5.13.0, undici@^5.21.0:
-  version "5.22.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.22.0.tgz#5e205d82a5aecc003fc4388ccd3d2c6e8674a0ad"
-  integrity sha512-fR9RXCc+6Dxav4P9VV/sp5w3eFiSdOjJYsbtWfd4s5L5C4ogyuVpdKIVHeW0vV1MloM65/f7W45nR9ZxwVdyiA==
+  version "5.25.2"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.25.2.tgz#17ddc3e8ab3c77e473ae1547f3f2917a05da2820"
+  integrity sha512-tch8RbCfn1UUH1PeVCXva4V8gDpGAud/w0WubD6sHC46vYQ3KDxL+xv1A2UxK0N6jrVedutuPHxe1XIoqerwMw==
   dependencies:
     busboy "^1.6.0"
 
