@@ -64,7 +64,6 @@
         "discord.js": "^14.7.1",
         "dotenv": "^16.0.3",
         "mastodon": "^1.2.2",
-        "node-gyp": "^10.0.0",
         "octokit-plugin-create-pull-request": "^4.1.1",
         "rimraf": "^5.0.0",
         "typescript": "^5.0.4",
