@@ -24,7 +24,7 @@ import Command from "./command";
 
 export class QuoteCommand extends Command {
     private readonly messageLinkRegex: RegExp =
-        /https:\/\/(?:(?:ptb|canary)\.)?discord\.com\/channels\/(?<guild>[0-9]{17,18})\/(?<channel>[0-9]{17,18})\/(?<message>[0-9]{17,18})/;
+        /https:\/\/(?:(?:ptb|canary)\.)?discord\.com\/channels\/(?<guild>\d*)\/(?<channel>\d*)\/(?<message>\d*)$/;
 
     override data() {
         if (!QUOTE_ROLE_ID) return [];
