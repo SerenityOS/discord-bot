@@ -159,13 +159,10 @@ export class QuoteCommand extends Command {
             };
         }
 
-        const originalMessage = await interaction.channel?.messages.fetch(interaction.commandId);
-        if (!originalMessage) return;
-
         // Option 3b: The quote's message ID was given
         try {
-            const message = await originalMessage.channel.messages.fetch(argument);
-            if (message.guild == null) return;
+            const message = await interaction.channel?.messages.fetch(argument);
+            if (message?.guild == null) return;
             return {
                 guildId: message.guild.id,
                 channelId: message.channel.id,
