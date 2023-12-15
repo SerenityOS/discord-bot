@@ -100,11 +100,16 @@ export class QuoteCommand extends Command {
         });
 
         const commandIssuerNick = await this.getAuthorNick(guild, interaction.user);
-        const pullRequestNumber = await githubAPI.openFortunesPullRequest(
-            fortunes,
-            commandIssuerNick,
-            nickname
-        );
+        let pullRequestNumber;
+        try {
+            pullRequestNumber = await githubAPI.openFortunesPullRequest(
+                fortunes,
+                commandIssuerNick,
+                nickname
+            );
+        } catch (e) {
+            console.trace(e);
+        }
 
         if (pullRequestNumber == undefined) {
             const sadcaret = await getSadCaret(interaction);
