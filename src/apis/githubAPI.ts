@@ -6,11 +6,11 @@
  */
 
 /* eslint camelcase: [2, { "properties": "never" }] */
-import { GITHUB_TOKEN } from "../config/secrets";
+import { GITHUB_TOKEN } from "../config/secrets.js";
 import { Octokit } from "@octokit/rest";
-import { throttling as OctokitThrottling } from "@octokit/plugin-throttling";
 import { composeCreatePullRequest } from "octokit-plugin-create-pull-request";
-import config from "../config/botConfig";
+import config from "../config/botConfig.js";
+import { throttling as OctokitThrottling } from "@octokit/plugin-throttling";
 
 export interface ManPage {
     url: string;
@@ -134,6 +134,7 @@ class GithubAPI {
             });
 
             return results.data;
+            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         } catch (e: any) {
             if (e.status === 404) return null;
 
@@ -157,6 +158,7 @@ class GithubAPI {
             });
 
             return results.data?.total_count;
+            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
         } catch (e: any) {
             console.trace(e);
             throw e;

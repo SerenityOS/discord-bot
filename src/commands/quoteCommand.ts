@@ -17,10 +17,10 @@ import {
     ContextMenuCommandInteraction,
     ChannelType,
 } from "discord.js";
-import githubAPI, { SERENITY_REPOSITORY } from "../apis/githubAPI";
-import { QUOTE_ROLE_ID } from "../config/secrets";
-import { getSadCaret } from "../util/emoji";
-import Command from "./command";
+import githubAPI, { SERENITY_REPOSITORY } from "../apis/githubAPI.js";
+import { QUOTE_ROLE_ID } from "../config/secrets.js";
+import { getSadCaret } from "../util/emoji.js";
+import Command from "./command.js";
 
 export class QuoteCommand extends Command {
     private readonly messageLinkRegex: RegExp =

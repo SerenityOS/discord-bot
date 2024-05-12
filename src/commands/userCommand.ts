@@ -12,18 +12,18 @@ import {
     SelectMenuInteraction,
     SlashCommandBuilder,
 } from "discord.js";
-import { embedFromIssueOrPull, noMatchingFoundMessage } from "../util/embedFromIssueOrPull";
-import githubAPI from "../apis/githubAPI";
-import Command from "./command";
+import { embedFromIssueOrPull, noMatchingFoundMessage } from "../util/embedFromIssueOrPull.js";
+import githubAPI from "../apis/githubAPI.js";
+import Command from "./command.js";
 import {
     getClosedIssue,
     getClosedPull,
     getMergedPull,
     getOpenIssue,
     getOpenPull,
-} from "../util/emoji";
-import { trimString } from "../util/text";
-import { GitHubColor } from "../util/color";
+} from "../util/emoji.js";
+import { trimString } from "../util/text.js";
+import { GitHubColor } from "../util/color.js";
 
 export class UserCommand extends Command {
     override data() {

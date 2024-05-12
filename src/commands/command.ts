@@ -5,7 +5,7 @@
  */
 
 import {
-    ApplicationCommandData,
+    RESTPostAPIApplicationCommandsJSONBody,
     ButtonInteraction,
     ChatInputCommandInteraction,
     ContextMenuCommandInteraction,
@@ -22,7 +22,7 @@ export default abstract class Command {
 
     handleButton?(interaction: ButtonInteraction): Promise<void>;
 
-    abstract data(): ApplicationCommandData[];
+    abstract data(): RESTPostAPIApplicationCommandsJSONBody[];
 
     buttonData?(): Array<string>;
 }

@@ -1,8 +1,8 @@
 import { assert, expect } from "chai";
-import githubAPI, { SERENITY_REPOSITORY } from "../src/apis/githubAPI";
+import githubAPI, { SERENITY_REPOSITORY } from "../src/apis/githubAPI.js";
 
-import { GITHUB_TOKEN } from "../src/config/secrets";
-import config from "../src/config/botConfig";
+import { GITHUB_TOKEN } from "../src/config/secrets.js";
+import config from "../src/config/botConfig.js";
 
 describe("githubApi", function () {
     // Disable the test timeout for our async tests.

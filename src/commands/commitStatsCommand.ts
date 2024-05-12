@@ -10,11 +10,11 @@ import {
     EmbedBuilder,
     SlashCommandBuilder,
 } from "discord.js";
-import githubAPI, { Commit, Repository } from "../apis/githubAPI";
-import { CommitClubColor, GitHubColor } from "../util/color";
-import { toMedal } from "../util/emoji";
-import { extractCopy, trimString } from "../util/text";
-import Command from "./command";
+import githubAPI, { Commit, Repository } from "../apis/githubAPI.js";
+import { CommitClubColor, GitHubColor } from "../util/color.js";
+import { toMedal } from "../util/emoji.js";
+import { extractCopy, trimString } from "../util/text.js";
+import Command from "./command.js";
 
 export class CommitStatsCommand extends Command {
     override data() {
