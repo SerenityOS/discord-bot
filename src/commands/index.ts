@@ -26,3 +26,4 @@ export * from "./quickLinksCommand.js";
 export * from "./quoteCommand.js";
 export * from "./testCommand.js";
 export * from "./userCommand.js";
+export * from "./slapCommand.js";
