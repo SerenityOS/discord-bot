@@ -11,7 +11,7 @@
         "build": "esbuild src/index.ts --minify --bundle --platform=node --packages=external --outfile=build/index.js",
         "prestart": "npm run build",
         "start": "node build/index.js",
-        "test": "mocha -r ts-node/register tests/**/*.test.ts"
+        "test": "vitest"
     },
     "nodemonConfig": {
         "watch": [
@@ -37,19 +37,15 @@
     "homepage": "https://github.com/SerenityOS/discord-bot#readme",
     "devDependencies": {
         "@octokit/types": "^9.1.2",
-        "@types/chai": "^4.3.4",
-        "@types/mocha": "^10.0.1",
         "@typescript-eslint/eslint-plugin": "^5.59.9",
         "@typescript-eslint/parser": "^5.59.1",
-        "chai": "^4.3.7",
         "eslint": "^8.39.0",
         "eslint-config-prettier": "^8.8.0",
         "eslint-plugin-prettier": "^4.2.1",
         "eslint-plugin-unused-imports": "^2.0.0",
-        "mocha": "^10.2.0",
         "nodemon": "^2.0.22",
         "prettier": "^2.8.8",
-        "ts-node": "^10.9.1"
+        "vitest": "^1.6.0"
     },
     "dependencies": {
         "@octokit/plugin-throttling": "^5.1.1",
