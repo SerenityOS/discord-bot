@@ -4,15 +4,11 @@
     "description": "SerenityOS Discord Bot",
     "main": "index.js",
     "license": "BSD-2-Clause",
-    "engines": {
-        "node": ">=16 <=18.17.1"
-    },
     "scripts": {
         "lint": "eslint . --ext .ts",
         "lint-and-fix": "eslint . --ext .ts --fix",
-        "start:dev": "nodemon --watch './src/**' --ext 'ts,js,json' --exec \"ts-node --files ./src/index.ts\"",
-        "prebuild": "rimraf ./build",
-        "build": "tsc",
+        "start:dev": "nodemon",
+        "build": "esbuild src/index.ts --minify --bundle --platform=node --packages=external --outfile=build/index.js",
         "prestart": "npm run build",
         "start": "node build/index.js",
         "test": "mocha -r ts-node/register tests/**/*.test.ts"
@@ -23,7 +19,7 @@
         ],
         "ext": ".ts,.js",
         "ignore": [],
-        "exec": "ts-node --files ./src/index.ts"
+        "exec": "npm run start"
     },
     "repository": {
         "type": "git",
@@ -63,9 +59,9 @@
         "bufferutil": "^4.0.7",
         "discord.js": "^14.7.1",
         "dotenv": "^16.0.3",
+        "esbuild": "^0.21.2",
         "mastodon": "^1.2.2",
         "octokit-plugin-create-pull-request": "^4.1.1",
-        "rimraf": "^5.0.0",
         "typescript": "^5.0.4",
         "utf-8-validate": "^6.0.3",
         "zlib-sync": "^0.1.8"
