@@ -26,8 +26,8 @@ repos:
   - repo: local
     hooks:
       - id: lint
-        name: running yarn lint to ensure changes will pass linting on CI
-        entry:  yarn lint
+        name: running pnpm lint to ensure changes will pass linting on CI
+        entry: pnpm lint
         language: system
         files: \.[jt]sx?$  # *.js, *.jsx, *.ts and *.tsx
         types: [file]
