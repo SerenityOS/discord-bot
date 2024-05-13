@@ -11,11 +11,11 @@ import {
     InteractionReplyOptions,
     time,
 } from "discord.js";
-import GithubAPI, { Repository } from "../apis/githubAPI";
+import GithubAPI, { Repository } from "../apis/githubAPI.js";
 
-import { GitHubColor } from "./color";
+import { GitHubColor } from "./color.js";
 import { RestEndpointMethodTypes } from "@octokit/rest";
-import { getSadCaret } from "./emoji";
+import { getSadCaret } from "./emoji.js";
 
 export async function embedFromIssueOrPull(
     issueOrPull:

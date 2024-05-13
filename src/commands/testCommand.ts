@@ -19,9 +19,9 @@ import {
     getYakslice,
     getYaksplode,
     getYakstack,
-} from "../util/emoji";
-import Command from "./command";
-import githubAPI from "../apis/githubAPI";
+} from "../util/emoji.js";
+import Command from "./command.js";
+import githubAPI from "../apis/githubAPI.js";
 
 /* eslint-disable camelcase */
 interface Result {

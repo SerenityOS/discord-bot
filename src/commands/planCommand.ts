@@ -5,7 +5,7 @@
  */
 
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import Command from "./command";
+import Command from "./command.js";
 
 export class PlanCommand extends Command {
     private readonly baseReply: string = `> Will SerenityOS support \`$THING\`?\nMaybe. Maybe not. There is no plan.\n\nSee: [FAQ](<https://github.com/SerenityOS/serenity/blob/master/Documentation/FAQ.md>)`;

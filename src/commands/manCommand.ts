@@ -15,9 +15,9 @@ import {
     Interaction,
     SlashCommandBuilder,
 } from "discord.js";
-import githubAPI from "../apis/githubAPI";
-import { getMaximize, getMinimize, getSadCaret } from "../util/emoji";
-import Command from "./command";
+import githubAPI from "../apis/githubAPI.js";
+import { getMaximize, getMinimize, getSadCaret } from "../util/emoji.js";
+import Command from "./command.js";
 
 interface Paragraph {
     title?: string;

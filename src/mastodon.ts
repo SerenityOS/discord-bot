@@ -6,7 +6,7 @@
 
 import { Message } from "discord.js";
 import Mastodon from "mastodon";
-import { ANNOUNCEMENT_MASTODON_TOKEN, ANNOUNCEMENT_MASTODON_URL } from "./config/secrets";
+import { ANNOUNCEMENT_MASTODON_TOKEN, ANNOUNCEMENT_MASTODON_URL } from "./config/secrets.js";
 
 let mastodon: Mastodon;
 

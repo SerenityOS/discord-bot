@@ -17,12 +17,13 @@
  * DO NOT export command classes using default
  */
 
-export * from "./commitStatsCommand";
-export * from "./emojiCommand";
-export * from "./githubCommand";
-export * from "./manCommand";
-export * from "./planCommand";
-export * from "./quickLinksCommand";
-export * from "./quoteCommand";
-export * from "./testCommand";
-export * from "./userCommand";
+export * from "./commitStatsCommand.js";
+export * from "./emojiCommand.js";
+export * from "./githubCommand.js";
+export * from "./manCommand.js";
+export * from "./planCommand.js";
+export * from "./quickLinksCommand.js";
+export * from "./quoteCommand.js";
+export * from "./testCommand.js";
+export * from "./userCommand.js";
+export * from "./slapCommand.js";

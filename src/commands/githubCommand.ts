@@ -5,17 +5,16 @@
  */
 
 import {
-    ApplicationCommandData,
     ChatInputCommandInteraction,
     SlashCommandBuilder,
     TextChannel,
     TextBasedChannel,
     SlashCommandStringOption,
 } from "discord.js";
-import githubAPI, { Repository, SERENITY_REPOSITORY } from "../apis/githubAPI";
-import { embedFromIssueOrPull } from "../util/embedFromIssueOrPull";
-import { getSadCaret } from "../util/emoji";
-import Command from "./command";
+import githubAPI, { Repository, SERENITY_REPOSITORY } from "../apis/githubAPI.js";
+import { embedFromIssueOrPull } from "../util/embedFromIssueOrPull.js";
+import { getSadCaret } from "../util/emoji.js";
+import Command from "./command.js";
 
 const repositories: Array<{
     name: string;
@@ -190,7 +189,7 @@ export class GithubCommand extends Command {
 }
 
 export class ReviewList extends Command {
-    override data(): ApplicationCommandData[] {
+    override data() {
         const aliases = ["reviewlist", "prlist"];
 
         const baseCommand = new SlashCommandBuilder()

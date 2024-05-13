@@ -5,10 +5,9 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import * as Commands from "./commands";
+import * as Commands from "./commands/index.js";
 
 import {
-    ApplicationCommandType,
     ButtonInteraction,
     Client,
     CommandInteraction,
@@ -16,9 +15,9 @@ import {
     SelectMenuInteraction,
 } from "discord.js";
 
-import Command from "./commands/command";
-import { GUILD_ID } from "./config/secrets";
-import config from "./config/botConfig";
+import Command from "./commands/command.js";
+import { GUILD_ID } from "./config/secrets.js";
+import config from "./config/botConfig.js";
 
 export default class CommandHandler {
     private readonly commands: Map<string[], Command>;
@@ -32,8 +31,9 @@ export default class CommandHandler {
                 const command = new commandClass();
                 const data = command.data();
 
+                // FIXME: Surely there's a better way to check this?
                 for (const entry of data)
-                    if (!entry.type || entry.type === ApplicationCommandType.ChatInput)
+                    if ("description" in entry)
                         availableCommands.push(`**${entry.name}** - ${entry.description}`);
 
                 return [data.map(entry => entry.name), command];
@@ -57,7 +57,7 @@ export default class CommandHandler {
         if (!config.production && GUILD_ID) {
             const guild = await client.guilds.fetch(GUILD_ID);
 
-            guild.commands.set(commands);
+            await guild.commands.set(commands);
         }
 
         if (!client.application) return;
@@ -74,7 +74,7 @@ export default class CommandHandler {
                 4
             )} from '${interaction.user.tag}`;
             await interaction.channel?.send(msg);
-            await console.log(msg);
+            console.log(msg);
         }
 
         if (!interaction.isCommand()) throw new Error("Invalid command interaction");
@@ -191,10 +191,11 @@ export default class CommandHandler {
             console.trace("matchedCommand.handle{Select|Context}Menu failed", error);
 
             const content = `⚠️ Something went extremely wrong!\n \`\`\`\n${
-                (error as any)?.stack ?? error ?? ""
+                (error as any)?.stack ?? error ?? "" // eslint-disable-line  @typescript-eslint/no-explicit-any
             }\n\`\`\``;
+            // eslint-disable-next-line  @typescript-eslint/no-explicit-any
             if ((interaction as any).deferred || (interaction as any).replied)
-                return (interaction as any).editReply({ content });
+                return (interaction as any).editReply({ content }); // eslint-disable-line  @typescript-eslint/no-explicit-any
 
             interaction.reply({ ephemeral: true, content });
         });

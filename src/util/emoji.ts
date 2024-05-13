@@ -6,7 +6,7 @@
 
 import { Client, Emoji } from "discord.js";
 
-import { GUILD_ID } from "../config/secrets";
+import { GUILD_ID } from "../config/secrets.js";
 
 type ClientOrParent = Client | { client: Client };
 

@@ -5,8 +5,8 @@
  */
 
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { getEmoji } from "../util/emoji";
-import Command from "./command";
+import { getEmoji } from "../util/emoji.js";
+import Command from "./command.js";
 
 export class EmojiCommand extends Command {
     override data() {

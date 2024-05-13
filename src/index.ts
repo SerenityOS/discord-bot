@@ -6,24 +6,17 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-import Discord, {
-    ActivityType,
-    Events,
-    GatewayIntentBits,
-    Interaction,
-    Partials,
-} from "discord.js";
-
-import CommandHandler from "./commandHandler";
-import config from "./config/botConfig";
-import { DISCORD_TOKEN, ANNOUNCEMENT_CHANNEL_ID } from "./config/secrets";
-import * as mastodon from "./mastodon";
+import { Client, ActivityType, Events, GatewayIntentBits, Interaction, Partials } from "discord.js";
+import CommandHandler from "./commandHandler.js";
+import config from "./config/botConfig.js";
+import { DISCORD_TOKEN, ANNOUNCEMENT_CHANNEL_ID } from "./config/secrets.js";
+import * as mastodon from "./mastodon.js";
 
 process.on("unhandledRejection", reason => {
     console.log("Unhandled Rejection:", reason);
 });
 
-const client = new Discord.Client({
+const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,

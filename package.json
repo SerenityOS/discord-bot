@@ -5,17 +5,18 @@
     "main": "index.js",
     "license": "BSD-2-Clause",
     "engines": {
-        "node": ">=16 <=18.17.1"
+        "node": ">18.18.0 && <20.0.0"
     },
+    "type": "module",
     "scripts": {
         "lint": "eslint . --ext .ts",
         "lint-and-fix": "eslint . --ext .ts --fix",
-        "start:dev": "nodemon --watch './src/**' --ext 'ts,js,json' --exec \"ts-node --files ./src/index.ts\"",
+        "start:dev": "nodemon --watch './src/**' --ext 'ts,js,json' --exec \"node --no-warnings=ExperimentalWarning --loader ts-node/esm src/index.ts\"",
         "prebuild": "rimraf ./build",
         "build": "tsc",
         "prestart": "npm run build",
         "start": "node build/index.js",
-        "test": "mocha -r ts-node/register tests/**/*.test.ts"
+        "test": "mocha --esm tests/**/*.test.ts"
     },
     "nodemonConfig": {
         "watch": [
@@ -23,7 +24,7 @@
         ],
         "ext": ".ts,.js",
         "ignore": [],
-        "exec": "ts-node --files ./src/index.ts"
+        "exec": "node --no-warnings=ExperimentalWarning --loader ts-node/esm ./src/index.ts"
     },
     "repository": {
         "type": "git",
@@ -40,34 +41,39 @@
     },
     "homepage": "https://github.com/SerenityOS/discord-bot#readme",
     "devDependencies": {
-        "@octokit/types": "^9.1.2",
-        "@types/chai": "^4.3.4",
-        "@types/mocha": "^10.0.1",
-        "@typescript-eslint/eslint-plugin": "^5.59.9",
-        "@typescript-eslint/parser": "^5.59.1",
-        "chai": "^4.3.7",
-        "eslint": "^8.39.0",
-        "eslint-config-prettier": "^8.8.0",
-        "eslint-plugin-prettier": "^4.2.1",
-        "eslint-plugin-unused-imports": "^2.0.0",
-        "mocha": "^10.2.0",
-        "nodemon": "^2.0.22",
-        "prettier": "^2.8.8",
-        "ts-node": "^10.9.1"
+        "@octokit/types": "^13.5.0",
+        "@types/chai": "^4.3.16",
+        "@types/mocha": "^10.0.6",
+        "@typescript-eslint/eslint-plugin": "^7.8.0",
+        "@typescript-eslint/parser": "^7.8.0",
+        "chai": "^5.1.1",
+        "eslint": "^8.57.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.1.3",
+        "eslint-plugin-unused-imports": "^3.2.0",
+        "mocha": "^10.4.0",
+        "nodemon": "^3.1.0",
+        "prettier": "^3.2.5",
+        "ts-node": "^10.9.2"
     },
     "dependencies": {
-        "@octokit/plugin-throttling": "^5.1.1",
-        "@octokit/rest": "^19.0.7",
-        "@types/node": "^18.16.3",
-        "axios": "^1.4.0",
-        "bufferutil": "^4.0.7",
-        "discord.js": "^14.7.1",
-        "dotenv": "^16.0.3",
+        "@octokit/core": "^5.2.0",
+        "@octokit/plugin-throttling": "^8.2.0",
+        "@octokit/rest": "^20.1.1",
+        "@types/node": "^20.12.11",
+        "axios": "^1.6.8",
+        "bufferutil": "^4.0.8",
+        "discord.js": "^14.15.2",
+        "dotenv": "^16.4.5",
         "mastodon": "^1.2.2",
-        "octokit-plugin-create-pull-request": "^4.1.1",
-        "rimraf": "^5.0.0",
-        "typescript": "^5.0.4",
-        "utf-8-validate": "^6.0.3",
-        "zlib-sync": "^0.1.8"
+        "octokit-plugin-create-pull-request": "^5.1.1",
+        "rimraf": "^5.0.7",
+        "typescript": "^5.4.5",
+        "utf-8-validate": "^6.0.4",
+        "zlib-sync": "^0.1.9"
+    },
+    "resolutions": {
+        "strip-ansi": "^6.0.1",
+        "cliui": "^7.0.4"
     }
 }
