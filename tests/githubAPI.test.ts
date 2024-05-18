@@ -1,17 +1,14 @@
-import { assert, expect } from "chai";
+import { describe, expect, it, assert } from "vitest";
 import githubAPI, { SERENITY_REPOSITORY } from "../src/apis/githubAPI";
 
 import { GITHUB_TOKEN } from "../src/config/secrets";
 import config from "../src/config/botConfig";
 
 describe("githubApi", function () {
-    // Disable the test timeout for our async tests.
-    this.timeout(0);
-
-    it("Should be able to create quote PRs", async function () {
+    it("Should be able to create quote PRs", async function (context) {
         // This test only exists to ease debugging of the openFortunesPullRequest
         // github API when attempting to reproduce a bug. Skip it by default.
-        this.skip();
+        context.skip();
 
         // The test  if the environment is configured for serenity, or
         // if we don't have a github API token setup.

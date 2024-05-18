@@ -10,21 +10,25 @@ jobs:
     env:
         NODE_ENV: ${{ matrix.node-env }}
     steps:
-      - name: Checkout 
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node 
+      - name: Setup Node
         uses: actions/setup-node@v4.0.2
         with:
-          node-version: 16
+          node-version: 18
 
-      - run: yarn install
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
-      - run: yarn build
+      - run: pnpm install
 
-      - run: yarn lint
+      - run: pnpm build
+
+      - run: pnpm lint
         if: ${{ matrix.node-env == 'development' }}
 
-      - run: yarn test
+      - run: pnpm test
         if: ${{ matrix.node-env == 'development' }}
 
