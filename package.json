@@ -59,7 +59,7 @@
         "@octokit/plugin-throttling": "^5.1.1",
         "@octokit/rest": "^19.0.7",
         "@types/node": "^18.16.3",
-        "axios": "^1.4.0",
+        "axios": "^1.7.1",
         "bufferutil": "^4.0.7",
         "discord.js": "^14.7.1",
         "dotenv": "^16.0.3",
