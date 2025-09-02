@@ -59,7 +59,7 @@ export interface UserIssuesAndPulls {
 class GithubAPI {
     private readonly octokit: Octokit;
     private readonly manPath: string = "Base/usr/share/man";
-    private readonly fortunesPath: string = "Base/res/fortunes.json";
+    private readonly fortunesPath: string = "Base/usr/share/fortune/fortunes.json";
 
     constructor() {
         this.octokit = new (Octokit.plugin(OctokitThrottling))({
