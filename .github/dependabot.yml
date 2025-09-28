@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # Maintain dependencies for our yarn packages.
+  # Maintain dependencies for our npm packages.
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
